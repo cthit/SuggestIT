@@ -6,15 +6,8 @@ from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from pony.orm import db_session, ObjectNotFound, commit
 
-from UUIDEncoder import UUIDEncoder
-
 app = Flask(__name__)
 api = Api(app)
-
-app.config['RESTFUL_JSON'] = {
-    'cls': UUIDEncoder,
-    'ensure_ascii': False
-}
 
 @db_session
 def add_new_suggestion(title_inp, text_inp, author_inp):

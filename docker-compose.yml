@@ -17,7 +17,16 @@ services:
       - 8080:8080
   app:
     build:
-      context: .
+      context: ./backend/
       dockerfile: dev.Dockerfile
     ports:
       - 5000:5000
+
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: dev.Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/usr/src/app/
