@@ -9,6 +9,8 @@ from pony.orm import db_session, ObjectNotFound, commit
 app = Flask(__name__)
 api = Api(app)
 
+app.config.setdefault('WTF_CSRF_METHODS', [])
+
 @db_session
 def add_new_suggestion(title_inp, text_inp, author_inp):
     return Suggestion(timestamp=datetime.utcnow(), title=title_inp, text=text_inp, author=author_inp)

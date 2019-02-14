@@ -4,6 +4,11 @@ import "./App.css";
 import { DigitHeader } from "@cthit/react-digit-components";
 
 class App extends Component {
+  constructor(props) {
+    super();
+    props.loadAllSuggestions();
+  }
+
   render() {
     return (
       <div>
