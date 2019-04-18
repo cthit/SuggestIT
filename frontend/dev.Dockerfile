@@ -9,6 +9,7 @@ USER node
 WORKDIR /usr/src/app
 
 COPY package.json .
+COPY ./src/ .
 
 RUN yarn install
 RUN yarn global add react-scripts
