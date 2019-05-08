@@ -38,7 +38,8 @@ class SuggestionBoard extends Component{
 
     translateTimestamp(ts){
         var pre = "Inlagd "
-        var diff = new Date().getTime() - new Date(ts).getTime() - 2*60*60*1000;
+        var now = new Date();
+        var diff = now.getTime() - new Date(ts).getTime() - now.getTimezoneOffset()*60;
         diff /= 1000;
         if(diff <= 60){
             return pre + parseInt(diff, 10) + " sekunder sedan";

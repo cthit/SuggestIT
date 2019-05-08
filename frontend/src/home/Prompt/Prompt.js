@@ -19,6 +19,7 @@ class Prompt extends Component{
         return(
             <div className="prompt">
                 <div className="innerPrompt">
+                        <DigitText.Heading6 text="Nytt förslag"/>
                         <DigitTextField
                         onChange={e => {
                             this.setState({

@@ -1,9 +1,12 @@
 import React, { Component } from "react";
+import SuggestITHeader from '../suggestitheader/suggestitheader';
 
 class NotFound extends Component {
   render() {
     return (
-      <div>Page not found</div>
+      <SuggestITHeader renderMain = {()=>
+      <p>Site not found</p>
+      }/>
     );
   }
 }

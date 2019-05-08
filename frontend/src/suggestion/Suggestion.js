@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {DigitText} from '@cthit/react-digit-components'
 import axios from 'axios';
+import SuggestITHeader from '../suggestitheader/suggestitheader';
 import './Suggestion.css';
 
 class Suggestion extends Component{
@@ -21,12 +22,14 @@ class Suggestion extends Component{
 
     render() {
         return(
-        <div>
-            <DigitText.Heading6 text={this.state.title}/>
-            <DigitText.Subtitle2 text={this.state.author}/>
-            <DigitText.Subtitle2 text={this.state.timestamp}/>
-            <DigitText.Text text={this.state.text}/>
-        </div>
+        <SuggestITHeader renderMain = {()=>
+            <div className="suggestionCard">
+                <DigitText.Heading6 text={this.state.title}/>
+                <DigitText.Subtitle2 className="grayText" text={"Inlagd av: " + this.state.author}/>
+                <DigitText.Subtitle2 className="grayText" text={new Date(this.state.timestamp).toString()}/>
+                <DigitText.Text text={this.state.text}/>
+            </div>}
+        />
             );
    }
 
