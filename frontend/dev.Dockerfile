@@ -1,4 +1,4 @@
-FROM node:9.11.1
+FROM node:latest
 
 RUN mkdir -p /usr/src/app/
 RUN chown -R node /usr/src/app
@@ -8,8 +8,9 @@ USER node
 
 WORKDIR /usr/src/app
 
-COPY package.json .
 COPY ./src/ .
+COPY package.json .
+COPY ./public/ .
 
 RUN yarn install
 RUN yarn global add react-scripts

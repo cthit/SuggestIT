@@ -30,3 +30,11 @@ services:
       - 3000:3000
     volumes:
       - ./frontend:/usr/src/app/
+
+  gotify:
+    image: cthit/gotify:latest
+    environment:
+      GOTIFY_PRE-SHARED-KEY: "123abc"
+      GOTIFY_MOCK-MODE: "true"
+    ports:
+      - 1337:8080

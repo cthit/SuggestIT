@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {DigitNavLink, DigitText} from '@cthit/react-digit-components';
 import axios from 'axios';
 import './SuggestionBoard.css';
+import {suggestions} from '../SuggestionStore';
 
 const SuggestionItem = ({props,ts})=>(
     <div className ="card">
@@ -19,6 +20,11 @@ class SuggestionBoard extends Component{
         this.state = {
             suggestions: []
         }
+        suggestions.subscribe(()=>{
+            this.setState({
+                suggestions: suggestions.getState()
+            })
+        })
         this.getData()
     }
     
@@ -26,8 +32,12 @@ class SuggestionBoard extends Component{
         
          axios.get("http://localhost:5000/")
         .then(res=>{
-            this.setState({
+            /*this.setState({
                suggestions: res.data 
+            });*/
+            suggestions.dispatch({
+                type: "add",
+                suggestion: res.data
             });
         })
         .catch(error=>{
@@ -39,7 +49,7 @@ class SuggestionBoard extends Component{
     translateTimestamp(ts){
         var pre = "Inlagd "
         var now = new Date();
-        var diff = now.getTime() - new Date(ts).getTime() - now.getTimezoneOffset()*60;
+        var diff = now.getTime() - new Date(ts).getTime() + now.getTimezoneOffset()*60000;
         diff /= 1000;
         if(diff <= 60){
             return pre + parseInt(diff, 10) + " sekunder sedan";
