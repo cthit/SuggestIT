@@ -6,6 +6,8 @@ from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from pony.orm import db_session, ObjectNotFound, commit
 
+from weekmail import weekmail
+
 app = Flask(__name__)
 api = Api(app)
 
@@ -46,7 +48,8 @@ class SuggestionResList(Resource):
     def get(self):
         return jsonify([suggestion_to_json(s) for s in Suggestion.select(lambda t : True)])
 
-
+wm = weekmail(4,17,0,0)
+wm.start()
 
 api.add_resource(SuggestionRes, '/<string:id>')
 api.add_resource(SuggestionResList, '/')
