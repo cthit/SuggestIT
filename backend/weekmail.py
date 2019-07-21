@@ -12,7 +12,7 @@ class weekmail():
         self.__notifyTime = self.__notifyTime.replace(hour=_hour,minute=_minute, second=_second)
 
         while(self.__notifyTime.weekday() != _dayIndex):
-            self.__notifyTime += datetime.timedelta(days=1)
+            self.__notifyTime += timedelta(days=1)
     
     def updateTime(self):
         while((self.__notifyTime - datetime.now()).total_seconds() < 0):
@@ -28,6 +28,8 @@ class weekmail():
         self.__timer.cancel()
 
     def notifyPRIT(self):
-        sendMail("prit","no-reply@chalmers.it","Veckans förslag", "something")
-        print("Email sent to PRIT at %s" % (self.__timer))
+        if sendMail("prit","no-reply@chalmers.it","Veckans förslag", "something"):
+            print("Email sent to P.R.I.T")
+        else:
+            print("Unable to send mail to P.R.I.T")
         self.start()

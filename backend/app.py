@@ -48,12 +48,12 @@ class SuggestionResList(Resource):
     def get(self):
         return jsonify([suggestion_to_json(s) for s in Suggestion.select(lambda t : True)])
 
-wm = weekmail(4,17,0,0)
-wm.start()
-
 api.add_resource(SuggestionRes, '/<string:id>')
 api.add_resource(SuggestionResList, '/')
 
-
 if __name__ == '__main__':
+    #4 = friday, 17,0,0 = 17:00:00
+    wm = weekmail(4,17,0,0)
+    wm.start()
+    print("Week mail loop has started")
     app.run(host='0.0.0.0')
