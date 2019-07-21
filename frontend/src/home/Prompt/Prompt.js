@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {DigitTextField, DigitTextArea, DigitButton, DigitSwitch, DigitLayout, DigitText} from '@cthit/react-digit-components'
 import axios from 'axios';
-import {suggestions} from '../SuggestionStore';
+import {suggestions} from '../../redux/SuggestionStore';
 import './Prompt.css';
 
 class Prompt extends Component{
@@ -25,7 +25,7 @@ class Prompt extends Component{
         axios.post('http://localhost:5000/', {
             title: this.state.title,
             text: this.state.description,
-            author: ((this.state.author == "" || this.state.anonymus_author)? "Anonym": this.state.author)
+            author: ((this.state.author === "" || this.state.anonymus_author)? "Anonym": this.state.author)
         })
         .then(res=>{
             console.log("Response from new add" + JSON.stringify(res.data));
@@ -102,11 +102,11 @@ class Prompt extends Component{
                     </DigitLayout.Row>
                     <DigitButton text = "Skicka" onClick={a =>{
                         this.setState({
-                            title_isempty: this.state.title == "",
-                            description_isempty: this.state.description == ""
+                            title_isempty: this.state.title === "",
+                            description_isempty: this.state.description === ""
                         });
                         
-                        if(this.state.title == "" || this.state.description == ""){
+                        if(this.state.title === "" || this.state.description === ""){
                             return;
                         }
 

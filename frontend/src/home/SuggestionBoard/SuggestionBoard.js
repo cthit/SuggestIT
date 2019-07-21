@@ -1,18 +1,8 @@
 import React, {Component} from 'react';
-import {DigitNavLink, DigitText} from '@cthit/react-digit-components';
 import axios from 'axios';
 import './SuggestionBoard.css';
-import {suggestions} from '../SuggestionStore';
-
-const SuggestionItem = ({props,ts})=>(
-    <div className ="card">
-        <div className="innerCard">
-            <DigitNavLink text={props.title} link={"/suggestion/" + props.id}/>
-            <DigitText.Subtitle2 text={props.author}/>
-            <DigitText.Subtitle2 text={ts}/>
-        </div>
-    </div>
-);
+import {suggestions} from '../../redux/SuggestionStore';
+import SuggestionItem from '../../components/SuggestionItem/SuggestionItem';
 
 class SuggestionBoard extends Component{
     constructor(props){
@@ -82,7 +72,7 @@ class SuggestionBoard extends Component{
                 {this.state.suggestions.map(obj=>
                 <SuggestionItem
                     key={obj.id} 
-                    props={obj} 
+                    suggestion={obj} 
                     ts={this.translateTimestamp(obj.timestamp)}
                 />)}
         </div>

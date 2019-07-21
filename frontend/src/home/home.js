@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import {DigitHeader} from '@cthit/react-digit-components';
 
 import "./home.css";
 import Prompt from "./Prompt/Prompt";

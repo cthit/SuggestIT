@@ -12,5 +12,5 @@ const reducer = function(state, action){
 export const suggestions = createStore(reducer,[]);
 
 suggestions.subscribe(()=>{
-    console.log("store changed", suggestions.getState())
+    console.log("store changed")
 })
