@@ -73,7 +73,7 @@ class SuggestionBoard extends Component{
                 <SuggestionItem
                     key={obj.id} 
                     suggestion={obj} 
-                    ts={this.translateTimestamp(obj.timestamp)}
+                    ts={obj.timestamp}
                 />)}
         </div>
         )
