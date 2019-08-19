@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import SuggestITHeader from '../suggestitheader/suggestitheader';
+import SuggestITHeader from '../common/suggestitheader/suggestitheader';
 
 class NotFound extends Component {
   render() {

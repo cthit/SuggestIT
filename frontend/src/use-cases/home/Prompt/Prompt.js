@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {DigitTextField, DigitTextArea, DigitButton, DigitSwitch, DigitLayout, DigitText} from '@cthit/react-digit-components'
 import axios from 'axios';
-import {suggestions} from '../../redux/SuggestionStore';
+import {suggestions} from '../../../redux/SuggestionStore';
 import './Prompt.css';
 
 class Prompt extends Component{

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {DigitText} from '@cthit/react-digit-components'
 import axios from 'axios';
-import SuggestITHeader from '../../suggestitheader/suggestitheader';
+import SuggestITHeader from '../common/suggestitheader/suggestitheader';
 import './Suggestion.css';
 
 class Suggestion extends Component{

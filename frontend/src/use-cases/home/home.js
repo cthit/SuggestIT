@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import "./home.css";
 import Prompt from "./Prompt/Prompt";
 import SuggestionBoard from "./SuggestionBoard/SuggestionBoard";
-import SuggestITHeader from '../suggestitheader/suggestitheader';
+import SuggestITHeader from '../common/suggestitheader/suggestitheader';
 
 class Home extends Component {
   render() {

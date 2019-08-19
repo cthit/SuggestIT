@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import './SuggestionBoard.css';
-import {suggestions} from '../../redux/SuggestionStore';
-import SuggestionItem from '../../components/SuggestionItem/SuggestionItem';
+import {suggestions} from '../../../redux/SuggestionStore';
+import SuggestionItem from '../../common/SuggestionItem/SuggestionItem';
 
 class SuggestionBoard extends Component{
     constructor(props){

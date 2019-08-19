@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import SuggestionItem from  '../../components/SuggestionItem/SuggestionItem';
+import SuggestionItem from  '../common/SuggestionItem/SuggestionItem';
 
 class WeekSummary extends Component{
     constructor(props){

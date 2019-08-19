@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from db import Suggestion, suggestion_to_json
+import config
 
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
@@ -13,21 +14,30 @@ api = Api(app)
 
 @db_session
 def add_new_suggestion(title_inp, text_inp, author_inp):
-    return Suggestion(timestamp=datetime.utcnow(), title=title_inp, text=text_inp, author=author_inp)
+    return Suggestion(timestamp=datetime.utcnow(), title=title_inp, text=text_inp, author=author_inp), 201
 
 
 class SuggestionRes(Resource):
     @db_session
     def get(self, id):
+        if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
+            return 'You are not PRIT', 401
+
         return suggestion_to_json(Suggestion[id])
 
     @db_session
     def delete(self, id):
+        if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
+            return 'You are not PRIT', 401
+
         Suggestion[id].delete()
 
 
     @db_session
     def put(self, id):
+        if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
+            return 'You are not PRIT', 401
+
         try:
             suggestion = Suggestion[id]
             suggestion.title = request.json["title"]
@@ -46,10 +56,27 @@ class SuggestionResList(Resource):
 
     @db_session
     def get(self):
+        if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
+            return 'You are not PRIT', 401
+
         return jsonify([suggestion_to_json(s) for s in Suggestion.select(lambda t : True)])
+
+class Authentication(Resource):
+    def put(self):
+        if request.json["password"] == config.PRIT_PASSWORD:
+            return jsonify(key=config.PRIT_AUTH_KEY)
+
+        return "You are not PRIT", 401
+
+    def get(self):
+        if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
+            return 'You are not PRIT', 401
+        
+        return 'You are PRIT', 200
 
 api.add_resource(SuggestionRes, '/<string:id>')
 api.add_resource(SuggestionResList, '/')
+api.add_resource(Authentication, '/authenticate')
 
 if __name__ == '__main__':
     #4 = friday, 17,0,0 = 17:00:00
