@@ -47,6 +47,17 @@ class SuggestionRes(Resource):
         except ObjectNotFound:
             add_new_suggestion(request.json["title"], request.json["text"], request.json["author"])
 
+class RemoveSuggestions(Resource):
+  @db_session
+  def put(self):
+    if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
+      return 'You are not P.R.I.T.', 401
+
+    for id in request.json['ids']:
+      try:
+        Suggestion[id].delete()
+      except ObjectNotFound:
+        return 'Cound not find the suggestion with id %s' % (id), 400
 
 class SuggestionResList(Resource):
     @db_session
@@ -81,6 +92,7 @@ class Authentication(Resource):
 api.add_resource(SuggestionRes, '/<string:id>')
 api.add_resource(Authentication, '/authenticate')
 api.add_resource(SuggestionResList, '/')
+api.add_resource(RemoveSuggestions, '/delete')
 
 if __name__ == '__main__':
     #4 = friday, 17,0,0 = 17:00:00
