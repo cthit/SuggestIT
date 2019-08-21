@@ -3,18 +3,29 @@ import React, { Component } from "react";
 import "./home.css";
 import Prompt from "./Prompt/Prompt";
 import SuggestionBoard from "./SuggestionBoard/SuggestionBoard";
-import SuggestITHeader from '../common/suggestitheader/suggestitheader';
+import { checkLogin } from "../../services/data.service";
 
 class Home extends Component {
+  constructor(props){
+    super(props)
+    this.state = {
+      suggestionboard: <div></div>
+    }
+
+    checkLogin().then( res=>
+      this.setState({
+        suggestionboard: <SuggestionBoard/>
+      })
+    )
+  }
+
   render() {
     return (
-      <SuggestITHeader renderMain = {()=>
       <div>
         <br/>
         <Prompt/>
-        <SuggestionBoard/> 
-      </div>}
-      />
+        {this.state.suggestionboard}
+      </div>
     );
   }
 }

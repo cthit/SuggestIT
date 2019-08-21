@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import {DigitHeader, DigitButton} from '@cthit/react-digit-components';
+import {DigitHeader, DigitButton, DigitText } from '@cthit/react-digit-components';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { login, checkLogin } from "../../../services/data.service";
+import { login, checkLogin } from '../../services/data.service';
+import './suggestitheader.css';
 
 class SuggestITHeader extends Component {
     constructor(props){
@@ -37,7 +37,7 @@ class SuggestITHeader extends Component {
               <div>
                 <DigitButton text="Login" outlined onClick={this.handleClickOpen}/>
                 <Dialog open={this.state.loginOpen} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                  <DialogTitle id="form-dialog-title">P.R.I.T login</DialogTitle>
+                  <DigitText.Title className="dialog-title" text="P.R.I.T. login"/>
                   <DialogContent>
                     <TextField
                       autoFocus

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {DigitText} from '@cthit/react-digit-components'
-import SuggestITHeader from '../common/suggestitheader/suggestitheader';
 import './Suggestion.css';
 import { translateTimestamp } from '../common/methods';
 import { getSuggestion } from '../../services/data.service';
@@ -23,15 +22,13 @@ class Suggestion extends Component{
 
     render() {
         return(
-        <SuggestITHeader renderMain = {()=>
-            <div className="suggestionCard">
-                <DigitText.Heading6 text={this.state.title}/>
-                <DigitText.Subtitle2 className="grayText" text={"Inlagd av: " + this.state.author}/>
-                <DigitText.Subtitle2 className="grayText" text={ translateTimestamp(this.state.timestamp) }/>
-                <DigitText.Text text={this.state.text}/>
-            </div>}
-        />
-            );
+          <div className="suggestionCard">
+            <DigitText.Heading6 text={this.state.title}/>
+            <DigitText.Subtitle2 className="grayText" text={"Inlagd av: " + this.state.author}/>
+            <DigitText.Subtitle2 className="grayText" text={ translateTimestamp(this.state.timestamp) }/>
+            <DigitText.Text text={this.state.text}/>
+          </div>
+        );
    }
 
    getSuggestionById(){

@@ -1,5 +1,3 @@
-
-
 export const translateTimestamp = (ts) => {
     var pre = "Inlagd "
     var now = new Date();

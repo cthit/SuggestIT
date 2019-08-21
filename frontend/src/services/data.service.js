@@ -41,9 +41,7 @@ export const login = (password) =>
   axios.put(`${baseUrl}/authenticate`, {password: password})
   .then(res => 
     cookies.set(authCookieName,res.data.key)
-  ).catch(error => {
-    //User might not be logged in
-  });
+  );
 
 export const checkLogin = () => 
     axios.get(`${baseUrl}/authenticate`, {headers: {
