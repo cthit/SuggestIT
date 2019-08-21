@@ -2,21 +2,22 @@ import React, {Component} from 'react';
 import './SuggestionBoard.css';
 import {suggestions} from '../../../redux/SuggestionStore';
 import SuggestionItem from '../../common/SuggestionItem/SuggestionItem';
-import { updateSuggestions } from '../../../services/data.service';
+import { updateSuggestions, deleteSuggestions } from '../../../services/data.service';
 import { DigitButton, DigitText } from '@cthit/react-digit-components';
 import { Dialog, DialogContent, DialogActions } from '@material-ui/core';
-import ConfirmModal from '../../common/ConfirmModal/ConfirmModal';
 
 class SuggestionBoard extends Component{
     constructor(props){
       super(props);
       this.state = {
         suggestions: [],
-        confirmOpen: false
+        confirmOpen: false,
+        clearButton: <div></div>
       }
       suggestions.subscribe(()=>{
         this.setState({
-          suggestions: suggestions.getState()
+          suggestions: suggestions.getState(),
+          clearButton: suggestions.getState().length > 0 ? this.ClearButton() : <div></div>
         })
       })
       this.getData()
@@ -30,16 +31,10 @@ class SuggestionBoard extends Component{
         return(
         <div>
           <div className="grid">
-            <DigitButton 
-              className="clear-button" 
-              text="Ränsa" 
-              primary 
-              raised
-              onClick={() => this.openConfirm()}
-              />
+            {this.state.clearButton}
           </div>
           <Dialog open={this.state.confirmOpen} aria-labelledby="form-dialog-title">
-            <DigitText.Title className="dialog-title" text="Är du säker"/>
+            <DigitText.Title className="dialog-title" text="Är du säker?"/>
             <DialogContent>
               <DigitText.Subtitle text=
                 {`Är du säker på att du vill ta bort ${this.state.suggestions.length} förslag?`}
@@ -63,8 +58,23 @@ class SuggestionBoard extends Component{
         )
     }
 
+    ClearButton = () =>
+      <DigitButton 
+        className="clear-button" 
+        text="Ränsa" 
+        primary 
+        raised
+        onClick={() => this.openConfirm()}
+        />
+
     clearSuggestions = () => {
-      
+      this.setState({
+        confirmOpen: false
+      });
+      deleteSuggestions(this.state.suggestions)
+      .then(res=> 
+        updateSuggestions()  
+      );
     }
 
     openConfirm = () => {

@@ -37,6 +37,13 @@ export const deleteSuggestion = (uuid) =>
     //User might not be logged in
   });
 
+export const deleteSuggestions = (suggestions) =>
+  axios.put(`${baseUrl}/delete`, {
+    ids: suggestions.map( e => e.id)
+  } ,{headers: {
+    Authorization: cookies.get(authCookieName)
+  }})
+
 export const login = (password) =>
   axios.put(`${baseUrl}/authenticate`, {password: password})
   .then(res => 

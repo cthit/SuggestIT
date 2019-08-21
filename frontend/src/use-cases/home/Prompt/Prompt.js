@@ -87,7 +87,11 @@ class Prompt extends Component{
               />
                 
           </DigitLayout.Row>
-          <DigitButton text = "Skicka" onClick={() =>{
+          <DigitButton
+            text = "Skicka"
+            primary
+            raised
+            onClick={() =>{
               this.setState({
                   title_isempty: this.state.title === "",
                   description_isempty: this.state.description === ""
