@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
 import {DigitText} from '@cthit/react-digit-components'
-import axios from 'axios';
 import SuggestITHeader from '../common/suggestitheader/suggestitheader';
 import './Suggestion.css';
-import Cookies from 'universal-cookie';
 import { translateTimestamp } from '../common/methods';
 import { getSuggestion } from '../../services/data.service';
-
-const cookies = new Cookies();
 
 class Suggestion extends Component{
 

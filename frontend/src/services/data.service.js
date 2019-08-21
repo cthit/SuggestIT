@@ -1,4 +1,3 @@
-import React from 'react';
 import { suggestions } from '../redux/SuggestionStore';
 import axios from 'axios';
 import Cookies from 'universal-cookie';

@@ -1,16 +1,11 @@
 import React, { Component } from "react";
 import {DigitHeader, DigitButton} from '@cthit/react-digit-components';
-import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import axios from "axios";
-import Cookies from 'universal-cookie';
 import { login, checkLogin } from "../../../services/data.service";
-
-const cookies = new Cookies();
 
 class SuggestITHeader extends Component {
     constructor(props){
@@ -54,7 +49,7 @@ class SuggestITHeader extends Component {
                       error= {this.state.passError}
                       onChange = {(event) => this.setState({passTextField: event.target.value})}
                       onKeyPress = {event => {
-                        if(event.key == 'Enter')
+                        if(event.key === 'Enter')
                           this.login()
                       }}
                       //Why not using DigitTextField, 1. No onKeyPress event, 2. No autofocus
