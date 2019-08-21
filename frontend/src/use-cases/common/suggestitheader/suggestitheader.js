@@ -8,6 +8,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import axios from "axios";
 import Cookies from 'universal-cookie';
+import { login, checkLogin } from "../../../services/data.service";
 
 const cookies = new Cookies();
 
@@ -18,10 +19,18 @@ class SuggestITHeader extends Component {
             renderMain: props.renderMain,
             isLoggedIn: false,
             loginOpen: false,
-            passTextField: ''
+            passTextField: 'Hello',
+            passError: false
         }
 
-        this.checkLogin();
+        checkLogin().then(res=>
+            this.setState({
+            isLoggedIn: true
+          })
+        )
+        .catch(error => {
+          //User might not be logged in
+        })
     }
 
   render() {
@@ -42,16 +51,18 @@ class SuggestITHeader extends Component {
                       label="Password"
                       type="password"
                       fullWidth
+                      error= {this.state.passError}
                       onChange = {(event) => this.setState({passTextField: event.target.value})}
+                      onKeyPress = {event => {
+                        if(event.key == 'Enter')
+                          this.login()
+                      }}
+                      //Why not using DigitTextField, 1. No onKeyPress event, 2. No autofocus
                     />
                   </DialogContent>
                   <DialogActions>
-                    <Button onClick={this.handleClose} color="primary">
-                      Cancel
-                    </Button>
-                    <Button onClick={this.login} color="primary">
-                      Login
-                    </Button>
+                    <DigitButton onClick={this.handleClose} text="Cancel" primary/>
+                    <DigitButton onClick={this.login} text="Login" primary/>
                   </DialogActions>
                 </Dialog>
               </div>
@@ -67,46 +78,26 @@ class SuggestITHeader extends Component {
       passTextField: ''
     })
 
-  login = () => {
-    axios.put('http://localhost:5000/authenticate', {
-      password: this.state.passTextField
-    }).then(res => {
-          cookies.set('PRIT_AUTH_KEY', res.data.key);
-          this.handleClose();
-          this.setState({
-            isLoggedIn: true
-          });
-        }
-      ).catch(res => 
-        console.log("Fail")
-      );
-  }
-
-  checkLogin = () => {
-    if(cookies.get('PRIT_AUTH_KEY'))
-      axios.get("http://localhost:5000/authenticate", { headers: {
-        Authorization: cookies.get('PRIT_AUTH_KEY')
-      }}).then(res =>
-          {
-            console.log("You are logged in")
-            this.setState({
-            isLoggedIn: true
-          })
-        }
-        ).catch(res => 
-          this.setState({
-            isLoggedIn: false
-          })  
-        )
-    else
-      this.setState({isLoggedIn: false})
-  }
-
   handleClickOpen = () =>
     this.setState({
       loginOpen: true
     })
-  
+
+  login = () => {
+    login(this.state.passTextField)
+    .then(res => {
+      this.handleClose();
+      this.setState({
+        isLoggedIn: true
+      });
+      window.location.reload(false);
+    })
+    .catch(error => 
+      this.setState({
+        passError: true
+      })
+    );
+  }  
 }
 
 export default SuggestITHeader;

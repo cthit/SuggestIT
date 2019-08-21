@@ -28,7 +28,7 @@ class weekmail():
         self.__timer.cancel()
 
     def notifyPRIT(self):
-        if sendMail("prit","no-reply@chalmers.it","Veckans förslag", "something"):
+        if sendMail("P.R.I.T.","no-reply@chalmers.it","Veckans förslag", "something"):
             print("Email sent to P.R.I.T")
         else:
             print("Unable to send mail to P.R.I.T")

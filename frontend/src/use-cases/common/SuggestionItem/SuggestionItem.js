@@ -1,6 +1,10 @@
 import React from 'react';
-import {DigitNavLink, DigitText} from '@cthit/react-digit-components';
+import { DigitNavLink, DigitText, DigitIconButton } from '@cthit/react-digit-components';
 import './SuggestionItem.css';
+import { translateTimestamp } from '../methods';
+import { Clear } from '@material-ui/icons';
+import { Grid } from '@material-ui/core';
+import { updateSuggestions, deleteSuggestion } from '../../../services/data.service';
 
 export const SuggestionItem = ({suggestion,ts,showtext})=>{
 
@@ -10,43 +14,29 @@ export const SuggestionItem = ({suggestion,ts,showtext})=>{
 
     return(
     <div className ="card">
-        <div className="innerCard">
+      <div className="innerCard">
+        <Grid container >
+          <Grid item xs={10}>
             <DigitNavLink text={suggestion.title} link={"/suggestion/" + suggestion.id}/>
-            <section>
-                <DigitText.Subtitle2 text={suggestion.author} className = "authorLabel"/>
-                <DigitText.Subtitle2 text={translateTimestamp(ts)} className = "timeStampLabel"/>
-                {text}
-            </section>
-        </div>
+          </Grid>
+          <Grid item xs={1}>
+            <DigitIconButton icon={Clear} onClick= {() => _deleteSuggestion(suggestion.id)}/>
+          </Grid>
+        </Grid>
+        <section>
+          <DigitText.Subtitle2 text={suggestion.author} className = "authorLabel"/>
+          <DigitText.Subtitle2 text={translateTimestamp(ts)} className = "timeStampLabel"/>
+          {text}
+        </section>
+      </div>
     </div>
     )};
 
-const translateTimestamp = (ts)=>{
-    var pre = "Inlagd "
-    var now = new Date();
-    var diff = now.getTime() - new Date(ts).getTime() + now.getTimezoneOffset()*60000;
-    diff /= 1000;
-    if(diff <= 60){
-        return pre + parseInt(diff, 10) + " sekunder sedan";
-    }
-    diff /=60;
-    if(diff <= 60){
-        return pre + parseInt(diff, 10) + " minuter sedan";
-    }
-    diff /=60;
-    if(diff <= 24){
-        return pre + parseInt(diff, 10) + " timmar sedan";
-    }
-    diff /=24;
-    if(diff <= 365.25/12){
-        return pre + parseInt(diff, 10) + " dagar sedan";
-    }
-    diff /= 365.25/12;
-    if(diff <= 12){
-        return pre + parseInt(diff, 10) + " månader sedan";
-    }
-    diff /= 12;
-    return pre + parseInt(diff, 10) + " år sedan";
-}
+export const _deleteSuggestion = (uuid) =>
+  {
+    deleteSuggestion(uuid).then(res => 
+      updateSuggestions()
+    )
+  }
 
 export default SuggestionItem;

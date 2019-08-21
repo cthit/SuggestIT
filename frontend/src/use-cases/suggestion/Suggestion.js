@@ -3,6 +3,11 @@ import {DigitText} from '@cthit/react-digit-components'
 import axios from 'axios';
 import SuggestITHeader from '../common/suggestitheader/suggestitheader';
 import './Suggestion.css';
+import Cookies from 'universal-cookie';
+import { translateTimestamp } from '../common/methods';
+import { getSuggestion } from '../../services/data.service';
+
+const cookies = new Cookies();
 
 class Suggestion extends Component{
 
@@ -26,7 +31,7 @@ class Suggestion extends Component{
             <div className="suggestionCard">
                 <DigitText.Heading6 text={this.state.title}/>
                 <DigitText.Subtitle2 className="grayText" text={"Inlagd av: " + this.state.author}/>
-                <DigitText.Subtitle2 className="grayText" text={new Date(this.state.timestamp).toString()}/>
+                <DigitText.Subtitle2 className="grayText" text={ translateTimestamp(this.state.timestamp) }/>
                 <DigitText.Text text={this.state.text}/>
             </div>}
         />
@@ -35,19 +40,15 @@ class Suggestion extends Component{
 
    getSuggestionById(){
 
-        axios.get("http://localhost:5000/" + this.state.id)
-        .then(res=>{
-            this.setState({
-                author: res.data.author,
-                text: res.data.text,
-                timestamp: res.data.timestamp,
-                title: res.data.title
-            });
-        })
-        .catch(error=>{
-            console.log("RIP, som error accured. =(");
-            console.log(error);
-        });
+    getSuggestion(this.state.id)
+    .then(res=>{
+      this.setState({
+        author: res.data.author,
+        text: res.data.text,
+        timestamp: res.data.timestamp,
+        title: res.data.title
+      });
+    })
    }
 }
 

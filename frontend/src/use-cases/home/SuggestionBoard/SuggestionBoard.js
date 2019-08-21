@@ -1,67 +1,25 @@
 import React, {Component} from 'react';
-import axios from 'axios';
 import './SuggestionBoard.css';
 import {suggestions} from '../../../redux/SuggestionStore';
 import SuggestionItem from '../../common/SuggestionItem/SuggestionItem';
+import { updateSuggestions } from '../../../services/data.service';
 
 class SuggestionBoard extends Component{
     constructor(props){
-        super(props);
-        this.state = {
-            suggestions: []
-        }
-        suggestions.subscribe(()=>{
-            this.setState({
-                suggestions: suggestions.getState()
-            })
+      super(props);
+      this.state = {
+        suggestions: []
+      }
+      suggestions.subscribe(()=>{
+        this.setState({
+          suggestions: suggestions.getState()
         })
-        this.getData()
+      })
+      this.getData()
     }
     
     getData(){
-        
-         axios.get("http://localhost:5000/")
-        .then(res=>{
-            /*this.setState({
-               suggestions: res.data 
-            });*/
-            suggestions.dispatch({
-                type: "add",
-                suggestion: res.data
-            });
-        })
-        .catch(error=>{
-            console.log("RIP, som error accured. =(");
-            console.log(error);
-        });
-    }
-
-    translateTimestamp(ts){
-        var pre = "Inlagd "
-        var now = new Date();
-        var diff = now.getTime() - new Date(ts).getTime() + now.getTimezoneOffset()*60000;
-        diff /= 1000;
-        if(diff <= 60){
-            return pre + parseInt(diff, 10) + " sekunder sedan";
-        }
-        diff /=60;
-        if(diff <= 60){
-            return pre + parseInt(diff, 10) + " minuter sedan";
-        }
-        diff /=60;
-        if(diff <= 24){
-            return pre + parseInt(diff, 10) + " timmar sedan";
-        }
-        diff /=24;
-        if(diff <= 365.25/12){
-            return pre + parseInt(diff, 10) + " dagar sedan";
-        }
-        diff /= 365.25/12;
-        if(diff <= 12){
-            return pre + parseInt(diff, 10) + " månader sedan";
-        }
-        diff /= 12;
-        return pre + parseInt(diff, 10) + " år sedan";
+      updateSuggestions()
     }
 
 
@@ -69,12 +27,13 @@ class SuggestionBoard extends Component{
         return(
             
         <div className="grid">
-                {this.state.suggestions.map(obj=>
-                <SuggestionItem
-                    key={obj.id} 
-                    suggestion={obj} 
-                    ts={obj.timestamp}
-                />)}
+          {this.state.suggestions.map(obj=>
+          <SuggestionItem
+            key={obj.id} 
+            suggestion={obj} 
+            ts={obj.timestamp}
+            />
+          )}
         </div>
         )
     }

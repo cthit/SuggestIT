@@ -7,7 +7,7 @@ from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from pony.orm import db_session, ObjectNotFound, commit
 
-from weekmail import weekmail
+#from weekmail import weekmail
 
 app = Flask(__name__)
 api = Api(app)
@@ -21,14 +21,14 @@ class SuggestionRes(Resource):
     @db_session
     def get(self, id):
         if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
-            return 'You are not PRIT', 401
+            return 'You are not P.R.I.T.', 401
 
         return suggestion_to_json(Suggestion[id])
 
     @db_session
     def delete(self, id):
         if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
-            return 'You are not PRIT', 401
+            return 'You are not P.R.I.T.', 401
 
         Suggestion[id].delete()
 
@@ -36,7 +36,7 @@ class SuggestionRes(Resource):
     @db_session
     def put(self, id):
         if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
-            return 'You are not PRIT', 401
+            return 'You are not P.R.I.T.', 401
 
         try:
             suggestion = Suggestion[id]
@@ -51,13 +51,17 @@ class SuggestionRes(Resource):
 class SuggestionResList(Resource):
     @db_session
     def post(self):
-        return suggestion_to_json(add_new_suggestion(request.json["title"], request.json["text"], request.json["author"]))
-
+        try:
+          add_new_suggestion(request.json["title"], request.json["text"], request.json["author"])
+          return "Suggestion created", 201
+        except:
+          return "Could not create suggestion", 400
+        
 
     @db_session
     def get(self):
         if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
-            return 'You are not PRIT', 401
+            return 'You are not P.R.I.T.', 401
 
         return jsonify([suggestion_to_json(s) for s in Suggestion.select(lambda t : True)])
 
@@ -66,21 +70,21 @@ class Authentication(Resource):
         if request.json["password"] == config.PRIT_PASSWORD:
             return jsonify(key=config.PRIT_AUTH_KEY)
 
-        return "You are not PRIT", 401
+        return "You are not P.R.I.T.", 401
 
     def get(self):
         if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
-            return 'You are not PRIT', 401
+            return 'You are not P.R.I.T.', 401
         
-        return 'You are PRIT', 200
+        return 'You are P.R.I.T.', 200
 
 api.add_resource(SuggestionRes, '/<string:id>')
-api.add_resource(SuggestionResList, '/')
 api.add_resource(Authentication, '/authenticate')
+api.add_resource(SuggestionResList, '/')
 
 if __name__ == '__main__':
     #4 = friday, 17,0,0 = 17:00:00
-    wm = weekmail(4,17,0,0)
-    wm.start()
-    print("Week mail loop has started")
+    #wm = weekmail(4,17,0,0)
+    #wm.start()
+    #print("Week mail loop has started")
     app.run(host='0.0.0.0')
