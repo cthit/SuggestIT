@@ -5,7 +5,7 @@ import SuggestionItem from '../../common/SuggestionItem/SuggestionItem';
 import { updateSuggestions, deleteSuggestions } from '../../../services/data.service';
 import { DigitButton, DigitText } from '@cthit/react-digit-components';
 import { Dialog, DialogContent, DialogActions } from '@material-ui/core';
-
+import ConfirmModal from '../../common/ConfirmModal/ConfirmModal';
 class SuggestionBoard extends Component{
     constructor(props){
       super(props);
@@ -17,7 +17,7 @@ class SuggestionBoard extends Component{
       suggestions.subscribe(()=>{
         this.setState({
           suggestions: suggestions.getState(),
-          clearButton: suggestions.getState().length > 0 ? this.ClearButton() : <div></div>
+          clearButton: suggestions.getState().length > 0 ? this.ClearButton() : <DigitText.Title text="Det finns för tillfället inga förslag."/>
         })
       })
       this.getData()
@@ -33,18 +33,12 @@ class SuggestionBoard extends Component{
           <div className="grid">
             {this.state.clearButton}
           </div>
-          <Dialog open={this.state.confirmOpen} aria-labelledby="form-dialog-title">
-            <DigitText.Title className="dialog-title" text="Är du säker?"/>
-            <DialogContent>
-              <DigitText.Subtitle text=
-                {`Är du säker på att du vill ta bort ${this.state.suggestions.length} förslag?`}
-                />
-            </DialogContent>
-            <DialogActions className="button-collection">
-              <DigitButton onClick = {() =>this.setState({confirmOpen: false})}   text="Nej" primary/>
-              <DigitButton onClick = {this.clearSuggestions} text="Ja" primary raised/>
-            </DialogActions>
-          </Dialog>
+          <ConfirmModal 
+            open      = {this.state.confirmOpen}
+            onConfirm = {this.clearSuggestions}
+            onClose   = {() =>this.setState({confirmOpen: false})}
+            text      = {`Är du säker på att du vill ta bort ${this.state.suggestions.length} förslag?`}
+            />
           <div className="grid">
             {this.state.suggestions.map(obj=>
             <SuggestionItem
