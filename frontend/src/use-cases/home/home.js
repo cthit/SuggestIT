@@ -4,7 +4,7 @@ import "./home.css";
 import Prompt from "./Prompt/Prompt";
 import SuggestionBoard from "./SuggestionBoard/SuggestionBoard";
 import { checkLogin } from "../../services/data.service";
-import UndoSnackbar from '../common/UndoSnackbar/UndoSnackbar';
+import { DigitToast } from "@cthit/react-digit-components";
 
 class Home extends Component {
   constructor(props){
@@ -24,7 +24,7 @@ class Home extends Component {
     return (
       <div>
         <br/>
-        <UndoSnackbar/>
+        <DigitToast />
         <Prompt/>
         {this.state.suggestionboard}
       </div>

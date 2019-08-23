@@ -3,7 +3,7 @@ import './SuggestionBoard.css';
 import {suggestions} from '../../../redux/SuggestionStore';
 import { SuggestionItem } from '../../common/SuggestionItem/SuggestionItem';
 import { updateSuggestions, deleteSuggestions } from '../../../services/data.service';
-import { DigitButton, DigitText, DigitToast } from '@cthit/react-digit-components';
+import { DigitButton, DigitText } from '@cthit/react-digit-components';
 import ConfirmModal from '../../common/ConfirmModal/ConfirmModal';
 
 class SuggestionBoard extends Component{
@@ -30,7 +30,6 @@ class SuggestionBoard extends Component{
     render(){
         return(
           <div>
-            <DigitToast />
             <div className="grid">
               {this.state.clearButton}
             </div>

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import {DigitTextField, DigitTextArea, DigitButton, DigitSwitch, DigitLayout, DigitText} from '@cthit/react-digit-components'
+import {DigitTextField, DigitTextArea, DigitButton, DigitSwitch, DigitLayout, DigitText, DigitToastActions} from '@cthit/react-digit-components'
 import './Prompt.css';
 import { addSuggestion, updateSuggestions } from '../../../services/data.service';
-
-class Prompt extends Component{
+import { connect } from 'react-redux';
+class PromptView extends Component{
 
   constructor(props){
     super(props);
@@ -15,7 +15,8 @@ class Prompt extends Component{
       title_isempty: false,
       title_error_message: "Titeln är ej ifylld!",
       description_isempty: false,
-      description_error_message: "Du måste lägga in en förklaring"
+      description_error_message: "Du måste lägga in en förklaring",
+      toastOpen: this.props['toastOpen']
     }
   }
 
@@ -31,12 +32,17 @@ class Prompt extends Component{
         description: "",
         author: ""
       });
+      this.state.toastOpen({
+        text: "Tack så mycket! Förslaget har skickats till P.R.I.T.",
+        duration: 5000
+    });
     });
   }
 
   render() {
     return(
       <div className="prompt">
+        
         <div className="innerPrompt">
           <DigitText.Heading6 text="Nytt förslag"/>
           <DigitTextField
@@ -72,7 +78,7 @@ class Prompt extends Component{
               }}
               value={this.state.author}
               disabled={this.state.anonymus_author}
-              upperLabel="Författare"
+              upperLabel="CID"
               />
 
             <DigitSwitch 
@@ -108,5 +114,17 @@ class Prompt extends Component{
     );
   }
 }
+
+const mapStateToProps = (state, ownProps) => ({});
+
+const mapDispatchToProps = dispatch => ({
+    toastOpen: toastData =>
+        dispatch(DigitToastActions.digitToastOpen(toastData))
+});
+
+export const Prompt = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(PromptView);
 
 export default Prompt;
