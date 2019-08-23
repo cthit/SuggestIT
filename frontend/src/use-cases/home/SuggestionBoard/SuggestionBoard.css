@@ -1,0 +1,22 @@
+
+.grid{
+    display: flex;
+    -moz-box-align: center;
+    align-items: center;
+    flex-wrap: wrap;
+    -moz-box-pack: center;
+    justify-content: center;
+}
+
+DigitButton.clear-button{
+  margin: 10em;
+}
+
+.dialog-title{
+  display: flex;
+  -moz-box-align: center;
+  align-items: center;
+  flex-wrap: wrap;
+  -moz-box-pack: center;
+  justify-content: center;
+}

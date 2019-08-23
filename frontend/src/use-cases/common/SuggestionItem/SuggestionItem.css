@@ -1,0 +1,28 @@
+.card{
+    margin: 16px;
+    position: relative;
+    padding: 16px 0px 16px 16px;
+    font-family: "Roboto";
+    max-width: 300px;
+    min-width: 300px;
+    min-height: 100px;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px, rgba(0, 0, 0, 0.2) 0px 3px 1px -2px;
+}
+
+.innerCard{
+    max-width: 95%;
+    word-wrap: break-word;
+}
+
+.timeStampLabel{
+    -webkit-text-fill-color: gray;
+}
+
+.authorLabel{
+    -webkit-text-fill-color: gray;
+}
+
+.footer{
+    
+}
