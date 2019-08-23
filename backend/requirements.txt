@@ -3,3 +3,4 @@ flask
 flask-restful
 pony
 requests
+flask-cors
