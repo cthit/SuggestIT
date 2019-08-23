@@ -1,64 +1,70 @@
-import React, { Component } from 'react';
+import React, { Component, useReducer, useState } from 'react';
 import { DigitNavLink, DigitText, DigitIconButton } from '@cthit/react-digit-components';
 import './SuggestionItem.css';
 import { translateTimestamp } from '../methods';
 import { Clear, ExpandMore, ExpandLess } from '@material-ui/icons';
-import { Grid } from '@material-ui/core';
+import { Grid, Snackbar } from '@material-ui/core';
 import { updateSuggestions, deleteSuggestion } from '../../../services/data.service';
+import { UndoSnackbar } from '../UndoSnackbar/UndoSnackbar';
 
-export class SuggestionItem extends Component{
+export const SuggestionItem = ({suggestion, ts}) => {
+  const [text, dispatchToggle] = useReducer(toggleText, null);
+  const [snackOpen, setSnackVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
 
-  constructor({suggestion, ts, ...props}){
-    super(props);
-    this.state = {
-      showtext: false,
-      text: <div></div>,
-      suggestion: suggestion,
-      ts: ts
-    }
+  const toggleText = (state, action) =>{
+    return state ? null : <DigitText.Subtitle className="suggestionText" text={suggestion.text}/>;
   }
 
-  toggleText = () =>{
-
-    this.setState({
-      showtext: !this.state.showtext,
-      text: this.state.showtext ? <div></div> : <DigitText.Subtitle className="suggestionText" text={this.state.suggestion.text}/>
-    })
-  }
-
-    render = () =>
-    <div className ="card">
-      <div className="innerCard">
-        <Grid container >
-          <Grid item xs={10}>
-            <DigitNavLink text={this.state.suggestion.title} link={"/suggestion/" + this.state.suggestion.id}/>
-          </Grid>
-          <Grid item xs={1}>
-            <DigitIconButton icon={Clear} onClick= {() => _deleteSuggestion(this.state.suggestion.id)}/>
-          </Grid>
-        </Grid>
-        <section>
-          <Grid container>
-            <Grid item xs={10}>
-              <DigitText.Subtitle2 text={this.state.suggestion.author} className = "authorLabel"/>
-              <DigitText.Subtitle2 text={translateTimestamp(this.state.ts)} className = "timeStampLabel"/>
-            </Grid>
-            <Grid item xs={1}>
-              <DigitIconButton icon={this.state.showtext ? ExpandLess : ExpandMore} onClick={this.toggleText}/>
-            </Grid>
-          </Grid>
-          {this.state.text}
-        </section>
-      </div>
-    </div>
-    
-  };
-
-export const _deleteSuggestion = (uuid) =>
-  {
-    deleteSuggestion(uuid).then(res => 
+  const hadleSnackClose = () =>{
+    setSnackVisible(false);
+    deleteSuggestion(suggestion.id).then(res => 
       updateSuggestions()
     )
   }
+
+  const undo = () => {
+    console.log("Undo!")
+  }
+
+  const _deleteSuggestion = (uuid) =>
+  {
+    setSnackVisible(true);
+    
+  }
+
+  return (
+    <div>
+      {visible ? <div className ="card">
+    <div className="innerCard">
+      <Grid container >
+        <Grid item xs={10}>
+          <DigitNavLink text={suggestion.title} link={"/suggestion/" + suggestion.id}/>
+        </Grid>
+        <Grid item xs={1}>
+          <DigitIconButton icon={Clear} onClick= {() => _deleteSuggestion(suggestion.id)}/>
+        </Grid>
+      </Grid>
+      <section>
+      <Grid container>
+        <Grid item xs={10}>
+          <DigitText.Subtitle2 text={suggestion.author} className = "authorLabel"/>
+          <DigitText.Subtitle2 text={translateTimestamp(ts)} className = "timeStampLabel"/>
+        </Grid>
+        <Grid item xs={1}>
+          <DigitIconButton icon={text ? ExpandLess : ExpandMore} onClick={() => dispatchToggle({type: 'Toggle'})}/>
+        </Grid>
+      </Grid>
+      {text}
+      </section>
+    </div>
+  </div> : <UndoSnackbar open={snackOpen} handleClose={hadleSnackClose} handleUndo={undo}/>
+  }
+    </div>
+    )
+    
+  };
+
+
 
 export default SuggestionItem;
