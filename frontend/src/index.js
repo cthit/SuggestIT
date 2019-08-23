@@ -8,7 +8,9 @@ import SuggestITHeader from './common/suggestitheader/suggestitheader';
 ReactDOM.render(
 <DigitProviders>
   <SuggestITHeader renderMain = {()=>
-      <Route component={App}/>  
+      <DigitProviders>
+        <Route component={App}/>
+      </DigitProviders>
     }
     />
 </DigitProviders>, document.getElementById("root"));

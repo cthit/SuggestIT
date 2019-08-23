@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import { Dialog, DialogContent, DialogActions } from '@material-ui/core';
 import { DigitButton, DigitText } from '@cthit/react-digit-components';
 import './ConfirmModal.css';
