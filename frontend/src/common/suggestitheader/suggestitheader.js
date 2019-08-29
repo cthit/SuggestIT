@@ -18,7 +18,7 @@ class SuggestITHeader extends Component {
             renderMain: props.renderMain,
             isLoggedIn: false,
             loginOpen: false,
-            passTextField: "Hello",
+            passTextField: "",
             passError: false,
         };
 

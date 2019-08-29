@@ -43,7 +43,7 @@ class SuggestionBoard extends Component {
                     open={this.state.confirmOpen}
                     onConfirm={this.clearSuggestions}
                     onClose={() => this.setState({ confirmOpen: false })}
-                    text={`Är du säker på att du vill ta bort ${this.state.suggestions.length} förslag?`}
+                    text={`Are you sure you want to delete ${this.state.suggestions.length} suggestions?`}
                 />
                 <div className="grid">
                     {this.state.suggestions.map(obj => (
@@ -61,7 +61,7 @@ class SuggestionBoard extends Component {
     ClearButton = () => (
         <DigitButton
             className="clear-button"
-            text="Ränsa"
+            text="Clear suggestions"
             primary
             raised
             onClick={() => this.openConfirm()}
@@ -78,7 +78,6 @@ class SuggestionBoard extends Component {
     };
 
     openConfirm = () => {
-        console.log("Open confirm");
         this.setState({
             confirmOpen: true,
         });

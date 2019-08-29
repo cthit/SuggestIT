@@ -13,7 +13,7 @@ import {
     updateSuggestions,
 } from "../../../services/data.service";
 import { connect } from "react-redux";
-import { TextField } from '@material-ui/core';
+import { TextField } from "@material-ui/core";
 import "./Prompt.css";
 class PromptView extends Component {
     constructor(props) {
@@ -57,7 +57,7 @@ class PromptView extends Component {
         return (
             <div className="prompt">
                 <div className="innerPrompt">
-                    <DigitText.Heading6 text="Nytt förslag" />
+                    <DigitText.Heading6 text="New Suggestion" />
                     <DigitTextField
                         error={this.state.title_isempty}
                         errorMessage={this.state.title_error_message}
@@ -69,7 +69,7 @@ class PromptView extends Component {
                         value={this.state.title}
                         upperLabel="Title"
                     />
-                    <br/>
+                    <br />
                     <TextField
                         id="description"
                         type="text"
@@ -79,15 +79,16 @@ class PromptView extends Component {
                         multiline
                         error={this.state.description_isempty}
                         errorMessage={this.state.description_error_message}
-                        onChange = {e => 
+                        onChange={e =>
                             this.setState({
-                                description: e.target.value
+                                description: e.target.value,
                             })
                         }
                     />
-                    { //DigitTextArea will be used when it has been updated,
-                      //There is currently a bug causing an infinite loop
-                      /*<DigitTextArea
+                    {
+                        //DigitTextArea will be used when it has been updated,
+                        //There is currently a bug causing an infinite loop
+                        /*<DigitTextArea
                       error={this.state.description_isempty}
                       errorMessage = {this.state.description_error_message}
                       onChange={e => {
@@ -97,7 +98,8 @@ class PromptView extends Component {
                       upperLabel="Förslag"
                       rows={5}
                       rowsMax={10}
-                    />*/}
+                    />*/
+                    }
                     <DigitLayout.Row>
                         <DigitTextField
                             onChange={e => {
