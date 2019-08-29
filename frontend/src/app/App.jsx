@@ -4,18 +4,22 @@ import "./App.css";
 import { DigitHeader } from "@cthit/react-digit-components";
 
 class App extends Component {
-  constructor(props) {
-    super();
-    props.loadAllSuggestions();
-  }
+    constructor(props) {
+        super();
+        props.loadAllSuggestions();
+    }
 
-  render() {
-    return (
-      <div>
-        <DigitHeader dense title="SuggestIT" renderMain={() => <Test />} />
-      </div>
-    );
-  }
+    render() {
+        return (
+            <div>
+                <DigitHeader
+                    dense
+                    title="SuggestIT"
+                    renderMain={() => <Test />}
+                />
+            </div>
+        );
+    }
 }
 
 export default App;
