@@ -1,18 +1,20 @@
 import React, { Component } from "react";
 import {
     DigitTextField,
-    /*DigitTextArea,*/ DigitButton,
+    /*DigitTextArea,*/
+    DigitButton,
     DigitSwitch,
     DigitLayout,
     DigitText,
     DigitToastActions,
 } from "@cthit/react-digit-components";
-import "./Prompt.css";
 import {
     addSuggestion,
     updateSuggestions,
 } from "../../../services/data.service";
 import { connect } from "react-redux";
+import { TextField } from '@material-ui/core';
+import "./Prompt.css";
 class PromptView extends Component {
     constructor(props) {
         super(props);
@@ -22,9 +24,9 @@ class PromptView extends Component {
             author: "",
             anonymus_author: false,
             title_isempty: false,
-            title_error_message: "Titeln är ej ifylld!",
+            title_error_message: "The title is not filled in",
             description_isempty: false,
-            description_error_message: "Du måste lägga in en förklaring",
+            description_error_message: "You need to discribe your suggestion",
             toastOpen: this.props["toastOpen"],
         };
     }
@@ -35,7 +37,7 @@ class PromptView extends Component {
             text: this.state.description,
             author:
                 this.state.author === "" || this.state.anonymus_author
-                    ? "Anonym"
+                    ? "Anonymous"
                     : this.state.author,
         }).then(res => {
             updateSuggestions();
@@ -45,14 +47,13 @@ class PromptView extends Component {
                 author: "",
             });
             this.state.toastOpen({
-                text: "Tack så mycket! Förslaget har skickats till P.R.I.T.",
+                text: "Thank you! The suggestion has been sent to P.R.I.T.",
                 duration: 5000,
             });
         });
     }
 
     render() {
-        console.log("Hejsan fr");
         return (
             <div className="prompt">
                 <div className="innerPrompt">
@@ -66,19 +67,37 @@ class PromptView extends Component {
                             });
                         }}
                         value={this.state.title}
-                        upperLabel="Rubrik"
+                        upperLabel="Title"
                     />
-                    {/*<DigitTextArea
-            error={this.state.description_isempty}
-            errorMessage = {this.state.description_error_message}
-            onChange={e => {
-              console.log("Hello")
-            }}
-            value={this.state.description}
-            upperLabel="Förslag"
-            rows={5}
-            rowsMax={10}
-          />*/}
+                    <br/>
+                    <TextField
+                        id="description"
+                        type="text"
+                        rows={6}
+                        fullWidth={true}
+                        label="Description"
+                        multiline
+                        error={this.state.description_isempty}
+                        errorMessage={this.state.description_error_message}
+                        onChange = {e => 
+                            this.setState({
+                                description: e.target.value
+                            })
+                        }
+                    />
+                    { //DigitTextArea will be used when it has been updated,
+                      //There is currently a bug causing an infinite loop
+                      /*<DigitTextArea
+                      error={this.state.description_isempty}
+                      errorMessage = {this.state.description_error_message}
+                      onChange={e => {
+                        console.log("Hello")
+                      }}
+                      value={this.state.description}
+                      upperLabel="Förslag"
+                      rows={5}
+                      rowsMax={10}
+                    />*/}
                     <DigitLayout.Row>
                         <DigitTextField
                             onChange={e => {
@@ -93,7 +112,7 @@ class PromptView extends Component {
 
                         <DigitSwitch
                             value={this.state.anonymus_author}
-                            label="Anonym"
+                            label="Anonymous"
                             primary
                             onChange={e => {
                                 this.setState({
@@ -103,7 +122,7 @@ class PromptView extends Component {
                         />
                     </DigitLayout.Row>
                     <DigitButton
-                        text="Skicka"
+                        text="Send"
                         primary
                         raised
                         onClick={() => {

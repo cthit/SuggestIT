@@ -24,7 +24,7 @@ class SuggestionBoard extends Component {
                     suggestions.getState().length > 0 ? (
                         this.ClearButton()
                     ) : (
-                        <DigitText.Title text="Det finns för tillfället inga förslag." />
+                        <DigitText.Title text="The suggestion box is empty." />
                     ),
             });
         });
