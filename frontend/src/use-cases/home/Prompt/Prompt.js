@@ -22,33 +22,26 @@ const initSuggestion = {
     author: "",
 };
 
-const suggestionChanged = (state, action) => {
-    console.log("Setting suggestion");
-    return { ...state, ...action.payload };
-};
+const title_error_message = "The title is not filled in";
+    const description_error_message = "The description is not filled in";
 
 const PromptView = ({ toastOpen }) => {
-    const [suggestion, setSuggestion] = useReducer(
-        suggestionChanged,
-        initSuggestion
-    );
-    const title_error_message = "The title is not filled in";
-    const description_error_message = "The description is not filled in";
+    const [text, setText] = useState('');
+    const [title, setTitle] = useState('');
+    const [author, setAuthor] = useState("");
+
     const [errors, setErrors] = useState({
         title_error: false,
         description_error: false,
     });
-    const [author, setAuthor] = useState("");
     const [anonymous_author, setAnonymousAuthor] = useState(false);
 
-    const sendNewSuggestion = () => {
+    const sendNewSuggestion = (suggestion) => {
         addSuggestion(suggestion).then(res => {
             updateSuggestions();
-            setSuggestion({
-                title: "",
-                text: "",
-                author: "",
-            });
+            setTitle('');
+            setAuthor('');
+            setText('');
             toastOpen({
                 text: "Thank you! The suggestion has been sent to P.R.I.T.",
                 duration: 5000,
@@ -64,9 +57,9 @@ const PromptView = ({ toastOpen }) => {
                     error={errors.title_error}
                     errorMessage={title_error_message}
                     onChange={e =>
-                        setSuggestion({ payload: { title: e.target.value } })
+                        setTitle(e.target.value)
                     }
-                    value={suggestion.title}
+                    value={title}
                     upperLabel="Title"
                 />
                 <br />
@@ -77,10 +70,11 @@ const PromptView = ({ toastOpen }) => {
                     fullWidth={true}
                     label="Description"
                     multiline
+                    value={text}
                     error={errors.description_error}
                     errorMessage={description_error_message}
                     onChange={e =>
-                        setSuggestion({ payload: { text: e.target.value } })
+                        setText(e.target.value)
                     }
                 />
                 {
@@ -110,7 +104,9 @@ const PromptView = ({ toastOpen }) => {
                         value={anonymous_author}
                         label="Anonymous"
                         primary
-                        onChange={e => setAnonymousAuthor(e.target.value)}
+                        onChange={() => {
+                            setAnonymousAuthor(!anonymous_author)
+                        }}
                     />
                 </DigitLayout.Row>
                 <DigitButton
@@ -119,15 +115,18 @@ const PromptView = ({ toastOpen }) => {
                     raised
                     onClick={() => {
                         setErrors({
-                            title_error: suggestion.title === "",
-                            description_error: suggestion.text === "",
+                            title_error: title === "",
+                            description_error: text === "",
                         });
 
-                        if (suggestion.title === "" || suggestion.text === "")
+                        if (title === "" || text === "")
                             return;
 
-                        setAuthor(author === "" ? "Anonymous" : author);
-                        sendNewSuggestion();
+                        sendNewSuggestion({
+                            title: title,
+                            text: text,
+                            author: author === "" || anonymous_author ? "Anonymous" : author
+                        });
                     }}
                 />
             </div>
