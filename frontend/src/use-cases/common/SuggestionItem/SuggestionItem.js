@@ -43,9 +43,9 @@ const SuggestionItemView = ({ suggestion, ts, ...props }) => {
 
     const deleteWithToast = () => {
         toastOpen({
-            text: "Förslaget raderades",
+            text: "The suggestion has been deleted",
             duration: 5000,
-            actionText: "Ångra",
+            actionText: "Undo",
             actionHandler: () => {
                 addSuggestion(suggestion).then(res => updateSuggestions());
             },

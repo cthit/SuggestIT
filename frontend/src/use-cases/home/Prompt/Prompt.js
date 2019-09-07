@@ -13,7 +13,7 @@ import {
     updateSuggestions,
 } from "../../../services/data.service";
 import { connect } from "react-redux";
-import { TextField } from "@material-ui/core";
+import SuggestItTextArea from "../../../common/suggestit-text-area/suggestit-text-area";
 import "./Prompt.css";
 
 const initSuggestion = {
@@ -23,11 +23,11 @@ const initSuggestion = {
 };
 
 const title_error_message = "The title is not filled in";
-    const description_error_message = "The description is not filled in";
+const description_error_message = "The description is not filled in";
 
 const PromptView = ({ toastOpen }) => {
-    const [text, setText] = useState('');
-    const [title, setTitle] = useState('');
+    const [text, setText] = useState("");
+    const [title, setTitle] = useState("");
     const [author, setAuthor] = useState("");
 
     const [errors, setErrors] = useState({
@@ -36,12 +36,12 @@ const PromptView = ({ toastOpen }) => {
     });
     const [anonymous_author, setAnonymousAuthor] = useState(false);
 
-    const sendNewSuggestion = (suggestion) => {
+    const sendNewSuggestion = suggestion => {
         addSuggestion(suggestion).then(res => {
             updateSuggestions();
-            setTitle('');
-            setAuthor('');
-            setText('');
+            setTitle("");
+            setAuthor("");
+            setText("");
             toastOpen({
                 text: "Thank you! The suggestion has been sent to P.R.I.T.",
                 duration: 5000,
@@ -56,59 +56,35 @@ const PromptView = ({ toastOpen }) => {
                 <DigitTextField
                     error={errors.title_error}
                     errorMessage={title_error_message}
-                    onChange={e =>
-                        setTitle(e.target.value)
-                    }
+                    onChange={e => setTitle(e.target.value)}
                     value={title}
                     upperLabel="Title"
                 />
                 <br />
-                <TextField
-                    id="description"
-                    type="text"
-                    rows={6}
-                    fullWidth={true}
-                    label="Description"
-                    multiline
-                    value={text}
+                {/*Change this tag to DigitTextArea when the*/}
+                <SuggestItTextArea
                     error={errors.description_error}
                     errorMessage={description_error_message}
-                    onChange={e =>
-                        setText(e.target.value)
-                    }
+                    onChange={e => setText(e.target.value)}
+                    value={text}
+                    upperLabel="Suggestion"
+                    rows={5}
+                    rowsMax={10}
                 />
-                {
-                    //DigitTextArea will be used when it has been updated,
-                    //There is currently a bug causing an infinite loop
-                    /*<DigitTextArea
-                  error={this.state.description_isempty}
-                  errorMessage = {this.state.description_error_message}
-                  onChange={e => {
-                    console.log("Hello")
-                  }}
-                  value={this.state.description}
-                  upperLabel="Förslag"
-                  rows={5}
-                  rowsMax={10}
-                />*/
-                }
-                <DigitLayout.Row>
-                    <DigitTextField
-                        onChange={e => setAuthor(e.target.value)}
-                        value={author}
-                        disabled={anonymous_author}
-                        upperLabel="CID"
-                    />
-
-                    <DigitSwitch
-                        value={anonymous_author}
-                        label="Anonymous"
-                        primary
-                        onChange={() => {
-                            setAnonymousAuthor(!anonymous_author)
-                        }}
-                    />
-                </DigitLayout.Row>
+                <DigitTextField
+                    onChange={e => setAuthor(e.target.value)}
+                    value={author}
+                    disabled={anonymous_author}
+                    upperLabel="CID"
+                />
+                <DigitSwitch
+                    value={anonymous_author}
+                    label="Anonymous"
+                    primary
+                    onChange={() => {
+                        setAnonymousAuthor(!anonymous_author);
+                    }}
+                />
                 <DigitButton
                     text="Send"
                     primary
@@ -119,13 +95,15 @@ const PromptView = ({ toastOpen }) => {
                             description_error: text === "",
                         });
 
-                        if (title === "" || text === "")
-                            return;
+                        if (title === "" || text === "") return;
 
                         sendNewSuggestion({
                             title: title,
                             text: text,
-                            author: author === "" || anonymous_author ? "Anonymous" : author
+                            author:
+                                author === "" || anonymous_author
+                                    ? "Anonymous"
+                                    : author,
                         });
                     }}
                 />
