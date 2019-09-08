@@ -6,16 +6,20 @@ import {
     updateSuggestions,
     deleteSuggestions,
 } from "../../../services/data.service";
-import { DigitButton, DigitText } from "@cthit/react-digit-components";
-import ConfirmModal from "../../common/ConfirmModal/ConfirmModal";
+import { 
+    DigitButton,
+    DigitText,
+    DigitDialogActions,
+} from "@cthit/react-digit-components";
+import { connect } from "react-redux";
 
-class SuggestionBoard extends Component {
+class SuggestionBoardView extends Component {
     constructor(props) {
         super(props);
         this.state = {
             suggestions: [],
-            confirmOpen: false,
             clearButton: <div></div>,
+            dialogOpen: props.dialogOpen,
         };
         suggestions.subscribe(() => {
             this.setState({
@@ -39,12 +43,6 @@ class SuggestionBoard extends Component {
         return (
             <div>
                 <div className="grid">{this.state.clearButton}</div>
-                <ConfirmModal
-                    open={this.state.confirmOpen}
-                    onConfirm={this.clearSuggestions}
-                    onClose={() => this.setState({ confirmOpen: false })}
-                    text={`Are you sure you want to delete ${this.state.suggestions.length} suggestions?`}
-                />
                 <div className="grid">
                     {this.state.suggestions.map(obj => (
                         <SuggestionItem
@@ -64,7 +62,15 @@ class SuggestionBoard extends Component {
             text="Clear suggestions"
             primary
             raised
-            onClick={() => this.openConfirm()}
+            onClick={() => {
+                this.state.dialogOpen({
+                    title: "Are you sure",
+                    description: `Are you sure you want to delete ${this.state.suggestions.length} suggestions?`,
+                    cancelButtonText: "No",
+                    confirmButtonText: "Yes",
+                    onConfirm: () => this.clearSuggestions()
+                });
+            }}
         />
     );
 
@@ -83,5 +89,17 @@ class SuggestionBoard extends Component {
         });
     };
 }
+
+const mapStateToProps = (state, ownProps) => ({});
+
+const mapDispatchToProps = dispatch => ({
+    dialogOpen: dialogData =>
+        dispatch(DigitDialogActions.digitDialogOpen(dialogData))
+});
+
+const SuggestionBoard = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SuggestionBoardView);
 
 export default SuggestionBoard;

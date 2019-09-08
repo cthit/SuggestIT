@@ -4,7 +4,10 @@ import "./home.css";
 import Prompt from "./Prompt/Prompt";
 import SuggestionBoard from "./SuggestionBoard/SuggestionBoard";
 import { checkLogin } from "../../services/data.service";
-import { DigitToast, DigitTextArea } from "@cthit/react-digit-components";
+import {
+    DigitToast,
+    DigitDialog,
+} from "@cthit/react-digit-components";
 
 class Home extends Component {
     constructor(props) {
@@ -25,7 +28,10 @@ class Home extends Component {
         return (
             <div>
                 <br />
+                <br />
+                <br />
                 <DigitToast />
+                <DigitDialog />
                 <Prompt />
                 {this.state.suggestionboard}
             </div>
