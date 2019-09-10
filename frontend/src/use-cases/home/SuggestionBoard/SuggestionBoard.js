@@ -6,7 +6,7 @@ import {
     updateSuggestions,
     deleteSuggestions,
 } from "../../../services/data.service";
-import { 
+import {
     DigitButton,
     DigitText,
     DigitDialogActions,
@@ -68,7 +68,7 @@ class SuggestionBoardView extends Component {
                     description: `Are you sure you want to delete ${this.state.suggestions.length} suggestions?`,
                     cancelButtonText: "No",
                     confirmButtonText: "Yes",
-                    onConfirm: () => this.clearSuggestions()
+                    onConfirm: () => this.clearSuggestions(),
                 });
             }}
         />
@@ -94,7 +94,7 @@ const mapStateToProps = (state, ownProps) => ({});
 
 const mapDispatchToProps = dispatch => ({
     dialogOpen: dialogData =>
-        dispatch(DigitDialogActions.digitDialogOpen(dialogData))
+        dispatch(DigitDialogActions.digitDialogOpen(dialogData)),
 });
 
 const SuggestionBoard = connect(
