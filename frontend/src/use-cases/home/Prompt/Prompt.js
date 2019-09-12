@@ -1,4 +1,4 @@
-import React, { Component, useState, useReducer } from "react";
+import React, { useState } from "react";
 import {
     DigitTextField,
     DigitTextArea,
@@ -13,12 +13,6 @@ import {
 } from "../../../services/data.service";
 import { connect } from "react-redux";
 import "./Prompt.css";
-
-const initSuggestion = {
-    title: "",
-    text: "",
-    author: "",
-};
 
 const title_error_message = "The title is not filled in";
 const description_error_message = "The description is not filled in";

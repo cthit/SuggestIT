@@ -10,11 +10,15 @@ import {
 import { Route } from "react-router";
 import SuggestITHeader from "./common/suggestitheader/suggestitheader";
 ReactDOM.render(
-    <DigitProviders>
-        <DigitToast />
-        <DigitDialog />
-        <SuggestITHeader renderMain={() => <Route component={App} />} />
-    </DigitProviders>,
+    <DigitProviders 
+        children = {
+            <div>
+                <DigitToast />
+                <DigitDialog />
+                <SuggestITHeader renderMain={() => <Route component={App} />} />
+            </div>
+        }
+    />,
     document.getElementById("root")
 );
 

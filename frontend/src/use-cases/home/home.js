@@ -4,7 +4,6 @@ import "./home.css";
 import Prompt from "./Prompt/Prompt";
 import SuggestionBoard from "./SuggestionBoard/SuggestionBoard";
 import { checkLogin } from "../../services/data.service";
-import { DigitToast, DigitDialog } from "@cthit/react-digit-components";
 
 class Home extends Component {
     constructor(props) {

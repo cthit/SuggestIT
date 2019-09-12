@@ -3,7 +3,7 @@ import axios from "axios";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
-const baseUrl = "http://localhost:5000";
+const baseUrl = "http://suggestit.chalmers.it";
 const authCookieName = "PRIT_AUTH_KEY";
 
 export const updateSuggestions = () =>
