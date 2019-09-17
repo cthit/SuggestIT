@@ -81,7 +81,7 @@ class SuggestITHeaderView extends Component {
                                             </>
                                         ),
                                         onCancel: e => this.login(),
-                                        onConfirm: e => this.handleClose()
+                                        onConfirm: e => this.handleClose(),
                                     })
                                 }
                             />

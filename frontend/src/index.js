@@ -10,8 +10,8 @@ import {
 import { Route } from "react-router";
 import SuggestITHeader from "./common/suggestitheader/suggestitheader";
 ReactDOM.render(
-    <DigitProviders 
-        children = {
+    <DigitProviders
+        children={
             <div>
                 <DigitToast />
                 <DigitDialog />

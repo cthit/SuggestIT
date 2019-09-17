@@ -24,7 +24,7 @@ class Suggestion extends Component {
                 <DigitText.Heading6 text={this.state.title} />
                 <DigitText.Subtitle2
                     className="grayText"
-                    text={"Inlagd av: " + this.state.author}
+                    text={"Posted by: " + this.state.author}
                 />
                 <DigitText.Subtitle2
                     className="grayText"
