@@ -18,7 +18,7 @@ class SuggestionBoardView extends Component {
         super(props);
         this.state = {
             suggestions: [],
-            clearButton: <div></div>,
+            clearButton: null,
             dialogOpen: props.dialogOpen,
         };
         suggestions.subscribe(() => {

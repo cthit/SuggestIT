@@ -8,7 +8,7 @@ import {
 import TextField from "@material-ui/core/TextField";
 import { connect } from "react-redux";
 import About from "./about/about.component";
-import { login, checkLogin } from "../../services/data.service";
+import { login, checkLogin, logOut } from "../../services/data.service";
 import "./suggestitheader.css";
 
 class SuggestITHeaderView extends Component {
@@ -39,82 +39,96 @@ class SuggestITHeaderView extends Component {
             <DigitHeader
                 renderMain={this.state.renderMain}
                 title="SuggestIT"
-                renderHeader={() =>
+                renderHeader={() => (
                     <div>
                         <DigitLayout.Row>
                             <DigitButton
                                 text="About"
-                                onClick={values => 
+                                onClick={values =>
                                     this.state.dialogOpen({
-                                        title:"About suggestIT",
-                                        renderMain: () => (
-                                            <About/>
-                                        ),
-                                        renderButtons: (confirm,cancel) => (
+                                        title: "About suggestIT",
+                                        renderMain: () => <About />,
+                                        renderButtons: (confirm, cancel) => (
                                             <DigitButton
                                                 text="Close"
                                                 onClick={cancel}
                                             />
-                                        )
+                                        ),
                                     })
                                 }
                             />
-                            {
-                                !this.state.isLoggedIn ? (
-                                    <div>
-                                        <DigitButton
-                                            text="Login"
-                                            outlined
-                                            onClick={values =>
-                                                this.state.dialogOpen({
-                                                    title: "Enter P.R.I.T. password",
-                                                    renderMain: () => (
-                                                        <TextField
-                                                            autoFocus
-                                                            margin="dense"
-                                                            id="name"
-                                                            label="Password"
-                                                            type="password"
-                                                            fullWidth
-                                                            error={this.state.passError}
-                                                            onChange={event =>
-                                                                this.setState({
-                                                                    passTextField:
-                                                                        event.target.value,
-                                                                })
-                                                            }
-                                                            onKeyPress={event => {
-                                                                if (event.key === "Enter")
-                                                                    this.login();
-                                                            }}
-                                                            //Why not using DigitTextField, 1. No onKeyPress event, 2. No autofocus
+                            {!this.state.isLoggedIn ? (
+                                <div>
+                                    <DigitButton
+                                        text="Login"
+                                        outlined
+                                        onClick={values =>
+                                            this.state.dialogOpen({
+                                                title:
+                                                    "Enter P.R.I.T. password",
+                                                renderMain: () => (
+                                                    <TextField
+                                                        autoFocus
+                                                        margin="dense"
+                                                        id="name"
+                                                        label="Password"
+                                                        type="password"
+                                                        fullWidth
+                                                        error={
+                                                            this.state.passError
+                                                        }
+                                                        onChange={event =>
+                                                            this.setState({
+                                                                passTextField:
+                                                                    event.target
+                                                                        .value,
+                                                            })
+                                                        }
+                                                        onKeyPress={event => {
+                                                            if (
+                                                                event.key ===
+                                                                "Enter"
+                                                            )
+                                                                this.login();
+                                                        }}
+                                                        //Why not using DigitTextField, 1. No onKeyPress event, 2. No autofocus
+                                                    />
+                                                ),
+                                                renderButtons: (
+                                                    confirm,
+                                                    cancel
+                                                ) => (
+                                                    <>
+                                                        <DigitButton
+                                                            text={"Confirm"}
+                                                            onClick={confirm}
                                                         />
-                                                    ),
-                                                    renderButtons: (confirm, cancel) => (
-                                                        <>
-                                                            <DigitButton
-                                                                text={"Confirm"}
-                                                                onClick={confirm}
-                                                            />
-                                                            <DigitButton
-                                                                text={"cancel"}
-                                                                onClick={cancel}
-                                                            />
-                                                        </>
-                                                    ),
-                                                    onCancel: e => this.login(),
-                                                    onConfirm: e => this.handleClose(),
-                                                })
-                                            }
-                                        />
-                                    </div>
-                                ) : (
-                                    <div></div>
-                                )
-                            }
+                                                        <DigitButton
+                                                            text={"cancel"}
+                                                            onClick={cancel}
+                                                        />
+                                                    </>
+                                                ),
+                                                onCancel: e => this.login(),
+                                                onConfirm: e =>
+                                                    this.handleClose(),
+                                            })
+                                        }
+                                    />
+                                </div>
+                            ) : (
+                                <DigitButton
+                                    outlined
+                                    text="logout"
+                                    onClick={() => {
+                                        logOut();
+                                        window.location.reload(false);
+                                    }}
+                                />
+                            )}
                         </DigitLayout.Row>
                     </div>
-                }
+                )}
             />
         );
     }

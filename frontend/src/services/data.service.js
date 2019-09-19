@@ -3,12 +3,15 @@ import axios from "axios";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
-const baseUrl = "http://suggestit.chalmers.it/api";
+const baseUrl =
+    process.env.NODE_ENV === "development"
+        ? "http://localhost:5000/api"
+        : "https://suggestit.chalmers.it/api";
 const authCookieName = "PRIT_AUTH_KEY";
 
 export const updateSuggestions = () =>
     axios
-        .get(baseUrl, {
+        .get(`${baseUrl}/`, {
             headers: {
                 Authorization: cookies.get("PRIT_AUTH_KEY"),
             },
@@ -34,7 +37,8 @@ export const getSuggestion = uuid =>
             //User might not be logged in
         });
 
-export const addSuggestion = _suggestion => axios.post(baseUrl, _suggestion);
+export const addSuggestion = _suggestion =>
+    axios.post(`${baseUrl}/`, _suggestion);
 
 export const deleteSuggestion = uuid =>
     axios
@@ -71,3 +75,5 @@ export const checkLogin = () =>
             Authorization: cookies.get(authCookieName),
         },
     });
+
+export const logOut = () => cookies.remove(authCookieName);

@@ -14,7 +14,7 @@ services:
     image: adminer
     restart: always
     ports:
-      - 8080:8080
+      - 1234:8080
   app:
     image: cthit/suggestit-backend
     environment: 
@@ -32,6 +32,6 @@ services:
   frontend:
     image: cthit/suggestit-frontend
     ports:
-      - 3000:3000
+      - 8080:8080
     volumes:
       - ./frontend:/usr/src/app/

@@ -18,14 +18,12 @@ class Home extends Component {
                 suggestionboard: <SuggestionBoard />,
             })
         );
+        console.log(process.env);
     }
 
     render() {
         return (
-            <div>
-                <br />
-                <br />
-                <br />
+            <div className="main">
                 <Prompt />
                 {this.state.suggestionboard}
             </div>

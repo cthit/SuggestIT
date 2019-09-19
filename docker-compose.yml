@@ -37,6 +37,8 @@ services:
       dockerfile: dev.Dockerfile
     ports:
       - 3000:3000
+    environment: 
+      BACKEND_URL: http://localhost:5000
     volumes:
       - ./frontend:/usr/src/app/
 

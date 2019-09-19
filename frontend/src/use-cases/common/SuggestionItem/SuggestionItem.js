@@ -4,11 +4,11 @@ import {
     DigitText,
     DigitIconButton,
     DigitToastActions,
+    DigitLayout,
 } from "@cthit/react-digit-components";
 import "./SuggestionItem.css";
 import { translateTimestamp } from "../methods";
 import { Clear, ExpandMore, ExpandLess } from "@material-ui/icons";
-import { Grid } from "@material-ui/core";
 import {
     updateSuggestions,
     deleteSuggestion,
@@ -55,43 +55,39 @@ const SuggestionItemView = ({ suggestion, ts, ...props }) => {
 
     return (
         <div className="card">
-            <div className="innerCard">
-                <Grid container>
-                    <Grid item xs={10}>
-                        <DigitNavLink
-                            text={suggestion.title}
-                            link={"/suggestion/" + suggestion.id}
-                        />
-                    </Grid>
-                    <Grid item xs={1}>
+            <DigitLayout.Grid>
+                <DigitLayout.Row>
+                    <DigitNavLink
+                        text={suggestion.title}
+                        link={"/suggestion/" + suggestion.id}
+                    />
+                    <div className="float-right">
                         <DigitIconButton
                             icon={Clear}
                             onClick={() => deleteWithToast()}
                         />
-                    </Grid>
-                </Grid>
-                <section>
-                    <Grid container>
-                        <Grid item xs={10}>
-                            <DigitText.Subtitle2
-                                text={suggestion.author}
-                                className="authorLabel"
-                            />
-                            <DigitText.Subtitle2
-                                text={translateTimestamp(ts)}
-                                className="timeStampLabel"
-                            />
-                        </Grid>
-                        <Grid item xs={1}>
-                            <DigitIconButton
-                                icon={text ? ExpandLess : ExpandMore}
-                                onClick={() => toggleText()}
-                            />
-                        </Grid>
-                    </Grid>
-                    {text}
-                </section>
-            </div>
+                    </div>
+                </DigitLayout.Row>
+                <DigitLayout.Row>
+                    <DigitText.Subtitle2
+                        text={suggestion.author}
+                        className="authorLabel"
+                    />
+                    <div className="float-right">
+                        <DigitIconButton
+                            icon={text ? ExpandLess : ExpandMore}
+                            onClick={() => toggleText()}
+                        />
+                    </div>
+                </DigitLayout.Row>
+                <DigitLayout.Row>
+                    <DigitText.Subtitle2
+                        text={translateTimestamp(ts)}
+                        className="timeStampLabel"
+                    />
+                </DigitLayout.Row>
+                {text}
+            </DigitLayout.Grid>
         </div>
     );
 };
