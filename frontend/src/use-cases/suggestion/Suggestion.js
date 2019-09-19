@@ -20,7 +20,7 @@ class Suggestion extends Component {
 
     render() {
         return (
-            <div className="suggestionCard">
+            <div className="suggestionCard main">
                 <DigitText.Heading6 text={this.state.title} />
                 <DigitText.Subtitle2
                     className="grayText"
