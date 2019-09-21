@@ -12,7 +12,7 @@ Run the following commands to set up the development environment.
     docker-compose up --build
 ```
 The frontend is exposed to port 3000 and uses live reload.  
-The backend is exposed to port 5000 but will nor reload when the code change.  
+The backend is exposed to port 5000 but will not reload when the code change.  
 The database can be administrated from port 5432.
 
 ## Run prod docker
