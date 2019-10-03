@@ -92,10 +92,10 @@ class Authentication(Resource):
         
         return 'You are P.R.I.T.', 200
 
-api.add_resource(SuggestionRes, '/<string:id>')
-api.add_resource(Authentication, '/authenticate')
-api.add_resource(SuggestionResList, '/')
-api.add_resource(RemoveSuggestions, '/delete')
+api.add_resource(SuggestionRes, '/api/<string:id>')
+api.add_resource(Authentication, '/api/authenticate')
+api.add_resource(SuggestionResList, '/api/')
+api.add_resource(RemoveSuggestions, '/api/delete')
 
 if __name__ == '__main__':
     #4 = friday, 17,0,0 = 17:00:00

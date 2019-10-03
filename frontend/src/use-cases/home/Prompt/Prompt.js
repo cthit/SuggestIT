@@ -1,125 +1,114 @@
-import React, { Component } from 'react';
-import {DigitTextField, DigitTextArea, DigitButton, DigitSwitch, DigitLayout, DigitText, DigitToastActions} from '@cthit/react-digit-components'
-import './Prompt.css';
-import { addSuggestion, updateSuggestions } from '../../../services/data.service';
-import { connect } from 'react-redux';
-class PromptView extends Component{
+import React, { useState } from "react";
+import {
+    DigitTextField,
+    DigitTextArea,
+    DigitButton,
+    DigitSwitch,
+    DigitText,
+    DigitToastActions,
+} from "@cthit/react-digit-components";
+import {
+    addSuggestion,
+    updateSuggestions,
+} from "../../../services/data.service";
+import { connect } from "react-redux";
+import "./Prompt.css";
 
-  constructor(props){
-    super(props);
-    this.state = {
-      title: "",
-      description: "",
-      author: "",
-      anonymus_author: false,
-      title_isempty: false,
-      title_error_message: "Titeln är ej ifylld!",
-      description_isempty: false,
-      description_error_message: "Du måste lägga in en förklaring",
-      toastOpen: this.props['toastOpen']
-    }
-  }
+const title_error_message = "The title is not filled in";
+const description_error_message = "The description is not filled in";
 
-  sendNewSuggestion(){
-    addSuggestion({
-      title: this.state.title,
-      text: this.state.description,
-      author: ((this.state.author === "" || this.state.anonymus_author)? "Anonym": this.state.author)
-    }).then(res => {
-      updateSuggestions();
-      this.setState({
-        title: "",
-        description: "",
-        author: ""
-      });
-      this.state.toastOpen({
-        text: "Tack så mycket! Förslaget har skickats till P.R.I.T.",
-        duration: 5000
+const PromptView = ({ toastOpen }) => {
+    const [text, setText] = useState("");
+    const [title, setTitle] = useState("");
+    const [author, setAuthor] = useState("");
+
+    const [errors, setErrors] = useState({
+        title_error: false,
+        description_error: false,
     });
-    });
-  }
+    const [anonymous_author, setAnonymousAuthor] = useState(false);
 
-  render() {
-    return(
-      <div className="prompt">
-        
-        <div className="innerPrompt">
-          <DigitText.Heading6 text="Nytt förslag"/>
-          <DigitTextField
-            error={this.state.title_isempty}
-            errorMessage = {this.state.title_error_message}
-            onChange={e => {
-                this.setState({
-                    title: e.target.value
-                });
-            }}
-            value={this.state.title}
-            upperLabel="Rubrik"
-            />
-          <DigitTextArea
-            error={this.state.description_isempty}
-            errorMessage = {this.state.description_error_message}
-            onChange={e => {
-                this.setState({
-                    description: e.target.value
-                });
-            }}
-            value={this.state.description}
-            upperLabel="Förslag"
-            rows={5}
-            rowsMax={10}
-            />
-          <DigitLayout.Row>
-            <DigitTextField
-              onChange={e => {
-                  this.setState({
-                      author: e.target.value
-                  });
-              }}
-              value={this.state.author}
-              disabled={this.state.anonymus_author}
-              upperLabel="CID"
-              />
+    const sendNewSuggestion = suggestion => {
+        addSuggestion(suggestion).then(res => {
+            updateSuggestions();
+            setTitle("");
+            setAuthor("");
+            setText("");
+            toastOpen({
+                text: "Thank you! The suggestion has been sent to P.R.I.T.",
+                duration: 5000,
+            });
+        });
+    };
 
-            <DigitSwitch 
-              value={this.state.anonymus_author}
-              label="Anonym"
-              primary
-              onChange = {e => {
-                  this.setState({
-                      anonymus_author: e.target.checked
-                  })
-              }}
-              />
-                
-          </DigitLayout.Row>
-          <DigitButton
-            text = "Skicka"
-            primary
-            raised
-            onClick={() =>{
-              this.setState({
-                  title_isempty: this.state.title === "",
-                  description_isempty: this.state.description === ""
-              });
+    return (
+        <div className="prompt">
+            <div className="innerPrompt">
+                <DigitText.Heading6 text="New Suggestion" />
+                <DigitTextField
+                    error={errors.title_error}
+                    errorMessage={title_error_message}
+                    onChange={e => setTitle(e.target.value)}
+                    value={title}
+                    upperLabel="Title"
+                />
+                <br />
+                {/*Change this tag to DigitTextArea when the*/}
+                <DigitTextArea
+                    error={errors.description_error}
+                    errorMessage={description_error_message}
+                    onChange={e => setText(e.target.value)}
+                    value={text}
+                    upperLabel="Suggestion"
+                    rows={5}
+                    rowsMax={10}
+                />
+                <DigitTextField
+                    onChange={e => setAuthor(e.target.value)}
+                    value={author}
+                    disabled={anonymous_author}
+                    upperLabel="CID"
+                />
+                <DigitSwitch
+                    value={anonymous_author}
+                    label="Anonymous"
+                    primary
+                    onChange={() => {
+                        setAnonymousAuthor(!anonymous_author);
+                    }}
+                />
+                <DigitButton
+                    text="Send"
+                    primary
+                    raised
+                    onClick={() => {
+                        setErrors({
+                            title_error: title === "",
+                            description_error: text === "",
+                        });
 
-              if(this.state.title === "" || this.state.description === ""){
-                  return;
-              }
-              this.sendNewSuggestion();
-              }}
-              />
+                        if (title === "" || text === "") return;
+
+                        sendNewSuggestion({
+                            title: title,
+                            text: text,
+                            author:
+                                author === "" || anonymous_author
+                                    ? "Anonymous"
+                                    : author,
+                        });
+                    }}
+                />
+            </div>
         </div>
-      </div>
     );
-  }
-}
+};
 
 const mapStateToProps = (state, ownProps) => ({});
 
 const mapDispatchToProps = dispatch => ({
     toastOpen: toastData =>
-        dispatch(DigitToastActions.digitToastOpen(toastData))
+        dispatch(DigitToastActions.digitToastOpen(toastData)),
 });
 
 export const Prompt = connect(

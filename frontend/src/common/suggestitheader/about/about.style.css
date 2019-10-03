@@ -1,8 +1,8 @@
-.suggestionCard{
+.card{
     margin: 16px;
     position: relative;
     padding: 16px 0px 16px 16px;
-    max-width: 1000px;
+    max-width: 250px;
     min-width: 100px;
     background-color: white;
     margin-right: 12%;
@@ -10,12 +10,4 @@
     left: 50%;
     transform: translate(-50%);
     box-shadow: rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px, rgba(0, 0, 0, 0.2) 0px 3px 1px -2px;
-}
-
-.grayText{
-    -webkit-text-fill-color: gray;
-}
-
-.main{
-    margin-top: 5em;
 }

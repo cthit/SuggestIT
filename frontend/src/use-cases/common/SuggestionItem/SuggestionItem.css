@@ -23,6 +23,7 @@
     -webkit-text-fill-color: gray;
 }
 
-.footer{
-    
+.float-right{
+    position: absolute;
+    right: 0px;
 }
