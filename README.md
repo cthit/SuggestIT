@@ -57,3 +57,6 @@ services:
     volumes:
       - ./frontend:/usr/src/app/
 ```
+
+## Backend documentation
+The project is using [Swagger](http://editor.swagger.io/) to document the restful api When the backend is running, the documentation. This can be found at ```http://localhost:5000/swagger``` when the backend is running. You can also copy the backend/static/swagger.yml to [swagger editor](http://editor.swagger.io/) and view it there.

@@ -42,7 +42,7 @@ export const addSuggestion = _suggestion =>
 
 export const deleteSuggestion = uuid =>
     axios
-        .delete(`${baseUrl}/${uuid}`, {
+        .delete(`${baseUrl}/delete/${uuid}`, {
             headers: {
                 Authorization: cookies.get(authCookieName),
             },

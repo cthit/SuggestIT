@@ -1,4 +1,5 @@
 from datetime import datetime
+from flask_swagger_ui import get_swaggerui_blueprint
 
 from db import Suggestion, suggestion_to_json
 import config
@@ -15,6 +16,19 @@ api = Api(app)
 
 cors = CORS(app, resources={r"/*": {"origins":"*"}})
 
+### swagger specific ###
+SWAGGER_URL = '/swagger'
+API_URL = '/static/swagger.json'
+SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
+    SWAGGER_URL,
+    API_URL,
+    config={
+        'app_name': "Seans-Python-Flask-REST-Boilerplate"
+    }
+)
+app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
+### end swagger specific ###
+
 @db_session
 def add_new_suggestion(title_inp, text_inp, author_inp):
     return Suggestion(timestamp=datetime.utcnow(), title=title_inp, text=text_inp, author=author_inp), 201
@@ -27,13 +41,6 @@ class SuggestionRes(Resource):
             return 'You are not P.R.I.T.', 401
 
         return suggestion_to_json(Suggestion[id])
-
-    @db_session
-    def delete(self, id):
-        if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
-            return 'You are not P.R.I.T.', 401
-
-        Suggestion[id].delete()
 
 
     @db_session
@@ -49,6 +56,14 @@ class SuggestionRes(Resource):
             commit()
         except ObjectNotFound:
             add_new_suggestion(request.json["title"], request.json["text"], request.json["author"])
+
+class RemoveSuggestion(Resource):
+  @db_session
+  def delete(self, id):
+    if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
+      return 'You are not P.R.I.T.', 401
+
+    Suggestion[id].delete()
 
 class RemoveSuggestions(Resource):
   @db_session
@@ -95,6 +110,7 @@ class Authentication(Resource):
 api.add_resource(SuggestionRes, '/api/<string:id>')
 api.add_resource(Authentication, '/api/authenticate')
 api.add_resource(SuggestionResList, '/api/')
+api.add_resource(RemoveSuggestion, '/api/delete/<string:id>')
 api.add_resource(RemoveSuggestions, '/api/delete')
 
 if __name__ == '__main__':
