@@ -1,98 +1,170 @@
 import React, { Component } from "react";
-import {DigitHeader, DigitButton, DigitText } from '@cthit/react-digit-components';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import { login, checkLogin } from '../../services/data.service';
-import './suggestitheader.css';
+import {
+    DigitHeader,
+    DigitButton,
+    DigitDialogActions,
+    DigitLayout,
+} from "@cthit/react-digit-components";
+import TextField from "@material-ui/core/TextField";
+import { connect } from "react-redux";
+import About from "./about/about.component";
+import { login, checkLogin, logOut } from "../../services/data.service";
+import "./suggestitheader.css";
 
-class SuggestITHeader extends Component {
-    constructor(props){
+class SuggestITHeaderView extends Component {
+    constructor(props) {
         super(props);
         this.state = {
             renderMain: props.renderMain,
             isLoggedIn: false,
             loginOpen: false,
-            passTextField: 'Hello',
-            passError: false
-        }
+            passTextField: "",
+            passError: false,
+            dialogOpen: props.dialogOpen,
+        };
 
-        checkLogin().then(res=>
-            this.setState({
-            isLoggedIn: true
-          })
-        )
-        .catch(error => {
-          //User might not be logged in
-        })
+        checkLogin()
+            .then(res =>
+                this.setState({
+                    isLoggedIn: true,
+                })
+            )
+            .catch(error => {
+                //User might not be logged in
+            });
     }
 
-  render() {
-    return (
-      <DigitHeader
-        renderMain = {this.state.renderMain}
-        title = "SuggestIT"
-        renderHeader = {() => !this.state.isLoggedIn ?
-              <div>
-                <DigitButton text="Login" outlined onClick={this.handleClickOpen}/>
-                <Dialog open={this.state.loginOpen} onClose={this.handleClose} aria-labelledby="form-dialog-title">
-                  <DigitText.Title className="dialog-title" text="P.R.I.T. login"/>
-                  <DialogContent>
-                    <TextField
-                      autoFocus
-                      margin="dense"
-                      id="name"
-                      label="Password"
-                      type="password"
-                      fullWidth
-                      error= {this.state.passError}
-                      onChange = {(event) => this.setState({passTextField: event.target.value})}
-                      onKeyPress = {event => {
-                        if(event.key === 'Enter')
-                          this.login()
-                      }}
-                      //Why not using DigitTextField, 1. No onKeyPress event, 2. No autofocus
-                    />
-                  </DialogContent>
-                  <DialogActions>
-                    <DigitButton onClick={this.handleClose} text="Cancel" primary/>
-                    <DigitButton onClick={this.login} text="Login" primary/>
-                  </DialogActions>
-                </Dialog>
-              </div>
-              
-          : <dir></dir>
-        }/>
-    );
-  }
+    render() {
+        return (
+            <DigitHeader
+                renderMain={this.state.renderMain}
+                title="SuggestIT"
+                renderHeader={() => (
+                    <div>
+                        <DigitLayout.Row>
+                            <DigitButton
+                                text="About"
+                                onClick={values =>
+                                    this.state.dialogOpen({
+                                        title: "About suggestIT",
+                                        renderMain: () => <About />,
+                                        renderButtons: (confirm, cancel) => (
+                                            <DigitButton
+                                                text="Close"
+                                                onClick={cancel}
+                                            />
+                                        ),
+                                    })
+                                }
+                            />
+                            {!this.state.isLoggedIn ? (
+                                <div>
+                                    <DigitButton
+                                        text="Login"
+                                        outlined
+                                        onClick={values =>
+                                            this.state.dialogOpen({
+                                                title:
+                                                    "Enter P.R.I.T. password",
+                                                renderMain: () => (
+                                                    <TextField
+                                                        autoFocus
+                                                        margin="dense"
+                                                        id="name"
+                                                        label="Password"
+                                                        type="password"
+                                                        fullWidth
+                                                        error={
+                                                            this.state.passError
+                                                        }
+                                                        onChange={event =>
+                                                            this.setState({
+                                                                passTextField:
+                                                                    event.target
+                                                                        .value,
+                                                            })
+                                                        }
+                                                        onKeyPress={event => {
+                                                            if (
+                                                                event.key ===
+                                                                "Enter"
+                                                            )
+                                                                this.login();
+                                                        }}
+                                                        //Why not using DigitTextField, 1. No onKeyPress event, 2. No autofocus
+                                                    />
+                                                ),
+                                                renderButtons: (
+                                                    confirm,
+                                                    cancel
+                                                ) => (
+                                                    <>
+                                                        <DigitButton
+                                                            text={"Confirm"}
+                                                            onClick={confirm}
+                                                        />
+                                                        <DigitButton
+                                                            text={"cancel"}
+                                                            onClick={cancel}
+                                                        />
+                                                    </>
+                                                ),
+                                                onCancel: e => this.login(),
+                                                onConfirm: e =>
+                                                    this.handleClose(),
+                                            })
+                                        }
+                                    />
+                                </div>
+                            ) : (
+                                <DigitButton
+                                    outlined
+                                    text="logout"
+                                    onClick={() => {
+                                        logOut();
+                                        window.location.reload(false);
+                                    }}
+                                />
+                            )}
+                        </DigitLayout.Row>
+                    </div>
+                )}
+            />
+        );
+    }
 
-  handleClose = () => 
-    this.setState({
-      loginOpen: false,
-      passTextField: ''
-    })
+    handleClose = () =>
+        this.setState({
+            passTextField: "",
+        });
 
-  handleClickOpen = () =>
-    this.setState({
-      loginOpen: true
-    })
-
-  login = () => {
-    login(this.state.passTextField)
-    .then(res => {
-      this.handleClose();
-      this.setState({
-        isLoggedIn: true
-      });
-      window.location.reload(false);
-    })
-    .catch(error => 
-      this.setState({
-        passError: true
-      })
-    );
-  }  
+    login = () => {
+        login(this.state.passTextField)
+            .then(res => {
+                this.handleClose();
+                this.setState({
+                    isLoggedIn: true,
+                });
+                window.location.reload(false);
+            })
+            .catch(error =>
+                this.setState({
+                    passError: true,
+                })
+            );
+    };
 }
+
+const mapStateToProps = (state, ownProps) => ({});
+
+const mapDispatchToProps = dispatch => ({
+    dialogOpen: dialogData =>
+        dispatch(DigitDialogActions.digitDialogCustomOpen(dialogData)),
+});
+
+const SuggestITHeader = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SuggestITHeaderView);
 
 export default SuggestITHeader;

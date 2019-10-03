@@ -19,6 +19,15 @@ services:
     build:
       context: ./backend/
       dockerfile: dev.Dockerfile
+    environment: 
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: postgres
+      
+      PRIT_AUTH_KEY: 123456789
+      PRIT_PASSWORD: password
     ports:
       - 5000:5000
 
@@ -28,6 +37,8 @@ services:
       dockerfile: dev.Dockerfile
     ports:
       - 3000:3000
+    environment: 
+      BACKEND_URL: http://localhost:5000
     volumes:
       - ./frontend:/usr/src/app/
 
