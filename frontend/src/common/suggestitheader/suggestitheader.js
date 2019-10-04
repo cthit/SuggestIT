@@ -100,12 +100,12 @@ class SuggestITHeaderView extends Component {
                                                 ) => (
                                                     <>
                                                         <DigitButton
-                                                            text={"Confirm"}
-                                                            onClick={confirm}
-                                                        />
-                                                        <DigitButton
                                                             text={"cancel"}
                                                             onClick={cancel}
+                                                        />
+                                                        <DigitButton
+                                                            text={"Confirm"}
+                                                            onClick={confirm}
                                                         />
                                                     </>
                                                 ),
