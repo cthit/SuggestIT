@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import {
-    DigitTextField,
-    DigitTextArea,
     DigitButton,
     DigitSwitch,
     DigitText,
     DigitToastActions,
 } from "@cthit/react-digit-components";
+import TextField from "@material-ui/core/TextField";
 import {
     addSuggestion,
     updateSuggestions,
@@ -45,29 +44,39 @@ const PromptView = ({ toastOpen }) => {
         <div className="prompt">
             <div className="innerPrompt">
                 <DigitText.Heading6 text="New Suggestion" />
-                <DigitTextField
+                <TextField
                     error={errors.title_error}
-                    errorMessage={title_error_message}
+                    helperText={errors.title_error && title_error_message}
                     onChange={e => setTitle(e.target.value)}
                     value={title}
-                    upperLabel="Title"
+                    label="Title"
+                    inputProps={{
+                        maxlength: 50
+                    }}
                 />
                 <br />
                 {/*Change this tag to DigitTextArea when the*/}
-                <DigitTextArea
-                    error={errors.description_error}
-                    errorMessage={description_error_message}
-                    onChange={e => setText(e.target.value)}
-                    value={text}
-                    upperLabel="Suggestion"
+                <TextField
+                    multiline
                     rows={5}
                     rowsMax={10}
+                    error={errors.description_error}
+                    helperText={errors.description_error && description_error_message}
+                    onChange={e => setText(e.target.value)}
+                    value={text}
+                    label="Suggestion"
+                    inputProps={{
+                        maxlength: 500
+                    }}
                 />
-                <DigitTextField
+                <TextField
                     onChange={e => setAuthor(e.target.value)}
                     value={author}
+                    label="CID"
                     disabled={anonymous_author}
-                    upperLabel="CID"
+                    inputProps={{
+                        maxlength: 50
+                    }}
                 />
                 <DigitSwitch
                     value={anonymous_author}

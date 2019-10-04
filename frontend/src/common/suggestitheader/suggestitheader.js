@@ -91,7 +91,10 @@ class SuggestITHeaderView extends Component {
                                                             )
                                                                 this.login();
                                                         }}
-                                                        //Why not using DigitTextField, 1. No onKeyPress event, 2. No autofocus
+                                                        inputProps={{
+                                                            maxlength: 50
+                                                        }}
+                                                        //Why not using DigitTextField, 1. No onKeyPress event, 2. No autofocus, 3. No inputProps
                                                     />
                                                 ),
                                                 renderButtons: (
