@@ -18,7 +18,6 @@ class Home extends Component {
                 suggestionboard: <SuggestionBoard />,
             })
         );
-        console.log(process.env);
     }
 
     render() {
