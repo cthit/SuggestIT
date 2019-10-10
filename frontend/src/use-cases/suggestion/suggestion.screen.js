@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { DigitText } from "@cthit/react-digit-components";
-import "./Suggestion.css";
+import "./suggestion.style.css";
 import { translateTimestamp } from "../common/methods";
 import { getSuggestion } from "../../services/data.service";
 

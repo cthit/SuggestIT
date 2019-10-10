@@ -7,9 +7,9 @@ import {
 } from "@cthit/react-digit-components";
 import TextField from "@material-ui/core/TextField";
 import { connect } from "react-redux";
-import About from "./about/about.component";
+import About from "./elements/about";
 import { login, checkLogin, logOut } from "../../services/data.service";
-import "./suggestitheader.css";
+import "./suggestitheader.style.css";
 
 class SuggestITHeaderView extends Component {
     constructor(props) {

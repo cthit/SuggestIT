@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import "./SuggestionBoard.css";
-import { suggestions } from "../../../redux/SuggestionStore";
-import { SuggestionItem } from "../../common/SuggestionItem/SuggestionItem";
+import { suggestions } from "../../../../redux/SuggestionStore";
+import SuggestionItem from "../../../common/SuggestionItem";
 import {
     updateSuggestions,
     deleteSuggestions,
-} from "../../../services/data.service";
+} from "../../../../services/data.service";
 import {
     DigitButton,
     DigitText,

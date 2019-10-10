@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 import { DigitText } from "@cthit/react-digit-components";
-import "./notfound.css";
+import "./notfound.style.css";
 
 const NotFound = () => (
     <div className="main">

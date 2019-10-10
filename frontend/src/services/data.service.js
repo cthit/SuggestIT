@@ -1,6 +1,7 @@
 import { suggestions } from "../redux/SuggestionStore";
 import axios from "axios";
 import Cookies from "universal-cookie";
+import { SET_SUGGESTIONS } from "../redux/suggestionstore.actions";
 
 const cookies = new Cookies();
 const baseUrl =
@@ -18,7 +19,7 @@ export const updateSuggestions = () =>
         })
         .then(res => {
             suggestions.dispatch({
-                type: "set",
+                type: SET_SUGGESTIONS,
                 suggestion: res.data,
             });
         })

@@ -10,9 +10,9 @@ import {
 import {
     addSuggestion,
     updateSuggestions,
-} from "../../../services/data.service";
+} from "../../../../services/data.service";
 import { connect } from "react-redux";
-import "./Prompt.css";
+import "./prompt.style.css";
 
 const title_error_message = "The title is not filled in";
 const description_error_message = "The description is not filled in";
