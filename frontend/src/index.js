@@ -8,7 +8,7 @@ import {
     DigitDialog,
 } from "@cthit/react-digit-components";
 import { Route } from "react-router";
-import SuggestITHeader from "./common/suggestitheader/suggestitheader";
+import SuggestITHeader from "./common/suggestitheader";
 ReactDOM.render(
     <DigitProviders
         children={

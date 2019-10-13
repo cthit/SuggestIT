@@ -6,7 +6,7 @@ import {
     DigitToastActions,
     DigitLayout,
 } from "@cthit/react-digit-components";
-import "./SuggestionItem.css";
+import "./suggestionitem.style.css";
 import { translateTimestamp } from "../methods";
 import { Clear, ExpandMore, ExpandLess } from "@material-ui/icons";
 import {

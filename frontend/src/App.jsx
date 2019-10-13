@@ -3,8 +3,8 @@ import { BrowserRouter, Switch } from "react-router-dom";
 import { Route } from "react-router";
 
 import Home from "./use-cases/home/home";
-import NotFound from "./use-cases/notfound/notfound";
-import Suggestion from "./use-cases/suggestion/Suggestion";
+import NotFound from "./use-cases/notfound";
+import Suggestion from "./use-cases/suggestion";
 import "./App.css";
 
 class App extends Component {

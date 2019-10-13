@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 
 import "./home.css";
-import Prompt from "./Prompt/Prompt";
-import SuggestionBoard from "./SuggestionBoard/SuggestionBoard";
+import Prompt from "./views/Prompt/prompt.view";
+import SuggestionBoard from "./views/SuggestionBoard/SuggestionBoard";
 import { checkLogin } from "../../services/data.service";
 
 class Home extends Component {
@@ -18,7 +18,6 @@ class Home extends Component {
                 suggestionboard: <SuggestionBoard />,
             })
         );
-        console.log(process.env);
     }
 
     render() {

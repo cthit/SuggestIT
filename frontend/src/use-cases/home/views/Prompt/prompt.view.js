@@ -6,18 +6,19 @@ import {
     DigitSwitch,
     DigitText,
     DigitToastActions,
+    DigitDialogActions,
 } from "@cthit/react-digit-components";
 import {
     addSuggestion,
     updateSuggestions,
-} from "../../../services/data.service";
+} from "../../../../services/data.service";
 import { connect } from "react-redux";
-import "./Prompt.css";
+import "./prompt.style.css";
 
 const title_error_message = "The title is not filled in";
 const description_error_message = "The description is not filled in";
 
-const PromptView = ({ toastOpen }) => {
+const PromptView = ({ toastOpen, openDialog }) => {
     const [text, setText] = useState("");
     const [title, setTitle] = useState("");
     const [author, setAuthor] = useState("");
@@ -52,8 +53,6 @@ const PromptView = ({ toastOpen }) => {
                     value={title}
                     upperLabel="Title"
                 />
-                <br />
-                {/*Change this tag to DigitTextArea when the*/}
                 <DigitTextArea
                     error={errors.description_error}
                     errorMessage={description_error_message}
@@ -67,14 +66,41 @@ const PromptView = ({ toastOpen }) => {
                     onChange={e => setAuthor(e.target.value)}
                     value={author}
                     disabled={anonymous_author}
-                    upperLabel="CID"
+                    upperLabel="Name/Nick"
                 />
+                <div>
+                    <DigitText.Text
+                        text={"By clicking Send I agree to"}
+                    />
+                    <a
+                        onClick={() => {
+                            openDialog({
+                                renderButtons: () => null,
+                                renderMain: () => (
+                                    <div>
+                                        <DigitText.Title
+                                            text={"GDPR agreement"}
+                                        />
+                                        <DigitText.Text
+                                            text={
+                                                "The data is collected by the Student Division Information Technology with the aim of knowing how to improve Hubben 2.1. The data that will be saved is title, the suggestion, the time it was sent and name if not anonymous. You have the right to withdraw your consent to the management, request to have all data that the organization has about you and to complain to the Data Inspectorate in case of dissatisfaction. The data will be kept until P.R.I.T. has solved the issue or deemed it invalid and will only be handled by the Student Division Information Technology, ultimately responsible for the data management of the section is William Levén, who can be reached at ordforande@chalmers.it. If you have any questions, please contact P.R.I.T. prit@chalmers.it or the section's data protection representative dpo@chalmers.it."
+                                            }
+                                        />
+                                    </div>
+                                ),
+                            });
+                        }}
+                        href="#"
+                    >
+                        <DigitText.Text text={"this GDPR agreement"} />
+                    </a>
+                </div>
                 <DigitSwitch
                     value={anonymous_author}
                     label="Anonymous"
                     primary
-                    onChange={() => {
-                        setAnonymousAuthor(!anonymous_author);
+                    onChange={e => {
+                        setAnonymousAuthor(e.target.checked);
                     }}
                 />
                 <DigitButton
@@ -109,6 +135,8 @@ const mapStateToProps = (state, ownProps) => ({});
 const mapDispatchToProps = dispatch => ({
     toastOpen: toastData =>
         dispatch(DigitToastActions.digitToastOpen(toastData)),
+    openDialog: dialogData =>
+        dispatch(DigitDialogActions.digitDialogCustomOpen(dialogData)),
 });
 
 export const Prompt = connect(
