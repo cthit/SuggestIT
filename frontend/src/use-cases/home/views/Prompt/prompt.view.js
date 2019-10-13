@@ -67,7 +67,7 @@ const PromptView = ({ toastOpen }) => {
                     onChange={e => setAuthor(e.target.value)}
                     value={author}
                     disabled={anonymous_author}
-                    upperLabel="CID"
+                    upperLabel="Name/Nick"
                 />
                 <DigitSwitch
                     value={anonymous_author}
