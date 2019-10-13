@@ -52,8 +52,6 @@ const PromptView = ({ toastOpen }) => {
                     value={title}
                     upperLabel="Title"
                 />
-                <br />
-                {/*Change this tag to DigitTextArea when the*/}
                 <DigitTextArea
                     error={errors.description_error}
                     errorMessage={description_error_message}
@@ -67,7 +65,7 @@ const PromptView = ({ toastOpen }) => {
                     onChange={e => setAuthor(e.target.value)}
                     value={author}
                     disabled={anonymous_author}
-                    upperLabel="CID"
+                    upperLabel="Name/Nick"
                 />
                 <DigitSwitch
                     value={anonymous_author}
