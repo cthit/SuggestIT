@@ -19,7 +19,7 @@ export const translateTimestamp = ts => {
     }
     diff /= 24;
     if (diff <= 365.25 / 12) {
-        return pre + parseInt(diff, 10) + " gays ago";
+        return pre + parseInt(diff, 10) + " days ago";
     }
     diff /= 365.25 / 12;
     if (diff <= 12) {
