@@ -30,7 +30,7 @@ services:
       PRIT_PASSWORD: password
 
       GOTIFY_URL: http://gotify:8080
-      GOTIFY_PRE_SHARED-KEY: 123abc
+      GOTIFY_PRE_SHARED_KEY: 123abcc
     ports:
       - 5000:5000
 
@@ -48,7 +48,7 @@ services:
   gotify:
     image: cthit/gotify:latest
     environment:
-      GOTIFY_PRE-SHARED-KEY: "123abc"
+      GOTIFY_PRE-SHARED-KEY: "123abcc"
       GOTIFY_MOCK-MODE: "true"
     ports:
       - 1337:8080
