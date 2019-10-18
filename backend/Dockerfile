@@ -11,6 +11,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 ENV PYTHONUNBUFFERED 0
+ENV PROD true
 
 EXPOSE 5000
 

@@ -1,33 +1,29 @@
 from datetime import datetime
-from flask_swagger_ui import get_swaggerui_blueprint
+from swagger_blueprint import SWAGGERUI_BLUEPRINT, SWAGGER_URL
 
 from db import Suggestion, suggestion_to_json
 import config
+from mail import sendMail
+from authentication_wrapper import login_required
 
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from pony.orm import db_session, ObjectNotFound, commit
 
-#from weekmail import weekmail
 from flask_cors import CORS
 
 app = Flask(__name__)
 api = Api(app)
 
-cors = CORS(app, resources={r"/*": {"origins":"*"}})
+PRIT_MAIL = "prit@chalmers.it"
+SENDER_MAIL = "no-reply@chalmers.it"
 
-### swagger specific ###
-SWAGGER_URL = '/swagger'
-API_URL = '/static/swagger.yml'
-SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
-    SWAGGER_URL,
-    API_URL,
-    config={
-        'app_name': "Seans-Python-Flask-REST-Boilerplate"
-    }
-)
+if config.IS_PROD == 'true':
+  app.config['DEBUG'] = False
+  app.config['TESTING'] = False
+
+cors = CORS(app, resources={r"/*": {"origins":"*"}})
 app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
-### end swagger specific ###
 
 @db_session
 def add_new_suggestion(title_inp, text_inp, author_inp):
@@ -36,18 +32,14 @@ def add_new_suggestion(title_inp, text_inp, author_inp):
 
 class SuggestionRes(Resource):
     @db_session
+    @login_required
     def get(self, id):
-        if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
-            return 'You are not P.R.I.T.', 401
-
         return suggestion_to_json(Suggestion[id])
 
 
     @db_session
+    @login_required
     def put(self, id):
-        if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
-            return 'You are not P.R.I.T.', 401
-
         try:
             suggestion = Suggestion[id]
             suggestion.title = request.json["title"]
@@ -59,18 +51,14 @@ class SuggestionRes(Resource):
 
 class RemoveSuggestion(Resource):
   @db_session
+  @login_required
   def delete(self, id):
-    if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
-      return 'You are not P.R.I.T.', 401
-
     Suggestion[id].delete()
 
 class RemoveSuggestions(Resource):
   @db_session
+  @login_required
   def put(self):
-    if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
-      return 'You are not P.R.I.T.', 401
-
     for id in request.json['ids']:
       try:
         Suggestion[id].delete()
@@ -82,16 +70,19 @@ class SuggestionResList(Resource):
     def post(self):
         try:
           add_new_suggestion(request.json["title"], request.json["text"], request.json["author"])
+          if sendMail( \
+              PRIT_MAIL, \
+              SENDER_MAIL, \
+              "SiggestIT: %s" % (request.json["title"]), \
+              "%s\n\nPosted by %s" % (request.json["text"], request.json["author"])):
+            print("A mail was sent to P.R.I.T")
           return "Suggestion created", 201
         except:
           return "Could not create suggestion", 400
         
-
     @db_session
+    @login_required
     def get(self):
-        if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
-            return 'You are not P.R.I.T.', 401
-
         return jsonify([suggestion_to_json(s) for s in Suggestion.select(lambda t : True)])
 
 class Authentication(Resource):
@@ -100,11 +91,9 @@ class Authentication(Resource):
             return jsonify(key=config.PRIT_AUTH_KEY)
 
         return "You are not P.R.I.T.", 401
-
+    
+    @login_required
     def get(self):
-        if request.headers.get('Authorization') != config.PRIT_AUTH_KEY:
-            return 'You are not P.R.I.T.', 401
-        
         return 'You are P.R.I.T.', 200
 
 api.add_resource(SuggestionRes, '/api/<string:id>')
@@ -114,8 +103,4 @@ api.add_resource(RemoveSuggestion, '/api/delete/<string:id>')
 api.add_resource(RemoveSuggestions, '/api/delete')
 
 if __name__ == '__main__':
-    #4 = friday, 17,0,0 = 17:00:00
-    #wm = weekmail(4,17,0,0)
-    #wm.start()
-    #print("Week mail loop has started")
     app.run(host='0.0.0.0')
