@@ -2,7 +2,7 @@ FROM node:latest as build
 
 COPY /package.json /
 
-RUN yarn install --production
+RUN yarn install --production --network-timeout 1000000000
 RUN yarn global add react-scripts 
 
 COPY . .
