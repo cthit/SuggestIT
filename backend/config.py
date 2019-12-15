@@ -11,5 +11,6 @@ PRIT_PASSWORD = os.environ.get("PRIT_PASSWORD", "password")
 
 GOTIFY_URL = os.environ.get("GOTIFY_URL",'http://localhost:1337')
 GOTIFY_PRE_SHARED_KEY = os.environ.get("GOTIFY_PRE_SHARED_KEY",'')
+ENABLE_EMAIL = os.environ.get("ENABLE_EMAIL", "False")
 
 IS_PROD = os.environ.get("PROD","false")

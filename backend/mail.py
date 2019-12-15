@@ -10,4 +10,4 @@ def sendMail(_to, _from, _subject, _body):
         "subject": _subject,
         "body": _body
     })
-    return requests.post('%s/mail' % config.GOTIFY_URL,headers=header ,data=data).ok
+    return requests.post('%s/mail' % config.GOTIFY_URL,headers=header ,data=data)
