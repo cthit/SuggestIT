@@ -6,6 +6,7 @@ import config
 from mail import sendMail
 from authentication_wrapper import login_required
 
+from requests.exceptions import RequestException
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from pony.orm import db_session, ObjectNotFound, commit
@@ -70,16 +71,23 @@ class SuggestionResList(Resource):
     def post(self):
         try:
           add_new_suggestion(request.json["title"], request.json["text"], request.json["author"])
-          if sendMail( \
-              PRIT_MAIL, \
-              SENDER_MAIL, \
-              "SiggestIT: %s" % (request.json["title"]), \
-              "%s\n\nPosted by %s" % (request.json["text"], request.json["author"])):
-            print("A mail was sent to P.R.I.T")
-          return "Suggestion created", 201
-        except:
+
+          if config.ENABLE_EMAIL == "True":
+              respons = sendMail( \
+                  PRIT_MAIL, \
+                  SENDER_MAIL, \
+                  "SiggestIT: %s" % (request.json["title"]), \
+                  "%s\n\nPosted by %s" % (request.json["text"], request.json["author"]))          
+              
+              respons.raise_for_status()
+              print("A mail has been sent to P.R.I.T.")
+        except RequestException as err:
+          print("Failed to send mail: \n %s" % err)
+        except Exception as err:
+          print("Failed to create suggestion: \n %s" % err)
           return "Could not create suggestion", 400
         
+        return "Suggestion created", 201
     @db_session
     @login_required
     def get(self):

@@ -1,19 +1,13 @@
 FROM node:latest
 
-RUN mkdir -p /usr/src/app/
-RUN chown -R node /usr/src/app
+WORKDIR /usr
 
-USER node
-
-
-WORKDIR /usr/src/app
-
-COPY ./src/ .
 COPY package.json .
-COPY ./public/ .
 
 RUN yarn install
 RUN yarn global add react-scripts
+
+COPY . .
 
 EXPOSE 3000
 
