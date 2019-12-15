@@ -76,7 +76,7 @@ class SuggestionResList(Resource):
               respons = sendMail( \
                   PRIT_MAIL, \
                   SENDER_MAIL, \
-                  "SiggestIT: %s" % (request.json["title"]), \
+                  "SuggestIT: %s" % (request.json["title"]), \
                   "%s\n\nPosted by %s" % (request.json["text"], request.json["author"]))          
               
               respons.raise_for_status()
