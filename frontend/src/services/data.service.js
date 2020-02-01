@@ -6,7 +6,7 @@ import { SET_SUGGESTIONS } from "../redux/suggestionstore.actions";
 const cookies = new Cookies();
 const baseUrl =
     process.env.NODE_ENV === "development"
-        ? "http://localhost:5000/api"
+        ? "http://localhost:5001/api"
         : "https://suggestit.chalmers.it/api";
 const authCookieName = "PRIT_AUTH_KEY";
 
@@ -29,7 +29,7 @@ export const updateSuggestions = () =>
 
 export const getSuggestion = uuid =>
     axios
-        .get(`${baseUrl}/${uuid}`, {
+        .get(`${baseUrl}?Id=${uuid}`, {
             headers: {
                 Authorization: cookies.get(authCookieName),
             },
@@ -43,7 +43,7 @@ export const addSuggestion = _suggestion =>
 
 export const deleteSuggestion = uuid =>
     axios
-        .delete(`${baseUrl}/delete/${uuid}`, {
+        .delete(`${baseUrl}/delete?Id=${uuid}`, {
             headers: {
                 Authorization: cookies.get(authCookieName),
             },
