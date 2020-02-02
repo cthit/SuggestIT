@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+	"github.com/rs/cors"
 
 	_ "github.com/lib/pq"
 )
@@ -30,29 +31,22 @@ func main() {
 
 	var err error
 	db, err = sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
-	}
+	if err != nil { panic(err) }
 	defer db.Close()
 
 	createSuggestionTable()
 
-	http.HandleFunc("/api/", corse(handleRoot))
-	http.HandleFunc("/api/delete", corse(auth(handleDelete)))
-	http.HandleFunc("/api/authenticate", corse(authHandler))
-	log.Fatal(http.ListenAndServe(":5001", nil))
-}
+	mux := http.NewServeMux()
+	c := cors.New(cors.Options{
+		AllowedMethods: []string{"GET","POST","PUT","DELETE","OPTIONS"},
+		AllowedOrigins: []string{"https://suggestit.chalmers.it", "http://localhost:3000"},
+		AllowedHeaders: []string{"Authorization", "Content-Type"},
+		AllowCredentials: true})
 
-func corse(h func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodOptions {
-			h(w, r)
-			return
-		}
+	mux.HandleFunc("/api/", handleRoot)
+	mux.HandleFunc("/api/delete", auth(handleDelete))
+	mux.HandleFunc("/api/authenticate", authHandler)
 
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "*")
-		w.WriteHeader(http.StatusOK)
-	}
+	handler := c.Handler(mux)
+	log.Fatal(http.ListenAndServe(":5001", handler))
 }
