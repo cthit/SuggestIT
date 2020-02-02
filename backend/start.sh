@@ -1,1 +1,0 @@
-sleep 3 && python -u app.py

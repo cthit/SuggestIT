@@ -6,7 +6,7 @@ import { SET_SUGGESTIONS } from "../redux/suggestionstore.actions";
 const cookies = new Cookies();
 const baseUrl =
     process.env.NODE_ENV === "development"
-        ? "http://localhost:5001/api"
+        ? "http://localhost:5000/api"
         : "https://suggestit.chalmers.it/api";
 const authCookieName = "PRIT_AUTH_KEY";
 
@@ -20,7 +20,7 @@ export const updateSuggestions = () =>
         .then(res => {
             suggestions.dispatch({
                 type: SET_SUGGESTIONS,
-                suggestion: res.data,
+                suggestion: res.data ? res.data : [],
             });
         })
         .catch(err => {
@@ -66,9 +66,17 @@ export const deleteSuggestions = suggestions =>
     );
 
 export const login = password =>
-    axios
-        .put(`${baseUrl}/authenticate`, { password: password })
-        .then(res => cookies.set(authCookieName, res.data.key));
+    new Promise((resolve, reject) =>
+        axios
+            .put(`${baseUrl}/authenticate`, { password: password })
+            .then(res => {
+                cookies.set(authCookieName, res.data.key);
+                resolve(true);
+            })
+            .catch(err => {
+                reject(false);
+            })
+    );
 
 export const checkLogin = () =>
     axios.get(`${baseUrl}/authenticate`, {

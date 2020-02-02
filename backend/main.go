@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+
 	"github.com/rs/cors"
 
 	_ "github.com/lib/pq"
@@ -31,16 +32,18 @@ func main() {
 
 	var err error
 	db, err = sql.Open("postgres", psqlInfo)
-	if err != nil { panic(err) }
+	if err != nil {
+		panic(err)
+	}
 	defer db.Close()
 
 	createSuggestionTable()
 
 	mux := http.NewServeMux()
 	c := cors.New(cors.Options{
-		AllowedMethods: []string{"GET","POST","PUT","DELETE","OPTIONS"},
-		AllowedOrigins: []string{"https://suggestit.chalmers.it", "http://localhost:3000"},
-		AllowedHeaders: []string{"Authorization", "Content-Type"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedOrigins:   []string{"https://suggestit.chalmers.it", "http://localhost:3000"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type"},
 		AllowCredentials: true})
 
 	mux.HandleFunc("/api/", handleRoot)
@@ -48,5 +51,5 @@ func main() {
 	mux.HandleFunc("/api/authenticate", authHandler)
 
 	handler := c.Handler(mux)
-	log.Fatal(http.ListenAndServe(":5001", handler))
+	log.Fatal(http.ListenAndServe(":5000", handler))
 }

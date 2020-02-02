@@ -95,8 +95,8 @@ class SuggestITHeaderView extends Component {
                                                     />
                                                 ),
                                                 renderButtons: (
-                                                    cancel,
-                                                    confirm
+                                                    confirm,
+                                                    cancel
                                                 ) => (
                                                     <>
                                                         <DigitButton
