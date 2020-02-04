@@ -14,7 +14,7 @@ export const updateSuggestions = () =>
     axios
         .get(`${baseUrl}/`, {
             headers: {
-                Authorization: cookies.get("PRIT_AUTH_KEY"),
+                Authorization: cookies.get(authCookieName),
             },
         })
         .then(res => {
@@ -65,16 +65,19 @@ export const deleteSuggestions = suggestions =>
         }
     );
 
-export const login = password =>
+export const login = (cid, password) =>
     new Promise((resolve, reject) =>
         axios
-            .put(`${baseUrl}/authenticate`, { password: password })
+            .put(`${baseUrl}/authenticate`, {
+                cid: cid,
+                password: password,
+            })
             .then(res => {
-                cookies.set(authCookieName, res.data.key);
+                cookies.set(authCookieName, res.data.token);
                 resolve(true);
             })
             .catch(err => {
-                reject(false);
+                reject("CID and password did not match");
             })
     );
 

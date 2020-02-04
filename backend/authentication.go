@@ -18,7 +18,7 @@ var (
 
 func auth(h func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if token := r.Header.Get("Authorization"); validUser(token) {
+		if token := r.Header.Get("Authorization"); !validUser(token) {
 			http.Error(w, "You are not P.R.I.T.", http.StatusUnauthorized)
 			return
 		}
