@@ -6,16 +6,19 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"time"
+	"github.com/dgrijalva/jwt-go"
 )
 
 var (
 	prit_password = os.Getenv("PRIT_PASSWORD")
 	prit_key      = os.Getenv("PRIT_AUTH_KEY")
+	auth_secret   = []byte(os.Getenv("AUTH_SECRET"))
 )
 
 func auth(h func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if key := r.Header.Get("Authorization"); key != prit_key {
+		if token := r.Header.Get("Authorization"); validUser(token) {
 			http.Error(w, "You are not P.R.I.T.", http.StatusUnauthorized)
 			return
 		}
@@ -27,17 +30,18 @@ func auth(h func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWr
 func authHandler(w http.ResponseWriter, r *http.Request) {
 	defer recoverBadRequest(w)
 
-	if key := r.Header.Get("Authorization"); r.Method == http.MethodGet && key == prit_key {
-		fmt.Fprintf(w, "You are P.R.I.T.")
-		return
-	}
-
-	if r.Method != http.MethodPut {
+	if r.Method != http.MethodPut && r.Method != http.MethodGet {
 		http.Error(w, fmt.Sprintf("Request method not supported: %s", r.Method), http.StatusBadRequest)
 		return
 	}
 
-	var pass struct {
+	if token := r.Header.Get("Authorization"); validUser(token) {
+		fmt.Fprintf(w, "You are P.R.I.T.")
+		return
+	}
+
+	var userInput struct {
+		CID string
 		Password string
 	}
 
@@ -47,14 +51,50 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	if err := json.Unmarshal(body, &pass); err != nil {
+	if err := json.Unmarshal(body, &userInput); err != nil {
 		panic(err)
 	}
 
-	if pass.Password != prit_password {
+	var user User
+	user, err = login_ldap(userInput.CID, userInput.Password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	if !user.MemberOfPRIT {
 		http.Error(w, "You are not P.R.I.T.", http.StatusUnauthorized)
 		return
 	}
 
-	fmt.Fprintln(w, fmt.Sprintf(`{"key":"%s"}`, prit_key))
+	var token string
+	token, err = createToken(user)
+	if err != nil {
+		http.Error(w, "Unable to create token", http.StatusUnauthorized)
+		return
+	}
+
+	fmt.Fprintln(w, fmt.Sprintf(`{"token":"%s"}`, token))
+}
+
+func createToken(user User) (string, error) {
+	user.ExpiresAt = time.Now().Add(time.Hour * 24*30).Unix() 
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, user)
+	return token.SignedString(auth_secret)
+}
+
+func validUser(token string) bool {
+	keyFunc := func(t *jwt.Token) (interface{}, error) {return auth_secret, nil}
+	parsedToken, err := jwt.ParseWithClaims(token, &User{}, keyFunc)
+	if err != nil {
+		return false
+	}
+
+	claims, ok := parsedToken.Claims.(*User)
+	if !ok || !parsedToken.Valid {
+		return false
+	}
+
+	return claims.MemberOfPRIT
 }

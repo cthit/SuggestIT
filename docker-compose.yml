@@ -26,6 +26,8 @@ services:
       SUGGESTIT_POSTGRES_HOST: db
       SUGGESTIT_POSTGRES_PORT: 5432
       SUGGESTIT_POSTGRES_DB: suggestit
+
+      AUTH_SECRET: thisisasecret
       
       PRIT_AUTH_KEY: 123456789
       PRIT_PASSWORD: password
