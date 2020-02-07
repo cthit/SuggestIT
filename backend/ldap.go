@@ -1,22 +1,22 @@
 package main
 
 import (
-	"github.com/dgrijalva/jwt-go"
-	"fmt"
 	"errors"
+	"fmt"
 	"strings"
 
-	"github.com/go-ldap/ldap/v3"
+	"github.com/dgrijalva/jwt-go"
+	"gopkg.in/ldap.v3"
 )
 
-type User struct{
-	Username string		`json:"cid"`
-	Nick string			`json:"nick"`
-	MemberOfPRIT bool	`json:"prit"`
+type User struct {
+	Username     string `json:"cid"`
+	Nick         string `json:"nick"`
+	MemberOfPRIT bool   `json:"prit"`
 	jwt.StandardClaims
 }
 
-func login_ldap(username string, pass string) (User, error){
+func login_ldap(username string, pass string) (User, error) {
 	conn, err := ldap.DialURL("ldap://kamino.chalmers.it")
 	if err != nil {
 		return User{}, errors.New("Could not connect to ldap")
@@ -29,7 +29,7 @@ func login_ldap(username string, pass string) (User, error){
 	}
 
 	user := User{Username: username}
-	user.MemberOfPRIT = memberOfFkit(conn, username, "digit")
+	user.MemberOfPRIT = memberOfFkit(conn, username, "prit")
 
 	s, er := conn.Search(ldap.NewSearchRequest(
 		"ou=people,dc=chalmers,dc=it",
@@ -47,7 +47,7 @@ func login_ldap(username string, pass string) (User, error){
 	return user, nil
 }
 
-func search(conn *ldap.Conn, dc string, filter string, attributes []string) (*ldap.SearchResult, error){
+func search(conn *ldap.Conn, dc string, filter string, attributes []string) (*ldap.SearchResult, error) {
 	return conn.Search(ldap.NewSearchRequest(
 		dc,
 		ldap.ScopeWholeSubtree, ldap.DerefAlways, 0, 0, false,

@@ -65,7 +65,7 @@ class SuggestITHeaderView extends Component {
                                         onClick={values =>
                                             this.state.dialogOpen({
                                                 title:
-                                                    "Enter P.R.I.T. password",
+                                                    "Enter CID and password for chalmers.it",
                                                 renderMain: () => (
                                                     <div>
                                                         {this.state

@@ -23,7 +23,7 @@ func createSuggestionTable() (sql.Result, error) {
 		title TEXT NOT NULL,
 		text TEXT NOT NULL,
 		author TEXT,
-		PRIMARY KEY (UUID)
+		PRIMARY KEY (id)
 		)`)
 }
 
