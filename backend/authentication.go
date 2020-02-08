@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -36,12 +37,12 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if token := r.Header.Get("Authorization"); validUser(token) {
-		fmt.Fprintf(w, "You are P.R.I.T.")
+		http.Error(w, "You are P.R.I.T.", http.StatusUnauthorized)
 		return
 	}
 
 	var userInput struct {
-		CID string
+		CID      string
 		Password string
 	}
 
@@ -78,14 +79,14 @@ func authHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func createToken(user User) (string, error) {
-	user.ExpiresAt = time.Now().Add(time.Hour * 24*30).Unix() 
+	user.ExpiresAt = time.Now().Add(time.Hour * 24 * 30).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, user)
 	return token.SignedString(auth_secret)
 }
 
 func validUser(token string) bool {
-	keyFunc := func(t *jwt.Token) (interface{}, error) {return auth_secret, nil}
+	keyFunc := func(t *jwt.Token) (interface{}, error) { return auth_secret, nil }
 	parsedToken, err := jwt.ParseWithClaims(token, &User{}, keyFunc)
 	if err != nil {
 		return false

@@ -23,7 +23,7 @@ func login_ldap(username string, pass string) (User, error) {
 	}
 	defer conn.Close()
 
-	err = conn.Bind(fmt.Sprintf("uid=%s,ou=people,dc=chalmers,dc=it", username), pass) //Password for chalmers.it
+	err = conn.Bind(fmt.Sprintf("uid=%s,ou=people,dc=chalmers,dc=it", username), pass)
 	if err != nil {
 		return User{}, errors.New("Username and password did not match")
 	}
@@ -57,10 +57,14 @@ func search(conn *ldap.Conn, dc string, filter string, attributes []string) (*ld
 }
 
 func memberOfFkit(conn *ldap.Conn, cid string, committee string) bool {
-	members := membersOf(conn, membersOf(conn, []string{fmt.Sprintf("cn=%s,ou=%s,ou=fkit,ou=groups,dc=chalmers,dc=it", committee, committee)}))
+	committee = fmt.Sprintf("cn=%s,ou=%s,ou=fkit,ou=groups,dc=chalmers,dc=it", committee, committee)
+	cid = fmt.Sprintf("uid=%s,ou=people,dc=chalmers,dc=it", cid)
 
-	for i := 0; i < len(members); i++ {
-		if strings.Contains(members[i], cid) {
+	groups := membersOf(conn, membersOf(conn, []string{committee}))
+
+	for _, group := range groups {
+		isMember, err := isMemberOf(conn, group, cid)
+		if err != nil && isMember {
 			return true
 		}
 	}
@@ -81,4 +85,8 @@ func membersOf(conn *ldap.Conn, groups []string) []string {
 	}
 
 	return members
+}
+
+func isMemberOf(conn *ldap.Conn, group string, member string) (bool, error) {
+	return conn.Compare(group, "member", member)
 }

@@ -1,0 +1,195 @@
+swagger: "2.0"
+info:
+  description: "This is the backend used in the application [suggestIT](https://suggestit.chalmers.it). The application is a suggestion box for the committee P.R.I.T."
+  version: "1.0.0"
+  title: "SuggestIT backand"
+  contact:
+    email: "digit@chalmers.it"
+host: "localhost:5000"
+tags:
+- name: "api"
+  description: "the main api"
+schemes:
+- "http"
+paths:
+  /api/authenticate:
+    put:
+      tags:
+      - "api"
+      summary: "Get authentication token"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "password"
+        required: true
+        schema:
+          $ref: "#/definitions/LoginCriteria"
+      responses:
+        401:
+          description: "You are not P.R.I.T."
+        200:
+          description: "Use the token to authenticate"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+  /api:
+    get:
+      tags:
+      - "api"
+      summary: "Get all suggestions"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "the token from /api/authorization"
+        required: true
+        type: "string"
+      - in: "query"
+        name: "Id"
+        description: "requesting one specific suggestion"
+        type: "string"
+        required: false
+      responses:
+        401:
+          description: "You are not P.R.I.T."
+        200:
+          description: "List of all suggestions in the suggestion box"
+          schema:
+            $ref: "#/definitions/Suggestions"
+    post:
+      tags:
+      - "api"
+      summary: "Create a new suggestion"
+      consumes:
+      - "application/json"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "the token from /api/authorization"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "the token from /api/authorization"
+        required: true
+        schema:
+          $ref: "#/definitions/Suggestion"
+      responses:
+        200:
+          description: "Suggestion created"
+    
+  /api/delete:
+    delete:
+      tags:
+      - "api"
+      summary: "Delete a specific suggestion"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "the token from /api/authorization"
+        required: true
+        type: "string"
+      - in: "query"
+        name: "Id"
+        type: "string"
+        required: true
+      responses:
+        200:
+          description: "null"
+          
+  /api/deletemult:
+    delete:
+      tags:
+      - "api"
+      summary: "Delete multiple suggestions"
+      parameters:
+      - in: "header"
+        name: "Authorization"
+        description: "the token from /api/authorization"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        required: true
+        schema:
+          $ref: "#/definitions/idarray"
+      responses:
+        200:
+          description: "null"
+          
+          
+
+definitions:
+  idarray:
+    type: "object"
+    properties:
+      ids:
+        type: "array"
+        items:
+          type: "string"
+          format: "uuid"
+  
+  Suggestions:
+    type: "array"
+    items:
+      type: "object"
+      properties:
+        author:
+          type: "string"
+          example: "Hello"
+        id: 
+          type: "string"
+          format: "uuid"
+        text:
+          type: "string"
+        timestamp:
+          type: "string"
+          format: "datetime"
+        title:
+          type: "string"
+  
+  SuggestionResponse:
+    type: "object"
+    properties:
+      author:
+        type: "string"
+        example: "Hello"
+      id: 
+        type: "string"
+        format: "uuid"
+      text:
+        type: "string"
+      timestamp:
+        type: "string"
+        format: "datetime"
+      title:
+        type: "string"
+  
+  Suggestion:
+    type: "object"
+    properties:
+      author:
+        type: "string"
+      text:
+        type: "string"
+      title:
+        type: "string"
+        
+  LoginCriteria:
+    type: "object"
+    properties:
+      cid:
+        type: "string"
+      password:
+        type: "string"
+      
+
+  LoginResponse:
+    type: "object"
+    properties:
+      token:
+        type: "string"
