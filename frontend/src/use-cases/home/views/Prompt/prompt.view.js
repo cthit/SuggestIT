@@ -69,9 +69,7 @@ const PromptView = ({ toastOpen, openDialog }) => {
                     upperLabel="Name/Nick"
                 />
                 <div>
-                    <DigitText.Text
-                        text={"By clicking Send I agree to"}
-                    />
+                    <DigitText.Text text={"By clicking Send I agree to"} />
                     <a
                         onClick={() => {
                             openDialog({
@@ -139,9 +137,6 @@ const mapDispatchToProps = dispatch => ({
         dispatch(DigitDialogActions.digitDialogCustomOpen(dialogData)),
 });
 
-export const Prompt = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(PromptView);
+export const Prompt = connect(mapStateToProps, mapDispatchToProps)(PromptView);
 
 export default Prompt;

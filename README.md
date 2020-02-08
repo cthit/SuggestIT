@@ -31,12 +31,7 @@ services:
     ports:
       - 5432:5432
 
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 1234:8080
-  app:
+  backend:
     image: cthit/suggestit-backend
     environment: 
       SUGGESTIT_POSTGRES_USER: suggestit
@@ -45,8 +40,7 @@ services:
       SUGGESTIT_POSTGRES_PORT: 5432
       SUGGESTIT_POSTGRES_DB: suggestit
       
-      PRIT_AUTH_KEY: <random long string>
-      PRIT_PASSWORD: <password for the user to access the backend>
+      AUTH_SECRET: <random long string>
     ports:
       - 5000:5000
 
@@ -59,4 +53,4 @@ services:
 ```
 
 ## Backend documentation
-The project is using [Swagger](http://editor.swagger.io/) to document the restful api When the backend is running, the documentation. This can be found at ```http://localhost:5000/swagger``` when the backend is running. You can also copy the backend/static/swagger.yml to [swagger editor](http://editor.swagger.io/) and view it there.
+The project is using [Swagger](http://swagger.io/) to document the restful api When the backend is running, the documentation. Copy the backend/static/swagger.yml to [swagger editor](http://editor.swagger.io/) or use the Swagger Viewer extension in VS Code to view it.

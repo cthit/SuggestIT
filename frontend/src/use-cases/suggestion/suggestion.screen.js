@@ -37,6 +37,11 @@ class Suggestion extends Component {
 
     getSuggestionById() {
         getSuggestion(this.state.id).then(res => {
+            if (!res) {
+                //Redirects to / if no suggestion could be found
+                window.location.href = "/";
+                return;
+            }
             this.setState({
                 author: res.data.author,
                 text: res.data.text,

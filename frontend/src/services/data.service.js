@@ -14,13 +14,13 @@ export const updateSuggestions = () =>
     axios
         .get(`${baseUrl}/`, {
             headers: {
-                Authorization: cookies.get("PRIT_AUTH_KEY"),
+                Authorization: cookies.get(authCookieName),
             },
         })
         .then(res => {
             suggestions.dispatch({
                 type: SET_SUGGESTIONS,
-                suggestion: res.data,
+                suggestion: res.data ? res.data : [],
             });
         })
         .catch(err => {
@@ -29,7 +29,7 @@ export const updateSuggestions = () =>
 
 export const getSuggestion = uuid =>
     axios
-        .get(`${baseUrl}/${uuid}`, {
+        .get(`${baseUrl}?Id=${uuid}`, {
             headers: {
                 Authorization: cookies.get(authCookieName),
             },
@@ -43,7 +43,7 @@ export const addSuggestion = _suggestion =>
 
 export const deleteSuggestion = uuid =>
     axios
-        .delete(`${baseUrl}/delete/${uuid}`, {
+        .delete(`${baseUrl}/delete?Id=${uuid}`, {
             headers: {
                 Authorization: cookies.get(authCookieName),
             },
@@ -65,10 +65,21 @@ export const deleteSuggestions = suggestions =>
         }
     );
 
-export const login = password =>
-    axios
-        .put(`${baseUrl}/authenticate`, { password: password })
-        .then(res => cookies.set(authCookieName, res.data.key));
+export const login = (cid, password) =>
+    new Promise((resolve, reject) =>
+        axios
+            .put(`${baseUrl}/authenticate`, {
+                cid: cid,
+                password: password,
+            })
+            .then(res => {
+                cookies.set(authCookieName, res.data.token);
+                resolve(true);
+            })
+            .catch(err => {
+                reject("CID and password did not match");
+            })
+    );
 
 export const checkLogin = () =>
     axios.get(`${baseUrl}/authenticate`, {

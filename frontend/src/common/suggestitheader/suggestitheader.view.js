@@ -9,7 +9,7 @@ import TextField from "@material-ui/core/TextField";
 import { connect } from "react-redux";
 import About from "./elements/about";
 import { login, checkLogin, logOut } from "../../services/data.service";
-import "./suggestitheader.style.css";
+import { ErrorBox } from "./suggestitheader.style.js";
 
 class SuggestITHeaderView extends Component {
     constructor(props) {
@@ -17,9 +17,9 @@ class SuggestITHeaderView extends Component {
         this.state = {
             renderMain: props.renderMain,
             isLoggedIn: false,
-            loginOpen: false,
+            cidTextField: "",
             passTextField: "",
-            passError: false,
+            loginErrorMessage: "",
             dialogOpen: props.dialogOpen,
         };
 
@@ -65,38 +65,26 @@ class SuggestITHeaderView extends Component {
                                         onClick={values =>
                                             this.state.dialogOpen({
                                                 title:
-                                                    "Enter P.R.I.T. password",
+                                                    "Enter CID and password for chalmers.it",
                                                 renderMain: () => (
-                                                    <TextField
-                                                        autoFocus
-                                                        margin="dense"
-                                                        id="name"
-                                                        label="Password"
-                                                        type="password"
-                                                        fullWidth
-                                                        error={
-                                                            this.state.passError
-                                                        }
-                                                        onChange={event =>
-                                                            this.setState({
-                                                                passTextField:
-                                                                    event.target
-                                                                        .value,
-                                                            })
-                                                        }
-                                                        onKeyPress={event => {
-                                                            if (
-                                                                event.key ===
-                                                                "Enter"
-                                                            )
-                                                                this.login();
-                                                        }}
-                                                        //Why not using DigitTextField, 1. No onKeyPress event, 2. No autofocus
-                                                    />
+                                                    <div>
+                                                        {this.state
+                                                            .loginErrorMessage ===
+                                                        "" ? null : (
+                                                            <ErrorBox>
+                                                                {
+                                                                    this.state
+                                                                        .loginErrorMessage
+                                                                }
+                                                            </ErrorBox>
+                                                        )}
+                                                        {this.cidTextField()}
+                                                        {this.passTextField()}
+                                                    </div>
                                                 ),
                                                 renderButtons: (
-                                                    cancel,
-                                                    confirm
+                                                    confirm,
+                                                    cancel
                                                 ) => (
                                                     <>
                                                         <DigitButton
@@ -133,13 +121,52 @@ class SuggestITHeaderView extends Component {
         );
     }
 
+    cidTextField = () => (
+        <TextField
+            autoFocus
+            margin="dense"
+            id="cid"
+            label="CID"
+            type="username"
+            fullWidth
+            onChange={event =>
+                this.setState({
+                    cidTextField: event.target.value,
+                })
+            }
+            onKeyPress={event => {
+                if (event.key === "Enter") this.login();
+            }}
+        />
+    );
+
+    passTextField = () => (
+        <TextField
+            margin="dense"
+            id="password"
+            label="Password"
+            type="password"
+            fullWidth
+            onChange={event =>
+                this.setState({
+                    passTextField: event.target.value,
+                })
+            }
+            onKeyPress={event => {
+                if (event.key === "Enter") this.login();
+            }}
+        />
+    );
+
     handleClose = () =>
         this.setState({
+            cidTextField: "",
             passTextField: "",
+            loginErrorMessage: "",
         });
 
     login = () => {
-        login(this.state.passTextField)
+        login(this.state.cidTextField, this.state.passTextField)
             .then(res => {
                 this.handleClose();
                 this.setState({
@@ -149,7 +176,7 @@ class SuggestITHeaderView extends Component {
             })
             .catch(error =>
                 this.setState({
-                    passError: true,
+                    loginErrorMessage: error,
                 })
             );
     };
