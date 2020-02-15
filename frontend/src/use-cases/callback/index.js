@@ -1,4 +1,4 @@
-import { Component } from "react";
+import React, { Component } from "react";
 import Cookies from "universal-cookie";
 const cookies = new Cookies();
 
@@ -9,6 +9,8 @@ class Callback extends Component {
         cookies.set("AUTH_TOKEN", params.get("token"));
         window.location.replace("/");
     }
+
+    render = () => <></>;
 }
 
 export default Callback;

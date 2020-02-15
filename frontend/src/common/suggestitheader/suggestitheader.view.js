@@ -5,11 +5,12 @@ import {
     DigitDialogActions,
     DigitLayout,
 } from "@cthit/react-digit-components";
-import TextField from "@material-ui/core/TextField";
 import { connect } from "react-redux";
 import About from "./elements/about";
-import { login, checkLogin, logOut } from "../../services/data.service";
-import { ErrorBox } from "./suggestitheader.style.js";
+import { checkLogin, logOut } from "../../services/data.service";
+
+const auth_url = process.env.REACT_APP_LDAP_AUTH_URL;
+const client_id = process.env.REACT_APP_CLIENT_ID;
 
 class SuggestITHeaderView extends Component {
     constructor(props) {
@@ -17,9 +18,6 @@ class SuggestITHeaderView extends Component {
         this.state = {
             renderMain: props.renderMain,
             isLoggedIn: false,
-            cidTextField: "",
-            passTextField: "",
-            loginErrorMessage: "",
             dialogOpen: props.dialogOpen,
         };
 
@@ -54,6 +52,8 @@ class SuggestITHeaderView extends Component {
                                                 onClick={cancel}
                                             />
                                         ),
+                                        onConfirm: (confirm, reject) =>
+                                            confirm(),
                                     })
                                 }
                             />
@@ -62,45 +62,10 @@ class SuggestITHeaderView extends Component {
                                     <DigitButton
                                         text="Login"
                                         outlined
-                                        onClick={values =>
-                                            this.state.dialogOpen({
-                                                title:
-                                                    "Enter CID and password for chalmers.it",
-                                                renderMain: () => (
-                                                    <div>
-                                                        {this.state
-                                                            .loginErrorMessage ===
-                                                        "" ? null : (
-                                                            <ErrorBox>
-                                                                {
-                                                                    this.state
-                                                                        .loginErrorMessage
-                                                                }
-                                                            </ErrorBox>
-                                                        )}
-                                                        {this.cidTextField()}
-                                                        {this.passTextField()}
-                                                    </div>
-                                                ),
-                                                renderButtons: (
-                                                    confirm,
-                                                    cancel
-                                                ) => (
-                                                    <>
-                                                        <DigitButton
-                                                            text={"cancel"}
-                                                            onClick={cancel}
-                                                        />
-                                                        <DigitButton
-                                                            text={"Confirm"}
-                                                            onClick={confirm}
-                                                        />
-                                                    </>
-                                                ),
-                                                onCancel: e => this.login(),
-                                                onConfirm: e =>
-                                                    this.handleClose(),
-                                            })
+                                        onClick={() =>
+                                            window.location.replace(
+                                                `${auth_url}/authenticate?client_id=${client_id}`
+                                            )
                                         }
                                     />
                                 </div>
@@ -120,66 +85,6 @@ class SuggestITHeaderView extends Component {
             />
         );
     }
-
-    cidTextField = () => (
-        <TextField
-            autoFocus
-            margin="dense"
-            id="cid"
-            label="CID"
-            type="username"
-            fullWidth
-            onChange={event =>
-                this.setState({
-                    cidTextField: event.target.value,
-                })
-            }
-            onKeyPress={event => {
-                if (event.key === "Enter") this.login();
-            }}
-        />
-    );
-
-    passTextField = () => (
-        <TextField
-            margin="dense"
-            id="password"
-            label="Password"
-            type="password"
-            fullWidth
-            onChange={event =>
-                this.setState({
-                    passTextField: event.target.value,
-                })
-            }
-            onKeyPress={event => {
-                if (event.key === "Enter") this.login();
-            }}
-        />
-    );
-
-    handleClose = () =>
-        this.setState({
-            cidTextField: "",
-            passTextField: "",
-            loginErrorMessage: "",
-        });
-
-    login = () => {
-        login(this.state.cidTextField, this.state.passTextField)
-            .then(res => {
-                this.handleClose();
-                this.setState({
-                    isLoggedIn: true,
-                });
-                window.location.reload(false);
-            })
-            .catch(error =>
-                this.setState({
-                    loginErrorMessage: error,
-                })
-            );
-    };
 }
 
 const mapStateToProps = (state, ownProps) => ({});

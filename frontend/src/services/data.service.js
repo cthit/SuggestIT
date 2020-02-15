@@ -4,11 +4,9 @@ import Cookies from "universal-cookie";
 import { SET_SUGGESTIONS } from "../redux/suggestionstore.actions";
 
 const cookies = new Cookies();
-const baseUrl =
-    process.env.NODE_ENV === "development"
-        ? "http://localhost:5000/api"
-        : "https://suggestit.chalmers.it/api";
-const authCookieName = "PRIT_AUTH_KEY";
+const baseUrl = process.env.REACT_APP_BACKEND_URL;
+
+const authCookieName = "AUTH_TOKEN";
 
 export const updateSuggestions = () =>
     axios
