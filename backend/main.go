@@ -49,7 +49,8 @@ func main() {
 	mux.HandleFunc("/api/", handleRoot)
 	mux.HandleFunc("/api/delete", auth(handleDelete))
 	mux.HandleFunc("/api/authenticate", authHandler)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) { fmt.Fprintln(w, "Hello") })
 
 	handler := c.Handler(mux)
-	log.Fatal(http.ListenAndServe(":5000", handler))
+	log.Fatal(http.ListenAndServe(":3001", handler))
 }

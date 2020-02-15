@@ -35,8 +35,12 @@ services:
       GOTIFY_URL: http://gotify:8080
       GOTIFY_PRE_SHARED_KEY: 123abcc
       ENABLE_EMAIL: "True"
+
+    volumes:
+      - ./backend/:/go/src/app
+    
     ports:
-      - 5000:5000
+      - 5000:3000
 
   frontend:
     build:
