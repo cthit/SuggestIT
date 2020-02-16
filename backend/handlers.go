@@ -8,120 +8,71 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-func handleRoot(w http.ResponseWriter, r *http.Request) {
-	defer recoverBadRequest(w)
+func handleInsert(c *gin.Context) {
 
-	switch r.Method {
-	case http.MethodPost:
-		handleInsert(w, r)
-	case http.MethodGet:
-		if r.URL.Query().Get("Id") != "" {
-			auth(handleGetSuggestion)(w, r)
-		} else {
-			auth(handleGetSuggestions)(w, r)
-		}
-	default:
-		err := fmt.Sprintf("Request method not supported: %s", r.Method)
-		panic(err)
-	}
-}
-
-func handleInsert(w http.ResponseWriter, r *http.Request) {
-	defer recoverBadRequest(w)
 	var s Suggestion
-	body, _ := ioutil.ReadAll(r.Body)
+	body, _ := ioutil.ReadAll(c.Request.Body)
 	if err := json.Unmarshal(body, &s); err != nil {
-		panic("Could not parse body")
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
 	}
 	if _, err := insertSuggestion(s); err != nil {
-		panic(err)
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
+	c.Status(http.StatusCreated)
 }
 
-func handleGetSuggestions(w http.ResponseWriter, r *http.Request) {
-	var res []Suggestion
-	var err error
-
-	if res, err = getSuggestions(); err != nil {
-		log.Println("Unable to get suggestions")
-		http.Error(w, "Somthing went wrong", http.StatusInternalServerError)
-	}
-
-	ss, _ := json.Marshal(res)
-	fmt.Fprint(w, string(ss))
+func handleGetSuggestions(c *gin.Context) {
+	res, _ := getSuggestions()
+	c.JSON(http.StatusOK, res)
 }
 
-func handleGetSuggestion(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("Id")
+func handleGetSuggestion(c *gin.Context) {
+	id := c.Query("Id")
 
 	var res Suggestion
 	var err error
 
 	if res, err = getSuggestion(id); err != nil {
 		log.Printf("Unable to get suggestion with id: %s\n", id)
-		http.Error(w, "Somthing went wrong", http.StatusInternalServerError)
+		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
 
-	s, _ := json.Marshal(res)
-	fmt.Fprint(w, string(s))
+	c.JSON(http.StatusOK, res)
 }
 
-func handleDelete(w http.ResponseWriter, r *http.Request) {
-	defer recoverBadRequest(w)
-
-	if r.Method == http.MethodDelete {
-		handleDeleteSuggestion(w, r)
-
-	} else if r.Method == http.MethodPut {
-		handleDeleteSuggestions(w, r)
-
-	} else {
-		http.Error(w, fmt.Sprintf("Request method not supported: %s", r.Method), http.StatusBadRequest)
-	}
-}
-
-func handleDeleteSuggestion(w http.ResponseWriter, r *http.Request) {
-	if err := deleteSuggestion(r.URL.Query().Get("Id")); err != nil {
-		panic(err)
+func handleDeleteSuggestion(c *gin.Context) {
+	if err := deleteSuggestion(c.Query("Id")); err != nil {
+		c.AbortWithError(http.StatusBadRequest, err)
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	c.Status(http.StatusNoContent)
 }
 
-func handleDeleteSuggestions(w http.ResponseWriter, r *http.Request) {
+func handleDeleteSuggestions(c *gin.Context) {
 	var suggestionIds struct {
 		Ids []string
 	}
 
-	body, _ := ioutil.ReadAll(r.Body)
+	body, _ := ioutil.ReadAll(c.Request.Body)
 	if err := json.Unmarshal(body, &suggestionIds); err != nil {
-		panic(fmt.Sprintf("Unable to parse body: %s", err))
+		c.AbortWithError(http.StatusBadRequest, err)
+		return
 	}
 
 	for _, id := range suggestionIds.Ids {
-		err := deleteSuggestion(id)
-
-		if err != nil {
-			panic(err)
-		}
+		deleteSuggestion(id)
 	}
 
-	w.WriteHeader(http.StatusNoContent)
-
-}
-
-func recoverBadRequest(w http.ResponseWriter) {
-	if rec := recover(); rec != nil {
-		log.Println(rec)
-		http.Error(w, fmt.Sprintf("%s", rec), http.StatusBadRequest)
-	}
+	c.Status(http.StatusNoContent)
 }

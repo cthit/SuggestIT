@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"time"
 
-	"github.com/rs/cors"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 
 	_ "github.com/lib/pq"
 )
@@ -39,17 +39,19 @@ func main() {
 
 	createSuggestionTable()
 
-	mux := http.NewServeMux()
-	c := cors.New(cors.Options{
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedOrigins:   []string{"https://suggestit.chalmers.it", "http://localhost:3000"},
-		AllowedHeaders:   []string{"Authorization", "Content-Type"},
-		AllowCredentials: true})
+	log.Println("Starting")
+	router := gin.Default()
+	router.Use(cors.New(cors.Config{
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowOrigins:     []string{"https://suggestit.chalmers.it", "http://localhost:3000"},
+		AllowHeaders:     []string{"Content-Type", "Authorization"},
+		AllowCredentials: true}))
 
-	mux.HandleFunc("/api/", handleRoot)
-	mux.HandleFunc("/api/delete", auth(handleDelete))
-	mux.HandleFunc("/api/authenticate", auth(func(w http.ResponseWriter, r *http.Request) { fmt.Fprintln(w, "OK") }))
+	router.DELETE("/api/delete", auth(handleDeleteSuggestion))
+	router.PUT("/api/delete", auth(handleDeleteSuggestions))
+	router.GET("/api/authenticate", auth(func(c *gin.Context) {}))
+	router.GET("/api/", auth(handleGetSuggestions))
+	router.POST("/api/", handleInsert)
 
-	handler := c.Handler(mux)
-	log.Fatal(http.ListenAndServe(":3001", handler))
+	router.Run(":3001")
 }

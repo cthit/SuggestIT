@@ -1,10 +1,12 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 	"os"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 )
 
 var (
@@ -18,14 +20,14 @@ type User struct {
 	jwt.StandardClaims
 }
 
-func auth(h func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if token := r.Header.Get("Authorization"); !ValidUser(token) {
-			http.Error(w, "You are not P.R.I.T.", http.StatusUnauthorized)
+func auth(h func(*gin.Context)) func(*gin.Context) {
+	return func(c *gin.Context) {
+		if token := c.GetHeader("Authorization"); !ValidUser(token) {
+			c.AbortWithError(http.StatusUnauthorized, errors.New("You are not P.R.I.T."))
 			return
 		}
 
-		h(w, r)
+		h(c)
 	}
 }
 

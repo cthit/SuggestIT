@@ -63,27 +63,24 @@ export const deleteSuggestions = suggestions =>
         }
     );
 
-export const login = (cid, password) =>
-    new Promise((resolve, reject) =>
-        axios
-            .put(`${baseUrl}/authenticate`, {
-                cid: cid,
-                password: password,
-            })
-            .then(res => {
-                cookies.set(authCookieName, res.data.token);
-                resolve(true);
-            })
-            .catch(err => {
-                reject("CID and password did not match");
-            })
-    );
-
 export const checkLogin = () =>
-    axios.get(`${baseUrl}/authenticate`, {
-        headers: {
-            Authorization: cookies.get(authCookieName),
-        },
+    new Promise((resolve, reject) => {
+        if (!cookies.get(authCookieName)) {
+            reject(false);
+            return;
+        }
+
+        axios
+            .get(`${baseUrl}/authenticate`, {
+                headers: {
+                    Authorization: cookies.get(authCookieName),
+                },
+            })
+            .then(val => resolve(val))
+            .catch(err => {
+                logOut();
+                reject(err);
+            });
     });
 
 export const logOut = () => cookies.remove(authCookieName);
