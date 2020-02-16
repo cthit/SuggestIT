@@ -2,6 +2,7 @@ import { suggestions } from "../redux/SuggestionStore";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import { SET_SUGGESTIONS } from "../redux/suggestionstore.actions";
+import * as jwt from "jsonwebtoken";
 
 const cookies = new Cookies();
 const baseUrl = process.env.REACT_APP_BACKEND_URL;
@@ -66,7 +67,7 @@ export const deleteSuggestions = suggestions =>
 export const checkLogin = () =>
     new Promise((resolve, reject) => {
         if (!cookies.get(authCookieName)) {
-            reject(false);
+            reject(undefined);
             return;
         }
 
@@ -78,8 +79,15 @@ export const checkLogin = () =>
             })
             .then(val => resolve(val))
             .catch(err => {
+                let token = jwt.decode(cookies.get(authCookieName));
                 logOut();
-                reject(err);
+                if (!token || !token.groups || token.groups.includes("prit")) {
+                    reject(undefined);
+                }
+                console.log(
+                    "You must be a member of P.R.I.T. to read suggestions"
+                );
+                reject("You must be a member of P.R.I.T. to read suggestions");
             });
     });
 

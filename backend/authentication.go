@@ -43,7 +43,7 @@ func ValidUser(token string) bool {
 		return false
 	}
 
-	return contains(claims.Groups, "digit")
+	return contains(claims.Groups, "prit")
 }
 
 func contains(elements []string, key string) bool {
