@@ -4,12 +4,14 @@ import {
     DigitButton,
     DigitDialogActions,
     DigitLayout,
+    DigitText,
 } from "@cthit/react-digit-components";
-import TextField from "@material-ui/core/TextField";
 import { connect } from "react-redux";
 import About from "./elements/about";
-import { login, checkLogin, logOut } from "../../services/data.service";
-import "./suggestitheader.style.css";
+import { checkLogin, logOut } from "../../services/data.service";
+
+const auth_url = process.env.REACT_APP_LDAP_AUTH_URL;
+const client_id = process.env.REACT_APP_CLIENT_ID;
 
 class SuggestITHeaderView extends Component {
     constructor(props) {
@@ -17,9 +19,6 @@ class SuggestITHeaderView extends Component {
         this.state = {
             renderMain: props.renderMain,
             isLoggedIn: false,
-            loginOpen: false,
-            passTextField: "",
-            passError: false,
             dialogOpen: props.dialogOpen,
         };
 
@@ -30,7 +29,16 @@ class SuggestITHeaderView extends Component {
                 })
             )
             .catch(error => {
-                //User might not be logged in
+                if (error == undefined) return;
+
+                props.dialogOpen({
+                    title: "",
+                    renderMain: () => <DigitText.Text text={error} />,
+                    renderButtons: (confirm, cancel) => (
+                        <DigitButton text="Close" onClick={cancel} />
+                    ),
+                    onConfirm: (confirm, reject) => confirm(),
+                });
             });
     }
 
@@ -54,6 +62,8 @@ class SuggestITHeaderView extends Component {
                                                 onClick={cancel}
                                             />
                                         ),
+                                        onConfirm: (confirm, reject) =>
+                                            confirm(),
                                     })
                                 }
                             />
@@ -62,57 +72,10 @@ class SuggestITHeaderView extends Component {
                                     <DigitButton
                                         text="Login"
                                         outlined
-                                        onClick={values =>
-                                            this.state.dialogOpen({
-                                                title:
-                                                    "Enter P.R.I.T. password",
-                                                renderMain: () => (
-                                                    <TextField
-                                                        autoFocus
-                                                        margin="dense"
-                                                        id="name"
-                                                        label="Password"
-                                                        type="password"
-                                                        fullWidth
-                                                        error={
-                                                            this.state.passError
-                                                        }
-                                                        onChange={event =>
-                                                            this.setState({
-                                                                passTextField:
-                                                                    event.target
-                                                                        .value,
-                                                            })
-                                                        }
-                                                        onKeyPress={event => {
-                                                            if (
-                                                                event.key ===
-                                                                "Enter"
-                                                            )
-                                                                this.login();
-                                                        }}
-                                                        //Why not using DigitTextField, 1. No onKeyPress event, 2. No autofocus
-                                                    />
-                                                ),
-                                                renderButtons: (
-                                                    cancel,
-                                                    confirm
-                                                ) => (
-                                                    <>
-                                                        <DigitButton
-                                                            text={"cancel"}
-                                                            onClick={cancel}
-                                                        />
-                                                        <DigitButton
-                                                            text={"Confirm"}
-                                                            onClick={confirm}
-                                                        />
-                                                    </>
-                                                ),
-                                                onCancel: e => this.login(),
-                                                onConfirm: e =>
-                                                    this.handleClose(),
-                                            })
+                                        onClick={() =>
+                                            window.location.replace(
+                                                `${auth_url}/authenticate?client_id=${client_id}`
+                                            )
                                         }
                                     />
                                 </div>
@@ -132,27 +95,6 @@ class SuggestITHeaderView extends Component {
             />
         );
     }
-
-    handleClose = () =>
-        this.setState({
-            passTextField: "",
-        });
-
-    login = () => {
-        login(this.state.passTextField)
-            .then(res => {
-                this.handleClose();
-                this.setState({
-                    isLoggedIn: true,
-                });
-                window.location.reload(false);
-            })
-            .catch(error =>
-                this.setState({
-                    passError: true,
-                })
-            );
-    };
 }
 
 const mapStateToProps = (state, ownProps) => ({});

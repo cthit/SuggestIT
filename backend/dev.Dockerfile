@@ -1,23 +1,10 @@
-FROM python:3
+FROM golang:latest
 
-RUN mkdir /usr/src/app
-
-WORKDIR /usr/src/app
-
-COPY requirements.txt .
-
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
-
+WORKDIR /go/src/app
 COPY . .
 
-ENV SUGGESTIT_POSTGRES_USER suggestit
-ENV SUGGESTIT_POSTGRES_PASSWORD password
-ENV SUGGESTIT_POSTGRES_HOST db
-ENV SUGGESTIT_POSTGRES_PORT 5432
-ENV SUGGESTIT_POSTGRES_DB suggestit
-ENV PYTHONUNBUFFERED 0
+RUN go get -d -v
+RUN go install -v
+RUN go get github.com/codegangsta/gin
 
-EXPOSE 5000
-
-CMD ["sh", "start.sh"]
+CMD ["gin", "-i", "run" ,"main.go"]

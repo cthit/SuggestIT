@@ -2,25 +2,24 @@ import { suggestions } from "../redux/SuggestionStore";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import { SET_SUGGESTIONS } from "../redux/suggestionstore.actions";
+import * as jwt from "jsonwebtoken";
 
 const cookies = new Cookies();
-const baseUrl =
-    process.env.NODE_ENV === "development"
-        ? "http://localhost:5000/api"
-        : "https://suggestit.chalmers.it/api";
-const authCookieName = "PRIT_AUTH_KEY";
+const baseUrl = process.env.REACT_APP_BACKEND_URL;
+
+const authCookieName = "AUTH_TOKEN";
 
 export const updateSuggestions = () =>
     axios
         .get(`${baseUrl}/`, {
             headers: {
-                Authorization: cookies.get("PRIT_AUTH_KEY"),
+                Authorization: cookies.get(authCookieName),
             },
         })
         .then(res => {
             suggestions.dispatch({
                 type: SET_SUGGESTIONS,
-                suggestion: res.data,
+                suggestion: res.data ? res.data : [],
             });
         })
         .catch(err => {
@@ -29,7 +28,7 @@ export const updateSuggestions = () =>
 
 export const getSuggestion = uuid =>
     axios
-        .get(`${baseUrl}/${uuid}`, {
+        .get(`${baseUrl}?Id=${uuid}`, {
             headers: {
                 Authorization: cookies.get(authCookieName),
             },
@@ -43,7 +42,7 @@ export const addSuggestion = _suggestion =>
 
 export const deleteSuggestion = uuid =>
     axios
-        .delete(`${baseUrl}/delete/${uuid}`, {
+        .delete(`${baseUrl}/delete?Id=${uuid}`, {
             headers: {
                 Authorization: cookies.get(authCookieName),
             },
@@ -65,16 +64,31 @@ export const deleteSuggestions = suggestions =>
         }
     );
 
-export const login = password =>
-    axios
-        .put(`${baseUrl}/authenticate`, { password: password })
-        .then(res => cookies.set(authCookieName, res.data.key));
-
 export const checkLogin = () =>
-    axios.get(`${baseUrl}/authenticate`, {
-        headers: {
-            Authorization: cookies.get(authCookieName),
-        },
+    new Promise((resolve, reject) => {
+        if (!cookies.get(authCookieName)) {
+            reject(undefined);
+            return;
+        }
+
+        axios
+            .get(`${baseUrl}/authenticate`, {
+                headers: {
+                    Authorization: cookies.get(authCookieName),
+                },
+            })
+            .then(val => resolve(val))
+            .catch(err => {
+                let token = jwt.decode(cookies.get(authCookieName));
+                logOut();
+                if (!token || !token.groups || token.groups.includes("prit")) {
+                    reject(undefined);
+                }
+                console.log(
+                    "You must be a member of P.R.I.T. to read suggestions"
+                );
+                reject("You must be a member of P.R.I.T. to read suggestions");
+            });
     });
 
 export const logOut = () => cookies.remove(authCookieName);

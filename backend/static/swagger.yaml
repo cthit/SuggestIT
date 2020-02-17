@@ -16,7 +16,7 @@ paths:
     put:
       tags:
       - "api"
-      summary: "Get authentication key"
+      summary: "Get authentication token"
       consumes:
       - "application/json"
       produces:
@@ -32,7 +32,7 @@ paths:
         401:
           description: "You are not P.R.I.T."
         200:
-          description: "Use the key to authenticate"
+          description: "Use the token to authenticate"
           schema:
             $ref: "#/definitions/LoginResponse"
   /api:
@@ -45,9 +45,14 @@ paths:
       parameters:
       - in: "header"
         name: "Authorization"
-        description: "the key from /api/authorization"
+        description: "the token from /api/authorization"
         required: true
         type: "string"
+      - in: "query"
+        name: "Id"
+        description: "requesting one specific suggestion"
+        type: "string"
+        required: false
       responses:
         401:
           description: "You are not P.R.I.T."
@@ -55,7 +60,6 @@ paths:
           description: "List of all suggestions in the suggestion box"
           schema:
             $ref: "#/definitions/Suggestions"
-  /api/:
     post:
       tags:
       - "api"
@@ -65,42 +69,20 @@ paths:
       parameters:
       - in: "header"
         name: "Authorization"
-        description: "the key from /api/authorization"
+        description: "the token from /api/authorization"
         required: true
         type: "string"
       - in: "body"
         name: "body"
-        description: "the key from /api/authorization"
+        description: "the token from /api/authorization"
         required: true
         schema:
           $ref: "#/definitions/Suggestion"
       responses:
         200:
           description: "Suggestion created"
-          
-  /api/{uuid}:
-    get:
-      tags:
-      - "api"
-      summary: "Get specific suggestion"
-      parameters:
-      - in: "header"
-        name: "Authorization"
-        description: "the key from /api/authorization"
-        required: true
-        type: "string"
-      - in: "path"
-        name: "uuid"
-        description: "The uuid of the suggestion"
-        required: true
-        type: "string"
-      responses:
-        200:
-          description: "One suggestion"
-          schema:
-            $ref: "#/definitions/SuggestionResponse"
     
-  /api/delete/{uuid}:
+  /api/delete:
     delete:
       tags:
       - "api"
@@ -108,26 +90,26 @@ paths:
       parameters:
       - in: "header"
         name: "Authorization"
-        description: "the key from /api/authorization"
+        description: "the token from /api/authorization"
         required: true
         type: "string"
-      - in: "path"
-        name: "uuid"
+      - in: "query"
+        name: "Id"
         type: "string"
         required: true
       responses:
         200:
           description: "null"
           
-  /api/delete:
-    put:
+  /api/deletemult:
+    delete:
       tags:
       - "api"
       summary: "Delete multiple suggestions"
       parameters:
       - in: "header"
         name: "Authorization"
-        description: "the key from /api/authorization"
+        description: "the token from /api/authorization"
         required: true
         type: "string"
       - in: "body"
@@ -200,6 +182,8 @@ definitions:
   LoginCriteria:
     type: "object"
     properties:
+      cid:
+        type: "string"
       password:
         type: "string"
       
@@ -207,5 +191,5 @@ definitions:
   LoginResponse:
     type: "object"
     properties:
-      key:
+      token:
         type: "string"

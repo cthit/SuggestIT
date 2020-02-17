@@ -15,24 +15,29 @@ services:
     restart: always
     ports:
       - 8080:8080
-  app:
+
+  backend:
     build:
       context: ./backend/
       dockerfile: dev.Dockerfile
     environment: 
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_HOST: localhost
-      POSTGRES_PORT: 5432
-      POSTGRES_DB: postgres
-      
-      PRIT_AUTH_KEY: 123456789
-      PRIT_PASSWORD: password
+      SUGGESTIT_POSTGRES_USER: suggestit
+      SUGGESTIT_POSTGRES_PASSWORD: password
+      SUGGESTIT_POSTGRES_HOST: db
+      SUGGESTIT_POSTGRES_PORT: 5432
+      SUGGESTIT_POSTGRES_DB: suggestit
+
+      AUTH_SECRET: hellotherethisisasecret
 
       GOTIFY_URL: http://gotify:8080
       GOTIFY_PRE_SHARED_KEY: 123abcc
+      ENABLE_EMAIL: "True"
+
+    volumes:
+      - ./backend/:/go/src/app
+    
     ports:
-      - 5000:5000
+      - 5000:3000
 
   frontend:
     build:
@@ -41,9 +46,11 @@ services:
     ports:
       - 3000:3000
     environment: 
-      BACKEND_URL: http://localhost:5000
+      REACT_APP_BACKEND_URL: http://localhost:5000/api
+      REACT_APP_CLIENT_ID: thisisaclientid
+      REACT_APP_LDAP_AUTH_URL: https://ldap-auth.chalmers.it
     volumes:
-      - ./frontend:/usr/src/app/
+      - ./frontend/src:/usr/src
 
   gotify:
     image: cthit/gotify:latest

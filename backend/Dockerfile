@@ -1,18 +1,12 @@
-FROM python:3
+FROM golang:latest AS build
 
-RUN mkdir /usr/src/app
-
-WORKDIR /usr/src/app
-
-COPY requirements.txt .
-
-RUN pip install --no-cache-dir -r requirements.txt
-
+WORKDIR /go/src/app
 COPY . .
 
-ENV PYTHONUNBUFFERED 0
-ENV PROD true
+RUN go get -d -v
+RUN go install -v
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
 
-EXPOSE 5000
-
-CMD ["sh", "start.sh"]
+FROM scratch AS run
+COPY --from=build /go/src/app/main .
+CMD ["./main"]

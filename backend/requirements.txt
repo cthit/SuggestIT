@@ -1,7 +1,0 @@
-psycopg2
-flask
-flask-restful
-pony
-requests
-flask-cors
-flask_swagger_ui
