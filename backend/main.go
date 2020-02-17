@@ -50,6 +50,7 @@ func main() {
 	router.DELETE("/api/delete", auth(handleDeleteSuggestion))
 	router.PUT("/api/delete", auth(handleDeleteSuggestions))
 	router.GET("/api/authenticate", auth(func(c *gin.Context) {}))
+	router.GET("/api/clientid", getClientId)
 	router.GET("/api/", auth(handleGetSuggestions))
 	router.POST("/api/", handleInsert)
 

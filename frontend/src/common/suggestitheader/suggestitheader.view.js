@@ -8,10 +8,7 @@ import {
 } from "@cthit/react-digit-components";
 import { connect } from "react-redux";
 import About from "./elements/about";
-import { checkLogin, logOut } from "../../services/data.service";
-
-const auth_url = process.env.REACT_APP_LDAP_AUTH_URL;
-const client_id = process.env.REACT_APP_CLIENT_ID;
+import { checkLogin, logOut, loginRedirect } from "../../services/data.service";
 
 class SuggestITHeaderView extends Component {
     constructor(props) {
@@ -72,11 +69,7 @@ class SuggestITHeaderView extends Component {
                                     <DigitButton
                                         text="Login"
                                         outlined
-                                        onClick={() =>
-                                            window.location.replace(
-                                                `${auth_url}/authenticate?client_id=${client_id}`
-                                            )
-                                        }
+                                        onClick={() => loginRedirect()}
                                     />
                                 </div>
                             ) : (

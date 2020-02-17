@@ -11,9 +11,19 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
+
+func getClientId(c *gin.Context) {
+	var id struct {
+		Client_id string `json:"client_id"`
+	}
+	id.Client_id = os.Getenv("CLIENT_ID")
+
+	c.JSON(http.StatusOK, id)
+}
 
 func handleInsert(c *gin.Context) {
 
