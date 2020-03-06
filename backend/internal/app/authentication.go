@@ -11,6 +11,7 @@ import (
 
 var (
 	auth_secret = []byte(os.Getenv("AUTH_SECRET"))
+	allowed_group = os.Getenv("ALLOWED_GROUP")
 )
 
 type User struct {
@@ -43,7 +44,7 @@ func ValidUser(token string) bool {
 		return false
 	}
 
-	return contains(claims.Groups, "prit")
+	return contains(claims.Groups, allowed_group)
 }
 
 func contains(elements []string, key string) bool {

@@ -27,6 +27,7 @@ services:
       SUGGESTIT_POSTGRES_PORT: 5432
       SUGGESTIT_POSTGRES_DB: suggestit
 
+      ALLOWED_GROUP: digit
       AUTH_SECRET: hellotherethisisasecret
       CLIENT_ID: thisisaclientid
 

@@ -1,6 +1,5 @@
-import React, { Component, useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import './SuggestionBoard.css';
-import { suggestions } from '../../../../redux/SuggestionStore';
 import SuggestionItem from '../../../common/SuggestionItem';
 import { updateSuggestions, deleteSuggestions } from '../../../../services/data.service';
 import { DigitButton, DigitText, DigitDialogActions } from '@cthit/react-digit-components';
