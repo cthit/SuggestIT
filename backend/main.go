@@ -27,7 +27,6 @@ func main() {
 	}
 	defer app.CloseDB()
 
-
 	app.CreateSuggestionTable()
 
 	log.Println("Starting")
@@ -42,6 +41,7 @@ func main() {
 	router.PUT("/api/delete", app.Auth(app.HandleDeleteSuggestions))
 	router.GET("/api/authenticate", app.Auth(func(c *gin.Context) {}))
 	router.GET("/api/clientid", app.GetClientId)
+	router.GET("/api/suggestion", app.HandleGetSuggestion)
 	router.GET("/api/", app.Auth(app.HandleGetSuggestions))
 	router.POST("/api/", app.HandleInsert)
 
