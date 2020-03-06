@@ -1,33 +1,24 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from 'react';
 
-import "./home.css";
-import Prompt from "./views/Prompt/prompt.view";
-import SuggestionBoard from "./views/SuggestionBoard/SuggestionBoard";
-import { checkLogin } from "../../services/data.service";
+import './home.css';
+import Prompt from './views/Prompt/prompt.view';
+import SuggestionBoard from './views/SuggestionBoard/SuggestionBoard';
+import { checkLogin } from '../../services/data.service';
 
-class Home extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            suggestionboard: <div></div>,
-            description: "",
-        };
+const Home = () => {
+	const [ suggestionboard, setSuggestionBoard ] = useState(<div />);
 
-        checkLogin().then(res =>
-            this.setState({
-                suggestionboard: <SuggestionBoard />,
-            })
-        );
-    }
+	useEffect(() => {
+		checkLogin().then(() => setSuggestionBoard(<SuggestionBoard />));
+		return () => {};
+	}, []);
 
-    render() {
-        return (
-            <div className="main">
-                <Prompt />
-                {this.state.suggestionboard}
-            </div>
-        );
-    }
-}
+	return (
+		<div className="main">
+			<Prompt />
+			{suggestionboard}
+		</div>
+	);
+};
 
 export default Home;
