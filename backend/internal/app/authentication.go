@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"errors"
@@ -20,7 +20,7 @@ type User struct {
 	jwt.StandardClaims
 }
 
-func auth(h func(*gin.Context)) func(*gin.Context) {
+func Auth(h func(*gin.Context)) func(*gin.Context) {
 	return func(c *gin.Context) {
 		if token := c.GetHeader("Authorization"); !ValidUser(token) {
 			c.AbortWithError(http.StatusUnauthorized, errors.New("You are not P.R.I.T."))

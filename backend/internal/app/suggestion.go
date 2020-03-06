@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"database/sql"
@@ -14,7 +14,7 @@ type Suggestion struct {
 	Author    string `json:"author"`
 }
 
-func createSuggestionTable() (sql.Result, error) {
+func CreateSuggestionTable() (sql.Result, error) {
 	db.Exec(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`)
 	return db.Exec(`
 		CREATE TABLE IF NOT EXISTS suggestion (

@@ -1,4 +1,4 @@
-package main
+package app
 
 /**
 * Pit falls:
@@ -16,7 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func getClientId(c *gin.Context) {
+func GetClientId(c *gin.Context) {
 	var id struct {
 		Client_id string `json:"client_id"`
 	}
@@ -25,7 +25,7 @@ func getClientId(c *gin.Context) {
 	c.JSON(http.StatusOK, id)
 }
 
-func handleInsert(c *gin.Context) {
+func HandleInsert(c *gin.Context) {
 
 	var s Suggestion
 	body, _ := ioutil.ReadAll(c.Request.Body)
@@ -41,12 +41,12 @@ func handleInsert(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
-func handleGetSuggestions(c *gin.Context) {
+func HandleGetSuggestions(c *gin.Context) {
 	res, _ := getSuggestions()
 	c.JSON(http.StatusOK, res)
 }
 
-func handleGetSuggestion(c *gin.Context) {
+func HandleGetSuggestion(c *gin.Context) {
 	id := c.Query("Id")
 
 	var res Suggestion
@@ -61,7 +61,7 @@ func handleGetSuggestion(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
-func handleDeleteSuggestion(c *gin.Context) {
+func HandleDeleteSuggestion(c *gin.Context) {
 	if err := deleteSuggestion(c.Query("Id")); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 	}
@@ -69,7 +69,7 @@ func handleDeleteSuggestion(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func handleDeleteSuggestions(c *gin.Context) {
+func HandleDeleteSuggestions(c *gin.Context) {
 	var suggestionIds struct {
 		Ids []string
 	}
