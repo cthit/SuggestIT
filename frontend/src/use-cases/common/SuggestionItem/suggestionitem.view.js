@@ -1,32 +1,15 @@
 import React, { useState, useContext } from 'react';
-import {
-	DigitNavLink,
-	DigitText,
-	DigitIconButton,
-	DigitToastActions,
-	DigitLayout
-} from '@cthit/react-digit-components';
+import { DigitNavLink, DigitText, DigitIconButton, DigitLayout, useDigitToast } from '@cthit/react-digit-components';
 import './suggestionitem.style.css';
 import { translateTimestamp } from '../methods';
 import { Clear, ExpandMore, ExpandLess } from '@material-ui/icons';
 import { updateSuggestions, deleteSuggestion, addSuggestion } from '../../../services/data.service';
-import { connect } from 'react-redux';
 import { SuggestionsContext } from '../../../common/suggestion-context';
 
-/*
-  For this component to work you need to have DigitProvider around it and a DigitToast in 
-  
-  Minimal example:
-  <DigitProviders>
-    <DigitToast />
-    <SuggestionItem />
-  </DigitProviders>
-  */
-
-const SuggestionItemView = ({ suggestion, ts, ...props }) => {
+const SuggestionItem = ({ suggestion, ts, ...props }) => {
 	const [ text, dispatchToggle ] = useState(null);
-	const toastOpen = props['toastOpen'];
-	const [ suggestions, setSuggestions ] = useContext(SuggestionsContext);
+	const [ toastOpen ] = useDigitToast({ duration: 5000 });
+	const [ , setSuggestions ] = useContext(SuggestionsContext);
 
 	const toggleText = () => {
 		dispatchToggle(text ? null : <DigitText.Subtitle className="suggestionText" text={suggestion.text} />);
@@ -35,7 +18,6 @@ const SuggestionItemView = ({ suggestion, ts, ...props }) => {
 	const deleteWithToast = () => {
 		toastOpen({
 			text: 'The suggestion has been deleted',
-			duration: 5000,
 			actionText: 'Undo',
 			actionHandler: () => {
 				addSuggestion(suggestion).then((res) => updateSuggestions(setSuggestions));
@@ -67,13 +49,5 @@ const SuggestionItemView = ({ suggestion, ts, ...props }) => {
 		</div>
 	);
 };
-
-const mapStateToProps = (state, ownProps) => ({});
-
-const mapDispatchToProps = (dispatch) => ({
-	toastOpen: (toastData) => dispatch(DigitToastActions.digitToastOpen(toastData))
-});
-
-export const SuggestionItem = connect(mapStateToProps, mapDispatchToProps)(SuggestionItemView);
 
 export default SuggestionItem;

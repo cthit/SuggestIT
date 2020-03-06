@@ -1,20 +1,49 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import './SuggestionBoard.css';
 import SuggestionItem from '../../../common/SuggestionItem';
 import { updateSuggestions, deleteSuggestions } from '../../../../services/data.service';
-import { DigitButton, DigitText, DigitDialogActions } from '@cthit/react-digit-components';
-import { connect } from 'react-redux';
+import { DigitButton, DigitText, useDigitDialog } from '@cthit/react-digit-components';
 import { SuggestionsContext } from '../../../../common/suggestion-context';
 
-const SuggestionBoardView = ({ dialogOpen }) => {
+const SuggestionBoard = () => {
+	const [ dialogOpen ] = useDigitDialog();
 	const [ clearButton, setClearButton ] = useState(null);
 	const [ suggestions, setSuggestions ] = useContext(SuggestionsContext);
 
-	useEffect(() => {
-		console.log('Updating suggestions');
-		updateSuggestions(setSuggestions);
-		return () => {};
-	}, []);
+	useEffect(
+		() => {
+			console.log('Updating suggestions');
+			updateSuggestions(setSuggestions);
+			return () => {};
+		},
+		[ setSuggestions ]
+	);
+
+	const clearSuggestions = useCallback(
+		() => deleteSuggestions(suggestions).then((res) => updateSuggestions(setSuggestions)),
+		[ suggestions, setSuggestions ]
+	);
+
+	const getClearButton = useCallback(
+		() => (
+			<DigitButton
+				className="clear-button"
+				text="Clear suggestions"
+				primary
+				raised
+				onClick={() => {
+					dialogOpen({
+						title: 'Are you sure',
+						description: `Are you sure you want to delete ${suggestions.length} suggestions?`,
+						cancelButtonText: 'No',
+						confirmButtonText: 'Yes',
+						onConfirm: () => clearSuggestions()
+					});
+				}}
+			/>
+		),
+		[ suggestions, clearSuggestions, dialogOpen ]
+	);
 
 	useEffect(
 		() => {
@@ -23,30 +52,8 @@ const SuggestionBoardView = ({ dialogOpen }) => {
 			);
 			return () => {};
 		},
-		[ suggestions ]
+		[ getClearButton, setClearButton, suggestions ]
 	);
-
-	const getClearButton = () => (
-		<DigitButton
-			className="clear-button"
-			text="Clear suggestions"
-			primary
-			raised
-			onClick={() => {
-				dialogOpen({
-					title: 'Are you sure',
-					description: `Are you sure you want to delete ${suggestions.length} suggestions?`,
-					cancelButtonText: 'No',
-					confirmButtonText: 'Yes',
-					onConfirm: () => clearSuggestions()
-				});
-			}}
-		/>
-	);
-
-	const clearSuggestions = () => {
-		deleteSuggestions(suggestions).then((res) => updateSuggestions(setSuggestions));
-	};
 
 	return (
 		<div>
@@ -57,13 +64,5 @@ const SuggestionBoardView = ({ dialogOpen }) => {
 		</div>
 	);
 };
-
-const mapStateToProps = (state, ownProps) => ({});
-
-const mapDispatchToProps = (dispatch) => ({
-	dialogOpen: (dialogData) => dispatch(DigitDialogActions.digitDialogOpen(dialogData))
-});
-
-const SuggestionBoard = connect(mapStateToProps, mapDispatchToProps)(SuggestionBoardView);
 
 export default SuggestionBoard;
