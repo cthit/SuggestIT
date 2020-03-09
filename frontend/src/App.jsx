@@ -10,16 +10,16 @@ import Callback from './use-cases/callback';
 import './App.css';
 
 const App = () => (
-	<SuggestionsProvider>
-		<BrowserRouter>
-			<Switch>
-				<Route exact path="/" component={Home} />
-				<Route path="/suggestion/:id" component={Suggestion} />
-				<Route path="/callback" component={Callback} />
-				<Route path="/" component={NotFound} />
-			</Switch>
-		</BrowserRouter>
-	</SuggestionsProvider>
+    <SuggestionsProvider>
+        <BrowserRouter>
+            <Switch>
+                <Route exact path="/" component={Home} />
+                <Route path="/suggestion/:id" component={Suggestion} />
+                <Route path="/callback" component={Callback} />
+                <Route path="/" component={NotFound} />
+            </Switch>
+        </BrowserRouter>
+    </SuggestionsProvider>
 );
 
 export default App;
