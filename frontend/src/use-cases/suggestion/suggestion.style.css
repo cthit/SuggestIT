@@ -1,4 +1,4 @@
-.suggestionCard{
+.suggestionCard {
     margin: 16px;
     position: relative;
     padding: 16px 0px 16px 16px;
@@ -9,13 +9,14 @@
     margin-left: 0%;
     left: 50%;
     transform: translate(-50%);
-    box-shadow: rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px, rgba(0, 0, 0, 0.2) 0px 3px 1px -2px;
+    box-shadow: rgba(0, 0, 0, 0.14) 0px 2px 2px 0px,
+        rgba(0, 0, 0, 0.12) 0px 1px 5px 0px, rgba(0, 0, 0, 0.2) 0px 3px 1px -2px;
 }
 
-.grayText{
+.grayText {
     -webkit-text-fill-color: gray;
 }
 
-.main{
+.main {
     margin-top: 5em;
 }

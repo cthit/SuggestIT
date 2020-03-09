@@ -1,10 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App.jsx';
-import * as serviceWorker from './serviceWorker';
-import { DigitProviders, DigitToast, DigitDialog } from '@cthit/react-digit-components';
-import { Route } from 'react-router';
-import SuggestITHeader from './common/suggestitheader';
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./App.jsx";
+import * as serviceWorker from "./serviceWorker";
+import {
+    DigitProviders,
+    DigitToast,
+    DigitDialog,
+} from "@cthit/react-digit-components";
+import { Route } from "react-router";
+import SuggestITHeader from "./common/suggestitheader";
 ReactDOM.render(
     <DigitProviders
         children={
@@ -15,7 +19,7 @@ ReactDOM.render(
             </div>
         }
     />,
-    document.getElementById('root')
+    document.getElementById("root")
 );
 
 serviceWorker.unregister();

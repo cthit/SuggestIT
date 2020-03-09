@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
-import './home.css';
-import Prompt from './views/Prompt/prompt.view';
-import SuggestionBoard from './views/SuggestionBoard/SuggestionBoard';
-import { checkLogin } from '../../services/data.service';
+import "./home.css";
+import Prompt from "./views/Prompt/prompt.view";
+import SuggestionBoard from "./views/SuggestionBoard/SuggestionBoard";
+import { checkLogin } from "../../services/data.service";
 
 const Home = () => {
-    const [ suggestionboard, setSuggestionBoard ] = useState(<div />);
+    const [suggestionboard, setSuggestionBoard] = useState(<div />);
 
     useEffect(() => {
         checkLogin().then(() => setSuggestionBoard(<SuggestionBoard />));
