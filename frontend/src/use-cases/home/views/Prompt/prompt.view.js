@@ -1,24 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
+    DigitText,
     DigitTextField,
     DigitTextArea,
     DigitButton,
     DigitSwitch,
-    DigitText,
-    DigitToastActions,
-    DigitDialogActions,
+    useDigitCustomDialog,
+    useDigitToast,
 } from "@cthit/react-digit-components";
 import {
     addSuggestion,
     updateSuggestions,
 } from "../../../../services/data.service";
-import { connect } from "react-redux";
 import "./prompt.style.css";
+import { LinkText } from "./promtp.style";
+import SuggestionsContext from "../../../../common/suggestion-provider/suggestion-context";
 
 const title_error_message = "The title is not filled in";
 const description_error_message = "The description is not filled in";
 
-const PromptView = ({ toastOpen, openDialog }) => {
+const Prompt = () => {
+    const [openDialog, ,] = useDigitCustomDialog();
+    const [toastOpen] = useDigitToast({ duration: 5000 });
+
     const [text, setText] = useState("");
     const [title, setTitle] = useState("");
     const [author, setAuthor] = useState("");
@@ -28,16 +32,16 @@ const PromptView = ({ toastOpen, openDialog }) => {
         description_error: false,
     });
     const [anonymous_author, setAnonymousAuthor] = useState(false);
+    const [, setSuggestions] = useContext(SuggestionsContext);
 
     const sendNewSuggestion = suggestion => {
         addSuggestion(suggestion).then(res => {
-            updateSuggestions();
+            updateSuggestions(setSuggestions);
             setTitle("");
             setAuthor("");
             setText("");
             toastOpen({
                 text: "Thank you! The suggestion has been sent to P.R.I.T.",
-                duration: 5000,
             });
         });
     };
@@ -70,7 +74,7 @@ const PromptView = ({ toastOpen, openDialog }) => {
                 />
                 <div>
                     <DigitText.Text text={"By clicking Send I agree to"} />
-                    <a
+                    <LinkText
                         onClick={() => {
                             openDialog({
                                 renderButtons: () => null,
@@ -88,10 +92,8 @@ const PromptView = ({ toastOpen, openDialog }) => {
                                 ),
                             });
                         }}
-                        href="#"
-                    >
-                        <DigitText.Text text={"this GDPR agreement"} />
-                    </a>
+                        text={"this GDPR agreement"}
+                    />
                 </div>
                 <DigitSwitch
                     value={anonymous_author}
@@ -127,16 +129,5 @@ const PromptView = ({ toastOpen, openDialog }) => {
         </div>
     );
 };
-
-const mapStateToProps = (state, ownProps) => ({});
-
-const mapDispatchToProps = dispatch => ({
-    toastOpen: toastData =>
-        dispatch(DigitToastActions.digitToastOpen(toastData)),
-    openDialog: dialogData =>
-        dispatch(DigitDialogActions.digitDialogCustomOpen(dialogData)),
-});
-
-export const Prompt = connect(mapStateToProps, mapDispatchToProps)(PromptView);
 
 export default Prompt;

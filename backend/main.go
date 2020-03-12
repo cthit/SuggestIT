@@ -1,14 +1,12 @@
 package main
 
 import (
+	"chalmers.it/suggestit/internal/app"
 	"database/sql"
-	"fmt"
-	"log"
-	"os"
-	"time"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"log"
+	"os"
 
 	_ "github.com/lib/pq"
 )
@@ -24,20 +22,12 @@ var (
 var db *sql.DB
 
 func main() {
-	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		db_host, db_port, db_user, db_password, db_dbname)
-
-	time.Sleep(4 * time.Second)
-
-	var err error
-	db, err = sql.Open("postgres", psqlInfo)
-	if err != nil {
+	if err := app.OpenDB(); err != nil {
 		panic(err)
 	}
-	defer db.Close()
+	defer app.CloseDB()
 
-	createSuggestionTable()
+	app.CreateSuggestionTable()
 
 	log.Println("Starting")
 	router := gin.Default()
@@ -47,11 +37,13 @@ func main() {
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
 		AllowCredentials: true}))
 
-	router.DELETE("/api/delete", auth(handleDeleteSuggestion))
-	router.PUT("/api/delete", auth(handleDeleteSuggestions))
-	router.GET("/api/authenticate", auth(func(c *gin.Context) {}))
-	router.GET("/api/", auth(handleGetSuggestions))
-	router.POST("/api/", handleInsert)
+	router.DELETE("/api/delete", app.Auth(app.HandleDeleteSuggestion))
+	router.PUT("/api/delete", app.Auth(app.HandleDeleteSuggestions))
+	router.GET("/api/authenticate", app.Auth(func(c *gin.Context) {}))
+	router.GET("/api/clientid", app.GetClientId)
+	router.GET("/api/suggestion", app.HandleGetSuggestion)
+	router.GET("/api/", app.Auth(app.HandleGetSuggestions))
+	router.POST("/api/", app.HandleInsert)
 
 	router.Run(":3001")
 }

@@ -1,15 +1,15 @@
-import { suggestions } from "../redux/SuggestionStore";
 import axios from "axios";
 import Cookies from "universal-cookie";
-import { SET_SUGGESTIONS } from "../redux/suggestionstore.actions";
 import * as jwt from "jsonwebtoken";
 
 const cookies = new Cookies();
-const baseUrl = process.env.REACT_APP_BACKEND_URL;
-
+const baseUrl =
+    process.env.NODE_ENV === "development"
+        ? "http://localhost:5000/api"
+        : "https://suggestit.chalmers.it/api";
 const authCookieName = "AUTH_TOKEN";
 
-export const updateSuggestions = () =>
+export const updateSuggestions = setter =>
     axios
         .get(`${baseUrl}/`, {
             headers: {
@@ -17,25 +17,18 @@ export const updateSuggestions = () =>
             },
         })
         .then(res => {
-            suggestions.dispatch({
-                type: SET_SUGGESTIONS,
-                suggestion: res.data ? res.data : [],
-            });
+            setter(res.data ? res.data : []);
         })
         .catch(err => {
             //User might not be logged in
         });
 
 export const getSuggestion = uuid =>
-    axios
-        .get(`${baseUrl}?Id=${uuid}`, {
-            headers: {
-                Authorization: cookies.get(authCookieName),
-            },
-        })
-        .catch(error => {
-            //User might not be logged in
-        });
+    axios.get(`${baseUrl}/suggestion?Id=${uuid}`, {
+        headers: {
+            Authorization: cookies.get(authCookieName),
+        },
+    });
 
 export const addSuggestion = _suggestion =>
     axios.post(`${baseUrl}/`, _suggestion);
@@ -63,6 +56,16 @@ export const deleteSuggestions = suggestions =>
             },
         }
     );
+
+export const loginRedirect = () =>
+    axios
+        .get(`${baseUrl}/clientid`)
+        .then(res =>
+            window.location.replace(
+                `https://ldap-auth.chalmers.it/authenticate?client_id=${res.data.client_id}`
+            )
+        )
+        .catch(err => console.log("Failed to get client_id"));
 
 export const checkLogin = () =>
     new Promise((resolve, reject) => {

@@ -1,55 +1,45 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { DigitText } from "@cthit/react-digit-components";
 import "./suggestion.style.css";
 import { translateTimestamp } from "../common/methods";
 import { getSuggestion } from "../../services/data.service";
 
-class Suggestion extends Component {
-    constructor(props) {
-        super(props);
+const Suggestion = ({ match }) => {
+    const [suggestion, setSuggestion] = useState({
+        title: "",
+        author: "",
+        timestamp: "",
+        text: "",
+    });
 
-        this.state = {
-            id: props.match.params.id,
-            author: "",
-            text: "",
-            timestamp: "",
-            title: "",
-        };
-        this.getSuggestionById();
-    }
+    useEffect(() => {
+        getSuggestion(match.params.id)
+            .then(res => {
+                if (!res) {
+                    //Redirects to / if no suggestion could be found
+                    window.location.href = "/";
+                    return;
+                }
+                setSuggestion(res.data);
+            })
+            .catch(err => console.log("Failed to get suggestion"));
+        return () => {};
+    }, [match.params.id]);
 
-    render() {
-        return (
-            <div className="suggestionCard main">
-                <DigitText.Heading6 text={this.state.title} />
-                <DigitText.Subtitle2
-                    className="grayText"
-                    text={"Posted by: " + this.state.author}
-                />
-                <DigitText.Subtitle2
-                    className="grayText"
-                    text={translateTimestamp(this.state.timestamp)}
-                />
-                <DigitText.Text text={this.state.text} />
-            </div>
-        );
-    }
-
-    getSuggestionById() {
-        getSuggestion(this.state.id).then(res => {
-            if (!res) {
-                //Redirects to / if no suggestion could be found
-                window.location.href = "/";
-                return;
-            }
-            this.setState({
-                author: res.data.author,
-                text: res.data.text,
-                timestamp: res.data.timestamp,
-                title: res.data.title,
-            });
-        });
-    }
-}
+    return (
+        <div className="suggestionCard main">
+            <DigitText.Heading6 text={suggestion.title} />
+            <DigitText.Subtitle2
+                className="grayText"
+                text={"Posted by: " + suggestion.author}
+            />
+            <DigitText.Subtitle2
+                className="grayText"
+                text={translateTimestamp(suggestion.timestamp)}
+            />
+            <DigitText.Text text={suggestion.text} />
+        </div>
+    );
+};
 
 export default Suggestion;

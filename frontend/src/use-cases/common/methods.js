@@ -1,10 +1,7 @@
 export const translateTimestamp = ts => {
     var pre = "Posted ";
     var now = new Date();
-    var diff =
-        now.getTime() -
-        new Date(ts).getTime() +
-        now.getTimezoneOffset() * 60000;
+    var diff = now.getTime() - new Date(ts).getTime();
     diff /= 1000;
     if (diff <= 60) {
         return pre + parseInt(diff, 10) + " seconds ago";

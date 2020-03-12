@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"errors"
@@ -11,6 +11,7 @@ import (
 
 var (
 	auth_secret = []byte(os.Getenv("AUTH_SECRET"))
+	allowed_group = os.Getenv("ALLOWED_GROUP")
 )
 
 type User struct {
@@ -20,7 +21,7 @@ type User struct {
 	jwt.StandardClaims
 }
 
-func auth(h func(*gin.Context)) func(*gin.Context) {
+func Auth(h func(*gin.Context)) func(*gin.Context) {
 	return func(c *gin.Context) {
 		if token := c.GetHeader("Authorization"); !ValidUser(token) {
 			c.AbortWithError(http.StatusUnauthorized, errors.New("You are not P.R.I.T."))
@@ -43,7 +44,7 @@ func ValidUser(token string) bool {
 		return false
 	}
 
-	return contains(claims.Groups, "prit")
+	return contains(claims.Groups, allowed_group)
 }
 
 func contains(elements []string, key string) bool {

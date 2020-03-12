@@ -27,7 +27,9 @@ services:
       SUGGESTIT_POSTGRES_PORT: 5432
       SUGGESTIT_POSTGRES_DB: suggestit
 
+      ALLOWED_GROUP: digit
       AUTH_SECRET: hellotherethisisasecret
+      CLIENT_ID: thisisaclientid
 
       GOTIFY_URL: http://gotify:8080
       GOTIFY_PRE_SHARED_KEY: 123abcc
@@ -45,10 +47,6 @@ services:
       dockerfile: dev.Dockerfile
     ports:
       - 3000:3000
-    environment: 
-      REACT_APP_BACKEND_URL: http://localhost:5000/api
-      REACT_APP_CLIENT_ID: thisisaclientid
-      REACT_APP_LDAP_AUTH_URL: https://ldap-auth.chalmers.it
     volumes:
       - ./frontend/src:/usr/src
 

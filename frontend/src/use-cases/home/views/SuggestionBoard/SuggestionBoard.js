@@ -1,6 +1,5 @@
-import React, { Component } from "react";
+import React, { useState, useContext, useEffect, useCallback } from "react";
 import "./SuggestionBoard.css";
-import { suggestions } from "../../../../redux/SuggestionStore";
 import SuggestionItem from "../../../common/SuggestionItem";
 import {
     updateSuggestions,
@@ -9,97 +8,75 @@ import {
 import {
     DigitButton,
     DigitText,
-    DigitDialogActions,
+    useDigitDialog,
 } from "@cthit/react-digit-components";
-import { connect } from "react-redux";
+import SuggestionsContext from "../../../../common/suggestion-provider/suggestion-context";
 
-class SuggestionBoardView extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            suggestions: [],
-            clearButton: null,
-            dialogOpen: props.dialogOpen,
-        };
-        suggestions.subscribe(() => {
-            this.setState({
-                suggestions: suggestions.getState(),
-                clearButton:
-                    suggestions.getState().length > 0 ? (
-                        this.ClearButton()
-                    ) : (
-                        <DigitText.Title text="The suggestion box is empty." />
-                    ),
-            });
-        });
-        this.getData();
-    }
+const SuggestionBoard = () => {
+    const [dialogOpen] = useDigitDialog();
+    const [clearButton, setClearButton] = useState(null);
+    const [suggestions, setSuggestions] = useContext(SuggestionsContext);
 
-    getData() {
-        updateSuggestions();
-    }
+    useEffect(() => {
+        console.log("Updating suggestions");
+        updateSuggestions(setSuggestions);
+        return () => {};
+    }, [setSuggestions]);
 
-    render() {
-        return (
-            <div>
-                <div className="grid">{this.state.clearButton}</div>
-                <div className="grid">
-                    {this.state.suggestions.map(obj => (
-                        <SuggestionItem
-                            key={obj.id}
-                            suggestion={obj}
-                            ts={obj.timestamp}
-                        />
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    ClearButton = () => (
-        <DigitButton
-            className="clear-button"
-            text="Clear suggestions"
-            primary
-            raised
-            onClick={() => {
-                this.state.dialogOpen({
-                    title: "Are you sure",
-                    description: `Are you sure you want to delete ${this.state.suggestions.length} suggestions?`,
-                    cancelButtonText: "No",
-                    confirmButtonText: "Yes",
-                    onConfirm: () => this.clearSuggestions(),
-                });
-            }}
-        />
+    const clearSuggestions = useCallback(
+        () =>
+            deleteSuggestions(suggestions).then(res =>
+                updateSuggestions(setSuggestions)
+            ),
+        [suggestions, setSuggestions]
     );
 
-    clearSuggestions = () => {
-        this.setState({
-            confirmOpen: false,
-        });
-        deleteSuggestions(this.state.suggestions).then(res =>
-            updateSuggestions()
+    const getClearButton = useCallback(
+        () => (
+            <DigitButton
+                className="clear-button"
+                text="Clear suggestions"
+                primary
+                raised
+                onClick={() => {
+                    dialogOpen({
+                        title: "Are you sure",
+                        description: `Are you sure you want to delete ${suggestions.length} suggestions?`,
+                        cancelButtonText: "No",
+                        confirmButtonText: "Yes",
+                        onConfirm: () => clearSuggestions(),
+                    });
+                }}
+            />
+        ),
+        [suggestions, clearSuggestions, dialogOpen]
+    );
+
+    useEffect(() => {
+        setClearButton(
+            suggestions.length > 0 ? (
+                getClearButton()
+            ) : (
+                <DigitText.Title text="The suggestion box is empty." />
+            )
         );
-    };
+        return () => {};
+    }, [getClearButton, setClearButton, suggestions]);
 
-    openConfirm = () => {
-        this.setState({
-            confirmOpen: true,
-        });
-    };
-}
-
-const mapStateToProps = (state, ownProps) => ({});
-
-const mapDispatchToProps = dispatch => ({
-    dialogOpen: dialogData =>
-        dispatch(DigitDialogActions.digitDialogOpen(dialogData)),
-});
-
-const SuggestionBoard = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(SuggestionBoardView);
+    return (
+        <div>
+            <div className="grid">{clearButton}</div>
+            <div className="grid">
+                {suggestions.map(obj => (
+                    <SuggestionItem
+                        key={obj.id}
+                        suggestion={obj}
+                        ts={obj.timestamp}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+};
 
 export default SuggestionBoard;

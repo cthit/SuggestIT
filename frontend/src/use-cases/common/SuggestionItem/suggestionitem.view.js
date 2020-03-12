@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
     DigitNavLink,
     DigitText,
     DigitIconButton,
-    DigitToastActions,
     DigitLayout,
+    useDigitToast,
 } from "@cthit/react-digit-components";
 import "./suggestionitem.style.css";
 import { translateTimestamp } from "../methods";
@@ -14,21 +14,12 @@ import {
     deleteSuggestion,
     addSuggestion,
 } from "../../../services/data.service";
-import { connect } from "react-redux";
+import SuggestionsContext from "../../../common/suggestion-provider/suggestion-context";
 
-/*
-  For this component to work you need to have DigitProvider around it and a DigitToast in 
-  
-  Minimal example:
-  <DigitProviders>
-    <DigitToast />
-    <SuggestionItem />
-  </DigitProviders>
-  */
-
-const SuggestionItemView = ({ suggestion, ts, ...props }) => {
+const SuggestionItem = ({ suggestion, ts, ...props }) => {
     const [text, dispatchToggle] = useState(null);
-    const toastOpen = props["toastOpen"];
+    const [toastOpen] = useDigitToast({ duration: 5000 });
+    const [, setSuggestions] = useContext(SuggestionsContext);
 
     const toggleText = () => {
         dispatchToggle(
@@ -44,13 +35,16 @@ const SuggestionItemView = ({ suggestion, ts, ...props }) => {
     const deleteWithToast = () => {
         toastOpen({
             text: "The suggestion has been deleted",
-            duration: 5000,
             actionText: "Undo",
             actionHandler: () => {
-                addSuggestion(suggestion).then(res => updateSuggestions());
+                addSuggestion(suggestion).then(res =>
+                    updateSuggestions(setSuggestions)
+                );
             },
         });
-        deleteSuggestion(suggestion.id).then(res => updateSuggestions());
+        deleteSuggestion(suggestion.id).then(res =>
+            updateSuggestions(setSuggestions)
+        );
     };
 
     return (
@@ -91,17 +85,5 @@ const SuggestionItemView = ({ suggestion, ts, ...props }) => {
         </div>
     );
 };
-
-const mapStateToProps = (state, ownProps) => ({});
-
-const mapDispatchToProps = dispatch => ({
-    toastOpen: toastData =>
-        dispatch(DigitToastActions.digitToastOpen(toastData)),
-});
-
-export const SuggestionItem = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(SuggestionItemView);
 
 export default SuggestionItem;
