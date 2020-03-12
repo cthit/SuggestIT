@@ -3,15 +3,11 @@ import Cookies from "universal-cookie";
 import * as jwt from "jsonwebtoken";
 
 const cookies = new Cookies();
-const baseUrl =
-    process.env.NODE_ENV === "development"
-        ? "http://localhost:5000/api"
-        : "https://suggestit.chalmers.it/api";
 const authCookieName = "AUTH_TOKEN";
 
 export const updateSuggestions = setter =>
     axios
-        .get(`${baseUrl}/`, {
+        .get(`/api`, {
             headers: {
                 Authorization: cookies.get(authCookieName),
             },
@@ -24,18 +20,17 @@ export const updateSuggestions = setter =>
         });
 
 export const getSuggestion = uuid =>
-    axios.get(`${baseUrl}/suggestion?Id=${uuid}`, {
+    axios.get(`/api/suggestion?Id=${uuid}`, {
         headers: {
             Authorization: cookies.get(authCookieName),
         },
     });
 
-export const addSuggestion = _suggestion =>
-    axios.post(`${baseUrl}/`, _suggestion);
+export const addSuggestion = _suggestion => axios.post(`/api/`, _suggestion);
 
 export const deleteSuggestion = uuid =>
     axios
-        .delete(`${baseUrl}/delete?Id=${uuid}`, {
+        .delete(`/api/delete?Id=${uuid}`, {
             headers: {
                 Authorization: cookies.get(authCookieName),
             },
@@ -46,7 +41,7 @@ export const deleteSuggestion = uuid =>
 
 export const deleteSuggestions = suggestions =>
     axios.put(
-        `${baseUrl}/delete`,
+        `/api/delete`,
         {
             ids: suggestions.map(e => e.id),
         },
@@ -59,7 +54,7 @@ export const deleteSuggestions = suggestions =>
 
 export const loginRedirect = () =>
     axios
-        .get(`${baseUrl}/clientid`)
+        .get(`/api/clientid`)
         .then(res =>
             window.location.replace(
                 `https://ldap-auth.chalmers.it/authenticate?client_id=${res.data.client_id}`
@@ -75,7 +70,7 @@ export const checkLogin = () =>
         }
 
         axios
-            .get(`${baseUrl}/authenticate`, {
+            .get(`/api/authenticate`, {
                 headers: {
                     Authorization: cookies.get(authCookieName),
                 },
