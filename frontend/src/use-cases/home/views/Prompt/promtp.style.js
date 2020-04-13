@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { DigitText } from "@cthit/react-digit-components";
+import { DigitText, DigitDesign } from "@cthit/react-digit-components";
 
 export const LinkText = styled(DigitText.Text)`
     &:hover {
@@ -7,4 +7,8 @@ export const LinkText = styled(DigitText.Text)`
     }
     color: blue;
     cursor: pointer;
+`;
+
+export const PromptWrapper = styled(DigitDesign.Card)`
+    padding: 1rem;
 `;

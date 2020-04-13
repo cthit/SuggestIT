@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 
-import "./home.css";
 import Prompt from "./views/Prompt/prompt.view";
 import SuggestionBoard from "./views/SuggestionBoard/SuggestionBoard";
 import { checkLogin } from "../../services/data.service";
+import { DigitDesign, DigitLayout } from "@cthit/react-digit-components";
 
 const Home = () => {
     const [suggestionboard, setSuggestionBoard] = useState(<div />);
@@ -14,8 +14,16 @@ const Home = () => {
     }, []);
 
     return (
-        <div className="main">
+        <div
+            style={{
+                width: "100%",
+                "flex-wrap": "wrap",
+                display: "flex",
+                justifyContent: "center",
+            }}
+        >
             <Prompt />
+            <div style={{ "flex-basis": "100%", height: 0 }}></div>
             {suggestionboard}
         </div>
     );

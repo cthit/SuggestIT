@@ -7,13 +7,13 @@ import {
     DigitSwitch,
     useDigitCustomDialog,
     useDigitToast,
+    DigitDesign,
 } from "@cthit/react-digit-components";
 import {
     addSuggestion,
     updateSuggestions,
 } from "../../../../services/data.service";
-import "./prompt.style.css";
-import { LinkText } from "./promtp.style";
+import { LinkText, PromptWrapper } from "./promtp.style";
 import SuggestionsContext from "../../../../common/suggestion-provider/suggestion-context";
 
 const title_error_message = "The title is not filled in";
@@ -47,8 +47,8 @@ const Prompt = () => {
     };
 
     return (
-        <div className="prompt">
-            <div className="innerPrompt">
+        <PromptWrapper size={{ height: "30rem" }}>
+            <DigitDesign.CardBody>
                 <DigitText.Heading6 text="New Suggestion" />
                 <DigitTextField
                     error={errors.title_error}
@@ -125,8 +125,8 @@ const Prompt = () => {
                         });
                     }}
                 />
-            </div>
-        </div>
+            </DigitDesign.CardBody>
+        </PromptWrapper>
     );
 };
 

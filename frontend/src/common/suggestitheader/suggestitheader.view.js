@@ -21,6 +21,7 @@ const SuggestITHeader = ({ renderMain }) => {
         <DigitHeader
             renderMain={renderMain}
             title="SuggestIT"
+            headerRowProps={{ flex: "1", justifyContent: "space-between" }}
             renderHeader={() => (
                 <div>
                     <DigitLayout.Row>
