@@ -1,17 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
 
 import Prompt from "./views/Prompt/prompt.view";
 import SuggestionBoard from "./views/SuggestionBoard/SuggestionBoard";
-import { checkLogin } from "../../services/data.service";
-import { DigitDesign, DigitLayout } from "@cthit/react-digit-components";
+import UserContext from "common/context/user-context";
 
 const Home = () => {
-    const [suggestionboard, setSuggestionBoard] = useState(<div />);
-
-    useEffect(() => {
-        checkLogin().then(() => setSuggestionBoard(<SuggestionBoard />));
-        return () => {};
-    }, []);
+    const [user] = useContext(UserContext);
 
     return (
         <div
@@ -24,7 +18,7 @@ const Home = () => {
         >
             <Prompt />
             <div style={{ "flex-basis": "100%", height: 0 }}></div>
-            {suggestionboard}
+            {user ? <SuggestionBoard /> : null}
         </div>
     );
 };

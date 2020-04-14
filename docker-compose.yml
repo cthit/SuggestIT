@@ -20,16 +20,16 @@ services:
     build:
       context: ./backend/
       dockerfile: dev.Dockerfile
-    environment: 
+    environment:
       SUGGESTIT_POSTGRES_USER: suggestit
       SUGGESTIT_POSTGRES_PASSWORD: password
       SUGGESTIT_POSTGRES_HOST: db
       SUGGESTIT_POSTGRES_PORT: 5432
       SUGGESTIT_POSTGRES_DB: suggestit
 
-      ALLOWED_GROUP: digit
-      AUTH_SECRET: hellotherethisisasecret
-      CLIENT_ID: thisisaclientid
+      DISABLE_AUTH: "True"
+      AUTH_SECRET: OdaI46WU7ceXaIfJtHFzKIBxOCKbHIQW16DjthSDCx61Kekq1ndH641xF3Ei1zGDjpIx4T7Fesb
+      CLIENT_ID: hk7mBNCX65f5RYDTkzcqmNBaDXLawyVbkxjzqOfWtATg2RD6digfvIkXcss5KwjAE4QUmxvA4Cv
 
       GOTIFY_URL: http://gotify:8080
       GOTIFY_PRE_SHARED_KEY: 123abcc
@@ -37,7 +37,7 @@ services:
 
     volumes:
       - ./backend/:/go/src/app
-    
+
     ports:
       - 5000:3000
 

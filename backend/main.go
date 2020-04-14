@@ -39,7 +39,8 @@ func main() {
 
 	router.DELETE("/api/delete", app.Auth(app.HandleDeleteSuggestion))
 	router.PUT("/api/delete", app.Auth(app.HandleDeleteSuggestions))
-	router.GET("/api/authenticate", app.Auth(func(c *gin.Context) {}))
+	router.POST("/api/auth/token", app.HandleGetToken)
+	router.GET("/api/auth", app.Auth(func(c *gin.Context) {}))
 	router.GET("/api/clientid", app.GetClientId)
 	router.GET("/api/suggestion", app.HandleGetSuggestion)
 	router.GET("/api/", app.Auth(app.HandleGetSuggestions))

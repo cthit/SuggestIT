@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Switch } from "react-router-dom";
 import { Route } from "react-router";
-import SuggestionsProvider from "./common/suggestion-provider";
+import { SuggestionsProvider } from "./common/context/suggestion-context";
 
 import Home from "./use-cases/home/home";
 import NotFound from "./use-cases/notfound";

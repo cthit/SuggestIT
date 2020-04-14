@@ -7,7 +7,9 @@ package app
  */
 
 import (
+	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -15,6 +17,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+type TokenResponse struct {
+	Access_token string `json:"access_token"`
+	Token_type   string `json:"token_type"`
+	Expires_in   string `json:"expires_in"`
+	Scope        string `json:"scope"`
+	Nick         string `json:"nick"`
+	Uid          string `json:"uid"`
+	ISS          string `json:"iss"`
+	JTI          string `json:"jti"`
+}
 
 func GetClientId(c *gin.Context) {
 	var id struct {
@@ -85,4 +98,38 @@ func HandleDeleteSuggestions(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+func HandleGetToken(c *gin.Context) {
+	code := c.Query("code")
+	redirect_uri := c.Query("redirect_uri")
+	authKey := base64.StdEncoding.EncodeToString([]byte(
+		fmt.Sprintf("%s:%s", os.Getenv("CLIENT_ID"), os.Getenv("AUTH_SECRET"))))
+	gammaQuery := fmt.Sprintf("https://gamma.chalmers.it/api/oauth/token" +
+		"?grant_type=authorization_code&client_id=%s&redirect_uri=%s&code=%s",
+		os.Getenv("CLIENT_ID"),
+		redirect_uri,
+		code)
+	client := http.Client{}
+	req, _ := http.NewRequest("POST",gammaQuery, nil)
+
+	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", authKey))
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	text, er := ioutil.ReadAll(resp.Body)
+	if er != nil {
+		log.Println("Unable to read body")
+		log.Println(er)
+		c.AbortWithError(http.StatusInternalServerError, er)
+		return
+	}
+
+	body := TokenResponse{}
+	json.Unmarshal(text, &body)
+	c.JSON(http.StatusOK, body)
 }

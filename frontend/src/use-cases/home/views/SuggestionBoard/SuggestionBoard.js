@@ -11,7 +11,7 @@ import {
     useDigitDialog,
     DigitLayout,
 } from "@cthit/react-digit-components";
-import SuggestionsContext from "../../../../common/suggestion-provider/suggestion-context";
+import SuggestionsContext from "common/context/suggestion-context";
 
 const SuggestionBoard = () => {
     const [dialogOpen] = useDigitDialog();

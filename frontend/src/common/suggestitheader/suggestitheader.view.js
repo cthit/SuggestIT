@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import {
     DigitHeader,
     DigitButton,
@@ -6,16 +6,14 @@ import {
     useDigitCustomDialog,
 } from "@cthit/react-digit-components";
 import About from "./elements/about";
-import { checkLogin, logOut, loginRedirect } from "../../services/data.service";
+import { logOut, loginRedirect, checkLogin } from "services/data.service";
+import UserContext from "../context/user-context";
 
 const SuggestITHeader = ({ renderMain }) => {
-    const [isLoggedIn, setIsloggedIn] = useState(false);
+    const [user, setUser] = useContext(UserContext);
     const [dialogOpen, ,] = useDigitCustomDialog();
 
-    useEffect(() => {
-        checkLogin().then(res => setIsloggedIn(true));
-        return () => {};
-    }, []);
+    useEffect(() => checkLogin(setUser), [setUser]);
 
     return (
         <DigitHeader
@@ -41,7 +39,7 @@ const SuggestITHeader = ({ renderMain }) => {
                                 })
                             }
                         />
-                        {!isLoggedIn ? (
+                        {!user ? (
                             <div>
                                 <DigitButton
                                     text="Login"

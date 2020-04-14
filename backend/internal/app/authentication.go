@@ -2,6 +2,9 @@ package app
 
 import (
 	"errors"
+	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 
@@ -33,18 +36,25 @@ func Auth(h func(*gin.Context)) func(*gin.Context) {
 }
 
 func ValidUser(token string) bool {
-	keyFunc := func(t *jwt.Token) (interface{}, error) { return auth_secret, nil }
-	parsedToken, err := jwt.ParseWithClaims(token, &User{}, keyFunc)
+	gammaQuery := fmt.Sprintf("https://gamma.chalmers.it/api/auth/valid_token?token=%s", token)
+
+	client := http.Client{}
+	req, _ := http.NewRequest("GET",gammaQuery, nil)
+
+	resp, err := client.Do(req)
 	if err != nil {
+		log.Println(err)
 		return false
 	}
 
-	claims, ok := parsedToken.Claims.(*User)
-	if !ok || !parsedToken.Valid {
+	text, er := ioutil.ReadAll(resp.Body)
+	//TODO: Check if the token is for this client
+	//TODO: Check if the user is a member of PRIT
+	if er != nil || string(text) != "true" {
 		return false
 	}
 
-	return contains(claims.Groups, allowed_group)
+	return true
 }
 
 func contains(elements []string, key string) bool {

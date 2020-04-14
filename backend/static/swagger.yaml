@@ -110,7 +110,7 @@ paths:
       - in: "header"
         name: "Authorization"
         description: "the token from /api/authorization"
-        required: true
+ authoriza       required: true
         type: "string"
       - in: "body"
         name: "body"
