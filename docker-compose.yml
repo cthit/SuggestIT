@@ -27,9 +27,10 @@ services:
       SUGGESTIT_POSTGRES_PORT: 5432
       SUGGESTIT_POSTGRES_DB: suggestit
 
-      DISABLE_AUTH: "True"
+      MOCK_MODE: "True"
       AUTH_SECRET: OdaI46WU7ceXaIfJtHFzKIBxOCKbHIQW16DjthSDCx61Kekq1ndH641xF3Ei1zGDjpIx4T7Fesb
       CLIENT_ID: hk7mBNCX65f5RYDTkzcqmNBaDXLawyVbkxjzqOfWtATg2RD6digfvIkXcss5KwjAE4QUmxvA4Cv
+      ALLOWED_GROUP: prit
 
       GOTIFY_URL: http://gotify:8080
       GOTIFY_PRE_SHARED_KEY: 123abcc
