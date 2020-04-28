@@ -9,6 +9,7 @@ import {
     DigitButton,
     DigitText,
     useDigitDialog,
+    DigitLayout,
 } from "@cthit/react-digit-components";
 import SuggestionsContext from "../../../../common/suggestion-provider/suggestion-context";
 
@@ -57,14 +58,17 @@ const SuggestionBoard = () => {
             suggestions.length > 0 ? (
                 getClearButton()
             ) : (
-                <DigitText.Title text="The suggestion box is empty." />
+                <DigitText.Title
+                    style={{ padding: "1rem" }}
+                    text="The suggestion box is empty."
+                />
             )
         );
         return () => {};
     }, [getClearButton, setClearButton, suggestions]);
 
     return (
-        <div>
+        <div style={{ position: "relative" }}>
             <div className="grid">{clearButton}</div>
             <div className="grid">
                 {suggestions.map(obj => (
