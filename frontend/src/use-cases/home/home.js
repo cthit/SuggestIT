@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import Prompt from "./views/Prompt/prompt.view";
+import Prompt from "./views/Prompt";
 import SuggestionBoard from "./views/SuggestionBoard/SuggestionBoard";
 import { checkLogin } from "../../services/data.service";
 import { DigitDesign, DigitLayout } from "@cthit/react-digit-components";
