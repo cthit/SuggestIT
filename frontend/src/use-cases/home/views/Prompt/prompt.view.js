@@ -47,7 +47,7 @@ const Prompt = () => {
     };
 
     return (
-        <PromptWrapper size={{ height: "30rem" }}>
+        <PromptWrapper size={{ height: "33rem" }}>
             <DigitDesign.CardBody>
                 <DigitText.Heading6 text="New Suggestion" />
                 <DigitTextField
@@ -56,6 +56,7 @@ const Prompt = () => {
                     onChange={e => setTitle(e.target.value)}
                     value={title}
                     upperLabel="Title"
+                    maxLength={24}
                 />
                 <DigitTextArea
                     error={errors.description_error}
@@ -71,6 +72,7 @@ const Prompt = () => {
                     value={author}
                     disabled={anonymous_author}
                     upperLabel="Name/Nick"
+                    maxLength={24}
                 />
                 <div>
                     <DigitText.Text text={"By clicking Send I agree to"} />
