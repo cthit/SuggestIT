@@ -9,7 +9,6 @@ import {
     DigitButton,
     DigitText,
     useDigitDialog,
-    DigitLayout,
 } from "@cthit/react-digit-components";
 import SuggestionsContext from "../../../../common/suggestion-provider/suggestion-context";
 
