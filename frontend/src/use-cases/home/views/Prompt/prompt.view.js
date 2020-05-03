@@ -65,7 +65,7 @@ const Prompt = () => {
                     value={text}
                     upperLabel="Suggestion"
                     rows={5}
-                    rowsMax={10}
+                    rowsMax={5}
                 />
                 <DigitTextField
                     onChange={e => setAuthor(e.target.value)}
