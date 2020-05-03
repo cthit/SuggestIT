@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Prompt from "./views/Prompt";
 import SuggestionBoard from "./views/SuggestionBoard/SuggestionBoard";
 import { checkLogin } from "../../services/data.service";
-import { DigitDesign, DigitLayout } from "@cthit/react-digit-components";
+import { HomeWrapper, Divider } from "./home.style";
 
 const Home = () => {
     const [suggestionboard, setSuggestionBoard] = useState(<div />);
@@ -14,18 +14,11 @@ const Home = () => {
     }, []);
 
     return (
-        <div
-            style={{
-                width: "100%",
-                "flex-wrap": "wrap",
-                display: "flex",
-                justifyContent: "center",
-            }}
-        >
+        <HomeWrapper>
             <Prompt />
-            <div style={{ "flex-basis": "100%", height: 0 }}></div>
+            <Divider />
             {suggestionboard}
-        </div>
+        </HomeWrapper>
     );
 };
 
