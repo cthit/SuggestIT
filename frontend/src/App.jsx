@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { BrowserRouter, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter, Switch } from "react-router-dom";
 import { Route } from "react-router";
 import { SuggestionsProvider } from "./common/context/suggestion-context";
 

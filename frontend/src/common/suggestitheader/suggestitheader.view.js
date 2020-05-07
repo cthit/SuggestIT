@@ -13,7 +13,9 @@ const SuggestITHeader = ({ renderMain }) => {
     const [user, setUser] = useContext(UserContext);
     const [dialogOpen, ,] = useDigitCustomDialog();
 
-    useEffect(() => checkLogin(setUser), [setUser]);
+    useEffect(() => {
+        checkLogin(setUser);
+    }, [setUser]);
 
     return (
         <DigitHeader
@@ -52,8 +54,7 @@ const SuggestITHeader = ({ renderMain }) => {
                                 outlined
                                 text="logout"
                                 onClick={() => {
-                                    logOut();
-                                    window.location.reload(false);
+                                    logOut(setUser);
                                 }}
                             />
                         )}

@@ -1,7 +1,5 @@
 import axios from "axios";
 
-const origin = window.location.origin;
-
 export const updateSuggestions = setter =>
     axios
         .get(`/api`)
@@ -36,4 +34,5 @@ export const checkLogin = setUser =>
 
 export const getToken = code => axios.post(`/api/auth/withCode?code=${code}`);
 
-export const logOut = () => axios.post("/api/logout");
+export const logOut = setUser =>
+    axios.post("/api/logout").finally(() => setUser(null));
