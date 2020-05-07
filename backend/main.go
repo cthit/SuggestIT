@@ -1,12 +1,13 @@
 package main
 
 import (
-	"chalmers.it/suggestit/internal/app"
 	"database/sql"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
 	"log"
 	"os"
+
+	"chalmers.it/suggestit/internal/app"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 
 	_ "github.com/lib/pq"
 )
@@ -37,12 +38,14 @@ func main() {
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
 		AllowCredentials: true}))
 
+	router.POST("/api/auth/withCode", app.HandleAuthenticationWithCode)
+	router.GET("/api/checkLogin", app.Auth(func(c *gin.Context) {}))
+	router.GET("/api/login", app.HandleLogin)
+	router.POST("/api/logout", app.HandleLogout)
+
 	router.DELETE("/api/delete", app.Auth(app.HandleDeleteSuggestion))
 	router.PUT("/api/delete", app.Auth(app.HandleDeleteSuggestions))
-	router.POST("/api/auth/token", app.HandleGetToken)
-	router.GET("/api/auth", app.Auth(func(c *gin.Context) {}))
-	router.GET("/api/clientid", app.GetClientId)
-	router.GET("/api/suggestion", app.HandleGetSuggestion)
+	router.GET("/api/suggestion", app.Auth(app.HandleGetSuggestion))
 	router.GET("/api/", app.Auth(app.HandleGetSuggestions))
 	router.POST("/api/", app.HandleInsert)
 

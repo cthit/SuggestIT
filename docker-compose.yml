@@ -31,7 +31,8 @@ services:
       AUTH_SECRET: Ip4YnL5fudnqpDQnjpTZrEg6ZydcROIo4u8jV46NhVizGRfNxZF8JD4GAeRbCWFEKe1bF1MIJNs 
       CLIENT_ID: j6jMgZSNyfv6Mi4nYkHB1YPJZcmT1t5rYbjEEsKlUarEMFjD5HWeagbHvHSnweShEaBTBC8uXia
       GAMMA_URL: http://gamma-backend:8081
-      REDIRECT_URL: http://localhost:3001/callback
+      REDIRECT_GAMMA_URL: http://localhost:8081
+      CALLBACK_URL: http://localhost:3001/callback
       ALLOWED_GROUP: prit
 
       #GOTIFY_URL: http://gotify:8080

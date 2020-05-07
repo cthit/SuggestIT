@@ -1,7 +1,7 @@
 package app
 
 import (
-	"encoding/base64"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -10,44 +10,38 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"golang.org/x/oauth2"
 )
 
 var (
-	client_id      = os.Getenv("CLIENT_ID")
-	auth_secret    = os.Getenv("AUTH_SECRET")
-	allowed_group  = os.Getenv("ALLOWED_GROUP")
-	gamma_url      = os.Getenv("GAMMA_URL")
-	redirect_url   = os.Getenv("REDIRECT_URL")
-	basicAothToken = base64.StdEncoding.EncodeToString([]byte(client_id + ":" + auth_secret))
-	mock_mode      = os.Getenv("MOCK_MODE") == "True"
-	auth_url       = fmt.Sprintf("%s/api/oauth/authorize", gamma_url)
-	token_url      = fmt.Sprintf("%s/api/oauth/token", gamma_url)
+	gamma_url     = os.Getenv("GAMMA_URL")
+	mock_mode     = os.Getenv("MOCK_MODE") == "True"
+	allowed_group = os.Getenv("ALLOWED_GROUP")
 )
+
+var client = oauth2.Config{
+	ClientID:     os.Getenv("CLIENT_ID"),
+	ClientSecret: os.Getenv("AUTH_SECRET"),
+	Endpoint: oauth2.Endpoint{
+		AuthURL:   fmt.Sprintf("%s/api/oauth/authorize", os.Getenv("REDIRECT_GAMMA_URL")),
+		TokenURL:  fmt.Sprintf("%s/api/oauth/token", gamma_url),
+		AuthStyle: 0,
+	},
+	RedirectURL: os.Getenv("CALLBACK_URL"),
+	Scopes:      nil,
+}
 
 func Auth(h func(*gin.Context)) func(*gin.Context) {
 	return func(c *gin.Context) {
-		if token := c.GetHeader("Authorization"); !ValidUser(token) {
+		token, err := c.Cookie("suggestit")
+		if err != nil && !ValidUser(token) {
 			c.AbortWithError(http.StatusUnauthorized, errors.New("You are not P.R.I.T."))
 			return
 		}
 
 		h(c)
 	}
-}
-
-func ValidToken(token string) bool {
-	keyFunc := func(t *jwt.Token) (interface{}, error) { return []byte(""), nil }
-
-	parsedToken, _ := jwt.ParseWithClaims(token, &TokenClaims{}, keyFunc)
-
-	claims, ok := parsedToken.Claims.(*TokenClaims)
-	if !ok {
-		return false
-	}
-
-	return claims.ClientId == client_id
 }
 
 func MemberOfGroup(user User, group string) bool {
@@ -66,7 +60,7 @@ func ValidUser(token string) bool {
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 
 	resp, err := client.Do(req)
-	if err != nil {
+	if err != nil || resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		log.Println(err)
 		return false
 	}
@@ -75,37 +69,11 @@ func ValidUser(token string) bool {
 	text, _ := ioutil.ReadAll(resp.Body)
 	json.Unmarshal(text, &me)
 
-	return ValidToken(token) && MemberOfGroup(me, allowed_group)
+	return MemberOfGroup(me, allowed_group)
 }
 
-func getToken(grant string, redirect_uri string) (TokenResponse, error) {
-
-	gammaQuery := fmt.Sprintf(token_url+
-		"?grant_type=authorization_code&client_id=%s&redirect_uri=%s&code=%s",
-		client_id,
-		redirect_uri,
-		grant)
-	client := http.Client{}
-	req, _ := http.NewRequest("POST", gammaQuery, nil)
-
-	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", basicAothToken))
-
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Println(err)
-		return TokenResponse{}, err
-	}
-
-	text, er := ioutil.ReadAll(resp.Body)
-	if er != nil {
-		log.Println("Unable to read body")
-		log.Println(er)
-		return TokenResponse{}, er
-	}
-
-	body := TokenResponse{}
-	json.Unmarshal(text, &body)
-	return body, nil
+func getToken(grant string) (*oauth2.Token, error) {
+	return client.Exchange(context.Background(), grant)
 }
 
 func contains(elements []Relationship, is func(Relationship) bool) bool {
