@@ -1,25 +1,20 @@
 import React, { useContext } from "react";
 
-import Prompt from "./views/Prompt/prompt.view";
+import Prompt from "./views/Prompt";
 import SuggestionBoard from "./views/SuggestionBoard/SuggestionBoard";
 import UserContext from "common/context/user-context";
+import { checkLogin } from "../../services/data.service";
+import { HomeWrapper, Divider } from "./home.style";
 
 const Home = () => {
     const [user] = useContext(UserContext);
 
     return (
-        <div
-            style={{
-                width: "100%",
-                "flex-wrap": "wrap",
-                display: "flex",
-                justifyContent: "center",
-            }}
-        >
+        <HomeWrapper>
             <Prompt />
-            <div style={{ "flex-basis": "100%", height: 0 }}></div>
-            {user ? <SuggestionBoard /> : null}
-        </div>
+            <Divider />
+            {user && <SuggestionBoard />}
+        </HomeWrapper>
     );
 };
 
