@@ -4,7 +4,7 @@ import Cookies from "universal-cookie";
 const cookies = new Cookies();
 const authCookieName = "AUTH_TOKEN";
 const origin = window.location.origin;
-const gammaURL = "https://gamma.chalmers.it/api";
+const gammaURL = "http://localhost:8081/api";
 
 export const updateSuggestions = setter =>
     axios

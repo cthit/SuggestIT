@@ -14,17 +14,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const (
-	AUTH_URL  = "https://gamma.chalmers.it/api/oauth/authorize"
-	TOKEN_URL = "https://gamma.chalmers.it/api/oauth/token"
-)
-
 var (
 	client_id      = os.Getenv("CLIENT_ID")
 	auth_secret    = os.Getenv("AUTH_SECRET")
 	allowed_group  = os.Getenv("ALLOWED_GROUP")
+	gamma_url      = os.Getenv("GAMMA_URL")
+	redirect_url   = os.Getenv("REDIRECT_URL")
 	basicAothToken = base64.StdEncoding.EncodeToString([]byte(client_id + ":" + auth_secret))
-	mock_mode 	   = os.Getenv("MOCK_MODE") == "True"
+	mock_mode      = os.Getenv("MOCK_MODE") == "True"
+	auth_url       = fmt.Sprintf("%s/api/oauth/authorize", gamma_url)
+	token_url      = fmt.Sprintf("%s/api/oauth/token", gamma_url)
 )
 
 func Auth(h func(*gin.Context)) func(*gin.Context) {
@@ -55,12 +54,12 @@ func MemberOfGroup(user User, group string) bool {
 	if mock_mode {
 		return true
 	}
-	 return contains(user.Relationships ,
-		func(e Relationship) bool {return e.Group.Active && e.SuperGroup.Name == group})
+	return contains(user.Relationships,
+		func(e Relationship) bool { return e.Group.Active && e.SuperGroup.Name == group })
 }
 
 func ValidUser(token string) bool {
-	gammaQuery := "https://gamma.chalmers.it/api/users/me"
+	gammaQuery := fmt.Sprintf("%s/api/users/me", gamma_url)
 
 	client := http.Client{}
 	req, _ := http.NewRequest("GET", gammaQuery, nil)
@@ -76,12 +75,12 @@ func ValidUser(token string) bool {
 	text, _ := ioutil.ReadAll(resp.Body)
 	json.Unmarshal(text, &me)
 
-	return  ValidToken(token) && MemberOfGroup(me, allowed_group)
+	return ValidToken(token) && MemberOfGroup(me, allowed_group)
 }
 
 func getToken(grant string, redirect_uri string) (TokenResponse, error) {
 
-	gammaQuery := fmt.Sprintf(TOKEN_URL+
+	gammaQuery := fmt.Sprintf(token_url+
 		"?grant_type=authorization_code&client_id=%s&redirect_uri=%s&code=%s",
 		client_id,
 		redirect_uri,
@@ -109,7 +108,7 @@ func getToken(grant string, redirect_uri string) (TokenResponse, error) {
 	return body, nil
 }
 
-func contains(elements []Relationship, is func (Relationship) bool) bool {
+func contains(elements []Relationship, is func(Relationship) bool) bool {
 	for _, v := range elements {
 		if is(v) {
 			return true

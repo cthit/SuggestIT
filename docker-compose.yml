@@ -1,4 +1,4 @@
-version: "2"
+version: "3"
 services:
   db:
     image: postgres
@@ -28,13 +28,15 @@ services:
       SUGGESTIT_POSTGRES_DB: suggestit
 
       MOCK_MODE: "True"
-      AUTH_SECRET: OdaI46WU7ceXaIfJtHFzKIBxOCKbHIQW16DjthSDCx61Kekq1ndH641xF3Ei1zGDjpIx4T7Fesb
-      CLIENT_ID: hk7mBNCX65f5RYDTkzcqmNBaDXLawyVbkxjzqOfWtATg2RD6digfvIkXcss5KwjAE4QUmxvA4Cv
+      AUTH_SECRET: Ip4YnL5fudnqpDQnjpTZrEg6ZydcROIo4u8jV46NhVizGRfNxZF8JD4GAeRbCWFEKe1bF1MIJNs 
+      CLIENT_ID: j6jMgZSNyfv6Mi4nYkHB1YPJZcmT1t5rYbjEEsKlUarEMFjD5HWeagbHvHSnweShEaBTBC8uXia
+      GAMMA_URL: http://gamma-backend:8081
+      REDIRECT_URL: http://localhost:3001/callback
       ALLOWED_GROUP: prit
 
-      GOTIFY_URL: http://gotify:8080
-      GOTIFY_PRE_SHARED_KEY: 123abcc
-      ENABLE_EMAIL: "True"
+      #GOTIFY_URL: http://gotify:8080
+      #GOTIFY_PRE_SHARED_KEY: 123abcc
+      #ENABLE_EMAIL: "True"
 
     volumes:
       - ./backend/:/go/src/app
@@ -47,14 +49,55 @@ services:
       context: ./frontend/
       dockerfile: dev.Dockerfile
     ports:
-      - 3000:3000
+      - 3001:3000
     volumes:
       - ./frontend/src:/usr/src
 
-  gotify:
-    image: cthit/gotify:latest
+  gamma-db:
+    image: postgres:10
     environment:
-      GOTIFY_PRE-SHARED-KEY: "123abcc"
-      GOTIFY_MOCK-MODE: "true"
+      POSTGRES_USER: user
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: password
+
+  gamma-frontend:
+    image: cthit/gamma-frontend:development
+    network_mode: host
     ports:
-      - 1337:8080
+      - 3000:3000
+
+  gamma-backend:
+    image: cthit/gamma-backend
+    environment:
+      # Default admin user name = admin
+      # Default admin password  = password
+
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_HOST: gamma-db
+      DB_PORT: 5432
+      DB_NAME: postgres
+
+      REDIS_HOST: redis
+      REDIS_PASSWORD: ""
+
+      GOTIFY_KEY: "123abc"
+      GOTIFY_URL: http://gotify:8080/mail
+
+      SERVER_PORT: 8081
+      FRONTEND_REDIRECT_URI: http://localhost:3000/login
+      SUCCESSFUL_LOGIN: http://localhost:3000
+      CORS_ALLOWED_ORIGIN: http://localhost:3000
+      COOKIE_DOMAIN: localhost
+
+    ports:
+      - 8081:8081
+
+  redis:
+    image: redis:5.0
+
+  gotify:
+    image: cthit/gotify
+    environment:
+      GOTIFY_PRE-SHARED-KEY: 123abc
+      GOTIFY_MOCK-MODE: "true"
