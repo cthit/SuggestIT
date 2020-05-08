@@ -2,7 +2,6 @@ version: "3"
 services:
   db:
     image: postgres
-    restart: always
     environment:
       POSTGRES_USER: suggestit
       POSTGRES_DB: suggestit
@@ -27,9 +26,9 @@ services:
       SUGGESTIT_POSTGRES_PORT: 5432
       SUGGESTIT_POSTGRES_DB: suggestit
 
-      MOCK_MODE: "True"
-      AUTH_SECRET: Ip4YnL5fudnqpDQnjpTZrEg6ZydcROIo4u8jV46NhVizGRfNxZF8JD4GAeRbCWFEKe1bF1MIJNs 
-      CLIENT_ID: j6jMgZSNyfv6Mi4nYkHB1YPJZcmT1t5rYbjEEsKlUarEMFjD5HWeagbHvHSnweShEaBTBC8uXia
+      MOCK_MODE: "False"
+      AUTH_SECRET: lQ7UI4HfqaSMDxCBj8VU2pkSGy4anFPhBtm1qsQpXMnG8eFsdbFMtAU4JckQm3mByCmIKvgDq3y
+      CLIENT_ID: s54LS1g35a4LIZgbpghrW4zqTywHrULoVyztaGA1t77pk6U4IBy8ZubZtkuxfZ6HQePZsdBMnj1
       GAMMA_URL: http://gamma-backend:8081
       REDIRECT_GAMMA_URL: http://localhost:8081
       CALLBACK_URL: http://localhost:3001/callback

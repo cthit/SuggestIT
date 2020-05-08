@@ -35,7 +35,7 @@ var client = oauth2.Config{
 func Auth(h func(*gin.Context)) func(*gin.Context) {
 	return func(c *gin.Context) {
 		token, err := c.Cookie("suggestit")
-		if err != nil && !ValidUser(token) {
+		if err != nil || !ValidUser(token) {
 			c.AbortWithError(http.StatusUnauthorized, errors.New("You are not P.R.I.T."))
 			return
 		}
@@ -45,11 +45,8 @@ func Auth(h func(*gin.Context)) func(*gin.Context) {
 }
 
 func MemberOfGroup(user User, group string) bool {
-	if mock_mode {
-		return true
-	}
-	return contains(user.Relationships,
-		func(e Relationship) bool { return e.Group.Active && e.SuperGroup.Name == group })
+	return mock_mode || contains(user.Groups,
+		func(e Group) bool { return e.Active && e.SuperGroup.Name == group })
 }
 
 func ValidUser(token string) bool {
@@ -69,14 +66,14 @@ func ValidUser(token string) bool {
 	text, _ := ioutil.ReadAll(resp.Body)
 	json.Unmarshal(text, &me)
 
-	return MemberOfGroup(me, allowed_group)
+	return MemberOfGroup(me, "prit")
 }
 
 func getToken(grant string) (*oauth2.Token, error) {
 	return client.Exchange(context.Background(), grant)
 }
 
-func contains(elements []Relationship, is func(Relationship) bool) bool {
+func contains(elements []Group, is func(Group) bool) bool {
 	for _, v := range elements {
 		if is(v) {
 			return true
