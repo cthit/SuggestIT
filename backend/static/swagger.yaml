@@ -1,195 +1,222 @@
-swagger: "2.0"
+openapi: 3.0.0
 info:
-  description: "This is the backend used in the application [suggestIT](https://suggestit.chalmers.it). The application is a suggestion box for the committee P.R.I.T."
-  version: "1.0.0"
-  title: "SuggestIT backand"
+  description: This is the backend used in the application
+    [suggestIT](https://suggestit.chalmers.it). The application is a suggestion
+    box for the committee P.R.I.T.
+  version: 1.0.0
+  title: SuggestIT backand
   contact:
-    email: "digit@chalmers.it"
-host: "localhost:5000"
-tags:
-- name: "api"
-  description: "the main api"
-schemes:
-- "http"
+    email: digit@chalmers.it
+
 paths:
-  /api/authenticate:
-    put:
+  /api/auth/withCode:
+    post:
       tags:
-      - "api"
-      summary: "Get authentication token"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
+        - Authentication
+      summary: Exchange Gamma authentication code with cookie
       parameters:
-      - in: "body"
-        name: "body"
-        description: "password"
-        required: true
-        schema:
-          $ref: "#/definitions/LoginCriteria"
-      responses:
-        401:
-          description: "You are not P.R.I.T."
-        200:
-          description: "Use the token to authenticate"
+        - in: query
+          name: code
+          description: Gamma authentication code
+          required: true
           schema:
-            $ref: "#/definitions/LoginResponse"
+            type: string
+      responses:
+        "200":
+          description: Attached authentication cookie
+        "401":
+          description: You are not P.R.I.T.
+  /api/checkLogin:
+    get:
+      tags:
+        - Authentication
+      summary: Checks if the user is logged in
+      parameters:
+        - in: cookie
+          name: suggestit
+          description: Gamma authntication token
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User is logged in
+        "401":
+          description: User is not logged in
+
+  /api/login:
+    get:
+      tags:
+        - Authentication
+      summary: Redirects the user to Gamma authentication site
+      responses:
+        "301":
+          description: Redirect to Gamma
+
+  /api/logout:
+    get:
+      tags:
+        - Authentication
+      summary: Removes authentication cookie and makes user unauthenticated
+      parameters:
+        - in: cookie
+          name: suggestit
+          description: Gamma authntication token
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "User has been logged out"
+
   /api:
     get:
       tags:
-      - "api"
-      summary: "Get all suggestions"
-      produces:
-      - "application/json"
+        - Api
+      summary: Get all suggestions
       parameters:
-      - in: "header"
-        name: "Authorization"
-        description: "the token from /api/authorization"
-        required: true
-        type: "string"
-      - in: "query"
-        name: "Id"
-        description: "requesting one specific suggestion"
-        type: "string"
-        required: false
-      responses:
-        401:
-          description: "You are not P.R.I.T."
-        200:
-          description: "List of all suggestions in the suggestion box"
+        - in: cookie
+          name: suggestit
+          description: Gamma authntication token
+          required: true
           schema:
-            $ref: "#/definitions/Suggestions"
+            type: string
+      responses:
+        "200":
+          description: List of all suggestions in the suggestion box
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Suggestions"
+        "401":
+          description: You are not P.R.I.T.
     post:
       tags:
-      - "api"
-      summary: "Create a new suggestion"
-      consumes:
-      - "application/json"
+        - Api
+      summary: Create a new suggestion
       parameters:
-      - in: "header"
-        name: "Authorization"
-        description: "the token from /api/authorization"
+        - in: cookie
+          name: suggestit
+          description: Gamma authntication token
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Suggestion"
+        description: the token from /api/authorization
         required: true
-        type: "string"
-      - in: "body"
-        name: "body"
-        description: "the token from /api/authorization"
-        required: true
-        schema:
-          $ref: "#/definitions/Suggestion"
       responses:
-        200:
-          description: "Suggestion created"
-    
+        "200":
+          description: Suggestion created
+
+  /api/suggestion:
+    get:
+      tags:
+        - Api
+      summary: Get specific suggestion
+      parameters:
+        - in: cookie
+          name: suggestit
+          description: Gamma authntication token
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: Id
+          description: requesting one specific suggestion
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: One singel suggestion
+        "401":
+          description: You are not P.R.I.T.
+
   /api/delete:
     delete:
       tags:
-      - "api"
-      summary: "Delete a specific suggestion"
+        - Api
+      summary: Delete a specific suggestion
       parameters:
-      - in: "header"
-        name: "Authorization"
-        description: "the token from /api/authorization"
-        required: true
-        type: "string"
-      - in: "query"
-        name: "Id"
-        type: "string"
-        required: true
+        - in: cookie
+          name: suggestit
+          description: Gamma authntication token
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: Id
+          required: true
+          schema:
+            type: string
       responses:
-        200:
+        "200":
           description: "null"
-          
-  /api/deletemult:
-    delete:
-      tags:
-      - "api"
-      summary: "Delete multiple suggestions"
-      parameters:
-      - in: "header"
-        name: "Authorization"
-        description: "the token from /api/authorization"
- authoriza       required: true
-        type: "string"
-      - in: "body"
-        name: "body"
-        required: true
-        schema:
-          $ref: "#/definitions/idarray"
-      responses:
-        200:
-          description: "null"
-          
-          
+        "401":
+          description: You are not P.R.I.T.
 
-definitions:
-  idarray:
-    type: "object"
-    properties:
-      ids:
-        type: "array"
-        items:
-          type: "string"
-          format: "uuid"
-  
-  Suggestions:
-    type: "array"
-    items:
-      type: "object"
+    put:
+      tags:
+        - Api
+      summary: Deletes multiple suggestions at once
+      parameters:
+        - in: cookie
+          name: suggestit
+          description: Gamma authntication token
+          required: true
+          schema:
+            type: string
+        - in: body
+          name: ids
+          required: true
+          schema:
+            $ref: "#/components/schemas/idarray"
+      responses:
+        "200":
+          description: "Suggestions deleted"
+        "401":
+          description: "You are not P.R.I.T."
+
+servers:
+  - url: http://localhost:5000
+components:
+  schemas:
+    idarray:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+    Suggestions:
+      type: array
+      items:
+        type: object
+        properties:
+          author:
+            type: string
+            example: Hello
+          id:
+            type: string
+            format: uuid
+          text:
+            type: string
+          timestamp:
+            type: string
+            format: datetime
+          title:
+            type: string
+    Suggestion:
+      type: object
       properties:
         author:
-          type: "string"
-          example: "Hello"
-        id: 
-          type: "string"
-          format: "uuid"
+          type: string
         text:
-          type: "string"
-        timestamp:
-          type: "string"
-          format: "datetime"
+          type: string
         title:
-          type: "string"
-  
-  SuggestionResponse:
-    type: "object"
-    properties:
-      author:
-        type: "string"
-        example: "Hello"
-      id: 
-        type: "string"
-        format: "uuid"
-      text:
-        type: "string"
-      timestamp:
-        type: "string"
-        format: "datetime"
-      title:
-        type: "string"
-  
-  Suggestion:
-    type: "object"
-    properties:
-      author:
-        type: "string"
-      text:
-        type: "string"
-      title:
-        type: "string"
-        
-  LoginCriteria:
-    type: "object"
-    properties:
-      cid:
-        type: "string"
-      password:
-        type: "string"
-      
-
-  LoginResponse:
-    type: "object"
-    properties:
-      token:
-        type: "string"
+          type: string

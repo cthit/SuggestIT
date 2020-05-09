@@ -11,7 +11,6 @@ services:
 
   adminer:
     image: adminer
-    restart: always
     ports:
       - 8080:8080
 
@@ -26,7 +25,8 @@ services:
       SUGGESTIT_POSTGRES_PORT: 5432
       SUGGESTIT_POSTGRES_DB: suggestit
 
-      MOCK_MODE: "False"
+      GIN_MODE: ""
+      MOCK_MODE: "True"
       AUTH_SECRET: lQ7UI4HfqaSMDxCBj8VU2pkSGy4anFPhBtm1qsQpXMnG8eFsdbFMtAU4JckQm3mByCmIKvgDq3y
       CLIENT_ID: s54LS1g35a4LIZgbpghrW4zqTywHrULoVyztaGA1t77pk6U4IBy8ZubZtkuxfZ6HQePZsdBMnj1
       GAMMA_URL: http://gamma-backend:8081
