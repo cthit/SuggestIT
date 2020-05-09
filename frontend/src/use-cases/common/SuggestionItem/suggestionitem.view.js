@@ -14,7 +14,7 @@ import {
     deleteSuggestion,
     addSuggestion,
 } from "../../../services/data.service";
-import SuggestionsContext from "../../../common/suggestion-provider/suggestion-context";
+import SuggestionsContext from "common/context/suggestion-context";
 
 const SuggestionItem = ({ suggestion, ts, ...props }) => {
     const [text, dispatchToggle] = useState(null);

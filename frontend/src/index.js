@@ -9,13 +9,19 @@ import {
 } from "@cthit/react-digit-components";
 import { Route } from "react-router";
 import SuggestITHeader from "./common/suggestitheader";
+import { UserProvider } from "./common/context/user-context/index.js";
+
 ReactDOM.render(
     <DigitProviders
         children={
             <div>
                 <DigitToast />
                 <DigitDialog />
-                <SuggestITHeader renderMain={() => <Route component={App} />} />
+                <UserProvider>
+                    <SuggestITHeader
+                        renderMain={() => <Route component={App} />}
+                    />
+                </UserProvider>
             </div>
         }
     />,

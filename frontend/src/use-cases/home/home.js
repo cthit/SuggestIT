@@ -1,23 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
 
 import Prompt from "./views/Prompt";
 import SuggestionBoard from "./views/SuggestionBoard/SuggestionBoard";
-import { checkLogin } from "../../services/data.service";
+import UserContext from "common/context/user-context";
 import { HomeWrapper, Divider } from "./home.style";
 
 const Home = () => {
-    const [suggestionboard, setSuggestionBoard] = useState(<div />);
-
-    useEffect(() => {
-        checkLogin().then(() => setSuggestionBoard(<SuggestionBoard />));
-        return () => {};
-    }, []);
+    const [user] = useContext(UserContext);
 
     return (
         <HomeWrapper>
             <Prompt />
             <Divider />
-            {suggestionboard}
+            {user && <SuggestionBoard />}
         </HomeWrapper>
     );
 };

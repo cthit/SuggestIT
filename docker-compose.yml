@@ -1,8 +1,7 @@
-version: "2"
+version: "3"
 services:
   db:
     image: postgres
-    restart: always
     environment:
       POSTGRES_USER: suggestit
       POSTGRES_DB: suggestit
@@ -12,7 +11,6 @@ services:
 
   adminer:
     image: adminer
-    restart: always
     ports:
       - 8080:8080
 
@@ -20,24 +18,29 @@ services:
     build:
       context: ./backend/
       dockerfile: dev.Dockerfile
-    environment: 
+    environment:
       SUGGESTIT_POSTGRES_USER: suggestit
       SUGGESTIT_POSTGRES_PASSWORD: password
       SUGGESTIT_POSTGRES_HOST: db
       SUGGESTIT_POSTGRES_PORT: 5432
       SUGGESTIT_POSTGRES_DB: suggestit
 
-      ALLOWED_GROUP: digit
-      AUTH_SECRET: hellotherethisisasecret
-      CLIENT_ID: thisisaclientid
+      GIN_MODE: ""
+      MOCK_MODE: "True"
+      AUTH_SECRET: lQ7UI4HfqaSMDxCBj8VU2pkSGy4anFPhBtm1qsQpXMnG8eFsdbFMtAU4JckQm3mByCmIKvgDq3y
+      CLIENT_ID: s54LS1g35a4LIZgbpghrW4zqTywHrULoVyztaGA1t77pk6U4IBy8ZubZtkuxfZ6HQePZsdBMnj1
+      GAMMA_URL: http://gamma-backend:8081
+      REDIRECT_GAMMA_URL: http://localhost:8081
+      CALLBACK_URL: http://localhost:3001/callback
+      ALLOWED_GROUP: prit
 
-      GOTIFY_URL: http://gotify:8080
-      GOTIFY_PRE_SHARED_KEY: 123abcc
-      ENABLE_EMAIL: "True"
+      #GOTIFY_URL: http://gotify:8080
+      #GOTIFY_PRE_SHARED_KEY: 123abcc
+      #ENABLE_EMAIL: "True"
 
     volumes:
       - ./backend/:/go/src/app
-    
+
     ports:
       - 5000:3000
 
@@ -46,14 +49,55 @@ services:
       context: ./frontend/
       dockerfile: dev.Dockerfile
     ports:
-      - 3000:3000
+      - 3001:3000
     volumes:
       - ./frontend/src:/usr/src
 
-  gotify:
-    image: cthit/gotify:latest
+  gamma-db:
+    image: postgres:10
     environment:
-      GOTIFY_PRE-SHARED-KEY: "123abcc"
-      GOTIFY_MOCK-MODE: "true"
+      POSTGRES_USER: user
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: password
+
+  gamma-frontend:
+    image: cthit/gamma-frontend:development
+    network_mode: host
     ports:
-      - 1337:8080
+      - 3000:3000
+
+  gamma-backend:
+    image: cthit/gamma-backend
+    environment:
+      # Default admin user name = admin
+      # Default admin password  = password
+
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_HOST: gamma-db
+      DB_PORT: 5432
+      DB_NAME: postgres
+
+      REDIS_HOST: redis
+      REDIS_PASSWORD: ""
+
+      GOTIFY_KEY: "123abc"
+      GOTIFY_URL: http://gotify:8080/mail
+
+      SERVER_PORT: 8081
+      FRONTEND_REDIRECT_URI: http://localhost:3000/login
+      SUCCESSFUL_LOGIN: http://localhost:3000
+      CORS_ALLOWED_ORIGIN: http://localhost:3000
+      COOKIE_DOMAIN: localhost
+
+    ports:
+      - 8081:8081
+
+  redis:
+    image: redis:5.0
+
+  gotify:
+    image: cthit/gotify
+    environment:
+      GOTIFY_PRE-SHARED-KEY: 123abc
+      GOTIFY_MOCK-MODE: "true"

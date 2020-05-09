@@ -10,7 +10,7 @@ import {
     DigitText,
     useDigitDialog,
 } from "@cthit/react-digit-components";
-import SuggestionsContext from "../../../../common/suggestion-provider/suggestion-context";
+import SuggestionsContext from "common/context/suggestion-context";
 
 const SuggestionBoard = () => {
     const [dialogOpen] = useDigitDialog();
@@ -18,9 +18,7 @@ const SuggestionBoard = () => {
     const [suggestions, setSuggestions] = useContext(SuggestionsContext);
 
     useEffect(() => {
-        console.log("Updating suggestions");
         updateSuggestions(setSuggestions);
-        return () => {};
     }, [setSuggestions]);
 
     const clearSuggestions = useCallback(
