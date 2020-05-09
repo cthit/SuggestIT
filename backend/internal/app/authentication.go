@@ -36,6 +36,7 @@ func Auth(h func(*gin.Context)) func(*gin.Context) {
 	return func(c *gin.Context) {
 		token, err := c.Cookie("suggestit")
 		if err != nil || !ValidUser(token) {
+			c.SetCookie("suggestit", "", -1000, "/", c.Request.Host, true, true)
 			c.AbortWithError(http.StatusUnauthorized, errors.New("You are not P.R.I.T."))
 			return
 		}
