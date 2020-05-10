@@ -10,13 +10,13 @@ import { UserProvider } from "./common/context/user-context/index.js";
 ReactDOM.render(
     <DigitProviders
         children={
-            <div>
+            <>
                 <UserProvider>
                     <SuggestITHeader
                         renderMain={() => <Route component={App} />}
                     />
                 </UserProvider>
-            </div>
+            </>
         }
     />,
     document.getElementById("root")

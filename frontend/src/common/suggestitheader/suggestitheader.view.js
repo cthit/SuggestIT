@@ -23,7 +23,7 @@ const SuggestITHeader = ({ renderMain }) => {
             title="SuggestIT"
             headerRowProps={{ flex: "1", justifyContent: "space-between" }}
             renderHeader={() => (
-                <div>
+                <>
                     <DigitLayout.Row>
                         <DigitButton
                             text="About"
@@ -42,13 +42,13 @@ const SuggestITHeader = ({ renderMain }) => {
                             }
                         />
                         {!user ? (
-                            <div>
+                            <>
                                 <DigitButton
                                     text="Login"
                                     outlined
                                     onClick={() => loginRedirect()}
                                 />
-                            </div>
+                            </>
                         ) : (
                             <DigitButton
                                 outlined
@@ -59,7 +59,7 @@ const SuggestITHeader = ({ renderMain }) => {
                             />
                         )}
                     </DigitLayout.Row>
-                </div>
+                </>
             )}
         />
     );

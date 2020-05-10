@@ -74,14 +74,14 @@ const Prompt = () => {
                     upperLabel="Name/Nick"
                     maxLength={24}
                 />
-                <div>
+                <>
                     <DigitText.Text text={"By clicking Send I agree to"} />
                     <LinkText
                         onClick={() => {
                             openDialog({
                                 renderButtons: () => null,
                                 renderMain: () => (
-                                    <div>
+                                    <>
                                         <DigitText.Title
                                             text={"GDPR agreement"}
                                         />
@@ -90,13 +90,13 @@ const Prompt = () => {
                                                 "The data is collected by the Student Division Information Technology with the aim of knowing how to improve Hubben 2.1. The data that will be saved is title, the suggestion, the time it was sent and name if not anonymous. You have the right to withdraw your consent to the management, request to have all data that the organization has about you and to complain to the Data Inspectorate in case of dissatisfaction. The data will be kept until P.R.I.T. has solved the issue or deemed it invalid and will only be handled by the Student Division Information Technology, ultimately responsible for the data management of the section is William Levén, who can be reached at ordforande@chalmers.it. If you have any questions, please contact P.R.I.T. prit@chalmers.it or the section's data protection representative dpo@chalmers.it."
                                             }
                                         />
-                                    </div>
+                                    </>
                                 ),
                             });
                         }}
                         text={"this GDPR agreement"}
                     />
-                </div>
+                </>
                 <DigitSwitch
                     value={anonymous_author}
                     label="Anonymous"
