@@ -8,6 +8,7 @@ package app
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -27,7 +28,7 @@ func HandleLogin(c *gin.Context) {
 
 // Removes the authentication cookie and makes the user unauthenticated
 func HandleLogout(c *gin.Context) {
-	c.SetCookie("suggestit", "", -1000, "/", c.Request.Host, true, true)
+	c.SetCookie("suggestit", "", -1000, "/", cookie_domain, true, true)
 }
 
 // Exchanges Gamma authentication code with access token
@@ -46,9 +47,21 @@ func HandleAuthenticationWithCode(c *gin.Context) {
 		token.AccessToken,
 		24*60*60,
 		"/",
-		c.Request.Host,
+		cookie_domain,
 		true,
 		true)
+}
+
+func HandleCheckLogin(c *gin.Context) {
+	token, err := c.Cookie("suggestit")
+	user := GetUser(token)
+	if err != nil || !MemberOfGroup(user, allowed_group) {
+		c.SetCookie("suggestit", "", -1000, "/", cookie_domain, true, true)
+		c.AbortWithError(http.StatusUnauthorized, errors.New("You are not P.R.I.T."))
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }
 
 // Creates a new suggestion

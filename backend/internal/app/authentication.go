@@ -18,6 +18,7 @@ var (
 	gamma_url     = os.Getenv("GAMMA_URL")
 	mock_mode     = os.Getenv("MOCK_MODE") == "True"
 	allowed_group = os.Getenv("ALLOWED_GROUP")
+	cookie_domain = os.Getenv("COOKIE_DOMAIN")
 )
 
 var client = oauth2.Config{
@@ -35,8 +36,8 @@ var client = oauth2.Config{
 func Auth(h func(*gin.Context)) func(*gin.Context) {
 	return func(c *gin.Context) {
 		token, err := c.Cookie("suggestit")
-		if err != nil || !ValidUser(token) {
-			c.SetCookie("suggestit", "", -1000, "/", c.Request.Host, true, true)
+		if err != nil || !MemberOfGroup(GetUser(token), allowed_group) {
+			c.SetCookie("suggestit", "", -1000, "/", cookie_domain, true, true)
 			c.AbortWithError(http.StatusUnauthorized, errors.New("You are not P.R.I.T."))
 			return
 		}
@@ -50,7 +51,7 @@ func MemberOfGroup(user User, group string) bool {
 		func(e Group) bool { return e.Active && e.SuperGroup.Name == group })
 }
 
-func ValidUser(token string) bool {
+func GetUser(token string) User {
 	gammaQuery := fmt.Sprintf("%s/api/users/me", gamma_url)
 
 	client := http.Client{}
@@ -60,14 +61,14 @@ func ValidUser(token string) bool {
 	resp, err := client.Do(req)
 	if err != nil || resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		log.Println(err)
-		return false
+		return User{}
 	}
 
 	me := User{}
 	text, _ := ioutil.ReadAll(resp.Body)
 	json.Unmarshal(text, &me)
 
-	return MemberOfGroup(me, "prit")
+	return me
 }
 
 func getToken(grant string) (*oauth2.Token, error) {
