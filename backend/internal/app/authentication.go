@@ -18,6 +18,7 @@ var (
 	gamma_url     = os.Getenv("GAMMA_URL")
 	mock_mode     = os.Getenv("MOCK_MODE") == "True"
 	allowed_group = os.Getenv("ALLOWED_GROUP")
+	cookie_domain = os.Getenv("COOKIE_DOMAIN")
 )
 
 var client = oauth2.Config{
@@ -36,7 +37,7 @@ func Auth(h func(*gin.Context)) func(*gin.Context) {
 	return func(c *gin.Context) {
 		token, err := c.Cookie("suggestit")
 		if err != nil || !ValidUser(token) {
-			c.SetCookie("suggestit", "", -1000, "/", c.Request.Host, true, true)
+			c.SetCookie("suggestit", "", -1000, "/", cookie_domain, true, true)
 			c.AbortWithError(http.StatusUnauthorized, errors.New("You are not P.R.I.T."))
 			return
 		}

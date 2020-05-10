@@ -27,12 +27,13 @@ services:
 
       GIN_MODE: ""
       MOCK_MODE: "True"
-      AUTH_SECRET: lQ7UI4HfqaSMDxCBj8VU2pkSGy4anFPhBtm1qsQpXMnG8eFsdbFMtAU4JckQm3mByCmIKvgDq3y
-      CLIENT_ID: s54LS1g35a4LIZgbpghrW4zqTywHrULoVyztaGA1t77pk6U4IBy8ZubZtkuxfZ6HQePZsdBMnj1
+      AUTH_SECRET: secret
+      CLIENT_ID: id
       GAMMA_URL: http://gamma-backend:8081
       REDIRECT_GAMMA_URL: http://localhost:8081
       CALLBACK_URL: http://localhost:3001/callback
       ALLOWED_GROUP: prit
+      COOKIE_DOMAIN: localhost
 
       #GOTIFY_URL: http://gotify:8080
       #GOTIFY_PRE_SHARED_KEY: 123abcc
@@ -89,7 +90,10 @@ services:
       SUCCESSFUL_LOGIN: http://localhost:3000
       CORS_ALLOWED_ORIGIN: http://localhost:3000
       COOKIE_DOMAIN: localhost
-
+      PRODUCTION: "false"
+      IS_MOCKING_CLIENT: "true"
+      DEFAULT_REDIRECT_URI: http://localhost:3001/callback
+ 
     ports:
       - 8081:8081
 

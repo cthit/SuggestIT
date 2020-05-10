@@ -27,7 +27,7 @@ func HandleLogin(c *gin.Context) {
 
 // Removes the authentication cookie and makes the user unauthenticated
 func HandleLogout(c *gin.Context) {
-	c.SetCookie("suggestit", "", -1000, "/", c.Request.Host, true, true)
+	c.SetCookie("suggestit", "", -1000, "/", cookie_domain, true, true)
 }
 
 // Exchanges Gamma authentication code with access token
@@ -46,7 +46,7 @@ func HandleAuthenticationWithCode(c *gin.Context) {
 		token.AccessToken,
 		24*60*60,
 		"/",
-		c.Request.Host,
+		cookie_domain,
 		true,
 		true)
 }
