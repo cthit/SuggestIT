@@ -39,7 +39,7 @@ func main() {
 		AllowCredentials: true}))
 
 	router.POST("/api/auth/withCode", app.HandleAuthenticationWithCode)
-	router.GET("/api/checkLogin", app.Auth(func(c *gin.Context) {}))
+	router.GET("/api/checkLogin", app.HandleCheckLogin)
 	router.GET("/api/login", app.HandleLogin)
 	router.POST("/api/logout", app.HandleLogout)
 

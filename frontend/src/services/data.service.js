@@ -29,7 +29,7 @@ export const loginRedirect = () => (window.location = "/api/login");
 export const checkLogin = setUser =>
     axios
         .get(`/api/checkLogin`)
-        .then(res => setUser(true))
+        .then(res => setUser(res.data))
         .catch(err => setUser(null));
 
 export const getToken = code => axios.post(`/api/auth/withCode?code=${code}`);

@@ -8,6 +8,7 @@ package app
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -49,6 +50,18 @@ func HandleAuthenticationWithCode(c *gin.Context) {
 		cookie_domain,
 		true,
 		true)
+}
+
+func HandleCheckLogin(c *gin.Context) {
+	token, err := c.Cookie("suggestit")
+	user := GetUser(token)
+	if err != nil || !MemberOfGroup(user, allowed_group) {
+		c.SetCookie("suggestit", "", -1000, "/", cookie_domain, true, true)
+		c.AbortWithError(http.StatusUnauthorized, errors.New("You are not P.R.I.T."))
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }
 
 // Creates a new suggestion
