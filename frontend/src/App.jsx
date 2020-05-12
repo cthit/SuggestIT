@@ -11,10 +11,10 @@ import "./App.css";
 
 const API = () => {
     useEffect(() => {
-        window.location = "http://localhost:5000/api/login";
+        window.location.href = "http://localhost:5000/api/login";
     });
 
-    return <></>;
+    return null;
 };
 
 const App = () => (

@@ -8,7 +8,3 @@ export const LinkText = styled(DigitText.Text)`
     color: blue;
     cursor: pointer;
 `;
-
-export const PromptWrapper = styled(DigitDesign.Card)`
-    padding: 1rem;
-`;

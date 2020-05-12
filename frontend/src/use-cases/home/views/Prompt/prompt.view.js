@@ -47,7 +47,7 @@ const Prompt = () => {
     };
 
     return (
-        <PromptWrapper size={{ height: "33rem" }}>
+        <DigitDesign.Card padding="1rem" size={{ height: "33rem" }}>
             <DigitDesign.CardBody>
                 <DigitText.Heading6 text="New Suggestion" />
                 <DigitTextField
@@ -128,7 +128,7 @@ const Prompt = () => {
                     }}
                 />
             </DigitDesign.CardBody>
-        </PromptWrapper>
+        </DigitDesign.Card>
     );
 };
 

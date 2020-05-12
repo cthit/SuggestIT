@@ -24,7 +24,7 @@ const Callback = ({ location }) => {
 
     return (
         <>
-            <DigitLoading size={80} />
+            <DigitLoading />
             {redirect ? <Redirect to="/" /> : null}
         </>
     );
