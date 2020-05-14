@@ -13,7 +13,7 @@ import {
     addSuggestion,
     updateSuggestions,
 } from "../../../../services/data.service";
-import { LinkText, PromptWrapper } from "./promtp.style";
+import { LinkText } from "./promtp.style";
 import SuggestionsContext from "common/context/suggestion-context";
 
 const title_error_message = "The title is not filled in";

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { DigitText, DigitDesign } from "@cthit/react-digit-components";
+import { DigitText } from "@cthit/react-digit-components";
 
 export const LinkText = styled(DigitText.Text)`
     &:hover {
