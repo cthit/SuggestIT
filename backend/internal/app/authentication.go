@@ -15,10 +15,10 @@ import (
 )
 
 var (
-	gamma_url     = os.Getenv("GAMMA_URL")
-	mock_mode     = os.Getenv("MOCK_MODE") == "True"
-	allowed_group = os.Getenv("ALLOWED_GROUP")
-	cookie_domain = os.Getenv("COOKIE_DOMAIN")
+	gamma_url       = os.Getenv("GAMMA_URL")
+	mock_mode       = os.Getenv("MOCK_MODE") == "True"
+	gamma_authority = os.Getenv("GAMMA_AUTHORITY")
+	cookie_domain   = os.Getenv("COOKIE_DOMAIN")
 )
 
 var client = oauth2.Config{
@@ -36,7 +36,7 @@ var client = oauth2.Config{
 func Auth(h func(*gin.Context)) func(*gin.Context) {
 	return func(c *gin.Context) {
 		token, err := c.Cookie("suggestit")
-		if err != nil || !MemberOfGroup(GetUser(token), allowed_group) {
+		if err != nil || !HasAuthority(GetUser(token)) {
 			c.SetCookie("suggestit", "", -1000, "/", cookie_domain, true, true)
 			c.AbortWithError(http.StatusUnauthorized, errors.New("You are not P.R.I.T."))
 			return
@@ -46,9 +46,9 @@ func Auth(h func(*gin.Context)) func(*gin.Context) {
 	}
 }
 
-func MemberOfGroup(user User, group string) bool {
-	return mock_mode || contains(user.Groups,
-		func(e Group) bool { return e.Active && e.SuperGroup.Name == group })
+func HasAuthority(user User) bool {
+	return mock_mode || contains(user.Authorities,
+		func(e Authority) bool { return e.Authority == gamma_authority })
 }
 
 func GetUser(token string) User {
@@ -75,7 +75,7 @@ func getToken(grant string) (*oauth2.Token, error) {
 	return client.Exchange(context.Background(), grant)
 }
 
-func contains(elements []Group, is func(Group) bool) bool {
+func contains(elements []Authority, is func(Authority) bool) bool {
 	for _, v := range elements {
 		if is(v) {
 			return true

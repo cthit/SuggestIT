@@ -55,7 +55,7 @@ func HandleAuthenticationWithCode(c *gin.Context) {
 func HandleCheckLogin(c *gin.Context) {
 	token, err := c.Cookie("suggestit")
 	user := GetUser(token)
-	if err != nil || !MemberOfGroup(user, allowed_group) {
+	if err != nil || !HasAuthority(user) {
 		c.SetCookie("suggestit", "", -1000, "/", cookie_domain, true, true)
 		c.AbortWithError(http.StatusUnauthorized, errors.New("You are not P.R.I.T."))
 		return

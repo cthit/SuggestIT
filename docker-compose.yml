@@ -26,13 +26,13 @@ services:
       SUGGESTIT_POSTGRES_DB: suggestit
 
       GIN_MODE: ""
-      MOCK_MODE: "True"
+      MOCK_MODE: "False"
       AUTH_SECRET: secret
       CLIENT_ID: id
       GAMMA_URL: http://gamma-backend:8081
       REDIRECT_GAMMA_URL: http://localhost:8081
       CALLBACK_URL: http://localhost:3001/callback
-      ALLOWED_GROUP: prit
+      GAMMA_AUTHORITY: suggestit
       COOKIE_DOMAIN: localhost
     volumes:
       - ./backend/:/go/src/app
