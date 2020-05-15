@@ -26,7 +26,7 @@ services:
       SUGGESTIT_POSTGRES_DB: suggestit
 
       GIN_MODE: ""
-      MOCK_MODE: "False"
+      MOCK_MODE: "True"
       AUTH_SECRET: secret
       CLIENT_ID: id
       GAMMA_URL: http://gamma-backend:8081
