@@ -34,11 +34,6 @@ services:
       CALLBACK_URL: http://localhost:3001/callback
       ALLOWED_GROUP: prit
       COOKIE_DOMAIN: localhost
-
-      #GOTIFY_URL: http://gotify:8080
-      #GOTIFY_PRE_SHARED_KEY: 123abcc
-      #ENABLE_EMAIL: "True"
-
     volumes:
       - ./backend/:/go/src/app
 
@@ -82,9 +77,6 @@ services:
       REDIS_HOST: redis
       REDIS_PASSWORD: ""
 
-      GOTIFY_KEY: "123abc"
-      GOTIFY_URL: http://gotify:8080/mail
-
       SERVER_PORT: 8081
       FRONTEND_REDIRECT_URI: http://localhost:3000/login
       SUCCESSFUL_LOGIN: http://localhost:3000
@@ -99,9 +91,3 @@ services:
 
   redis:
     image: redis:5.0
-
-  gotify:
-    image: cthit/gotify
-    environment:
-      GOTIFY_PRE-SHARED-KEY: 123abc
-      GOTIFY_MOCK-MODE: "true"
