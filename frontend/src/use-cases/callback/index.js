@@ -1,25 +1,28 @@
 import React, { useEffect, useState, useContext } from "react";
 import { getToken, checkLogin } from "services/data.service";
-import { DigitLoading } from "@cthit/react-digit-components";
+import { DigitLoading, useDigitToast } from "@cthit/react-digit-components";
 import { Redirect } from "react-router-dom";
 import UserContext from "common/context/user-context";
 
 const Callback = ({ location }) => {
     const [redirect, setRedirect] = useState(false);
     const [, setUser] = useContext(UserContext);
+    const [toastOpen] = useDigitToast({ duration: 5000 });
 
     useEffect(() => {
         let params = new URLSearchParams(location.search);
         getToken(params.get("code"))
             .then(res => {
                 checkLogin(setUser);
-                setRedirect(true);
+                console.log("Login success");
             })
             .catch(err => {
                 console.log(err);
-                console.log("Failed to fetch token");
-                setRedirect(true);
-            });
+                toastOpen({
+                    text: "You do not have the authority to view suggestions",
+                });
+            })
+            .finally(() => setRedirect(true));
     }, [location.search, setRedirect, setUser]);
 
     return (

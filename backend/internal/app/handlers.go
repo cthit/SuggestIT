@@ -43,6 +43,12 @@ func HandleAuthenticationWithCode(c *gin.Context) {
 		return
 	}
 
+	user := GetUser(token.AccessToken)
+	if !HasAuthority(user) {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+
 	c.SetCookie("suggestit",
 		token.AccessToken,
 		24*60*60,
