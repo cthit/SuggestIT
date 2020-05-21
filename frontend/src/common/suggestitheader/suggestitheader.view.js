@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import {
     DigitHeader,
     DigitButton,
@@ -6,23 +6,24 @@ import {
     useDigitCustomDialog,
 } from "@cthit/react-digit-components";
 import About from "./elements/about";
-import { checkLogin, logOut, loginRedirect } from "../../services/data.service";
+import { logOut, loginRedirect, checkLogin } from "services/data.service";
+import UserContext from "../context/user-context";
 
 const SuggestITHeader = ({ renderMain }) => {
-    const [isLoggedIn, setIsloggedIn] = useState(false);
+    const [user, setUser] = useContext(UserContext);
     const [dialogOpen, ,] = useDigitCustomDialog();
 
     useEffect(() => {
-        checkLogin().then(res => setIsloggedIn(true));
-        return () => {};
-    }, []);
+        checkLogin(setUser);
+    }, [setUser]);
 
     return (
         <DigitHeader
             renderMain={renderMain}
             title="SuggestIT"
+            headerRowProps={{ flex: "1", justifyContent: "space-between" }}
             renderHeader={() => (
-                <div>
+                <>
                     <DigitLayout.Row>
                         <DigitButton
                             text="About"
@@ -40,26 +41,25 @@ const SuggestITHeader = ({ renderMain }) => {
                                 })
                             }
                         />
-                        {!isLoggedIn ? (
-                            <div>
+                        {!user ? (
+                            <>
                                 <DigitButton
                                     text="Login"
                                     outlined
                                     onClick={() => loginRedirect()}
                                 />
-                            </div>
+                            </>
                         ) : (
                             <DigitButton
                                 outlined
                                 text="logout"
                                 onClick={() => {
-                                    logOut();
-                                    window.location.reload(false);
+                                    logOut(setUser);
                                 }}
                             />
                         )}
                     </DigitLayout.Row>
-                </div>
+                </>
             )}
         />
     );

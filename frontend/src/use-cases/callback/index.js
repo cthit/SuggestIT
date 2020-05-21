@@ -1,16 +1,36 @@
-import React, { useEffect } from "react";
-import Cookies from "universal-cookie";
-const cookies = new Cookies();
+import React, { useEffect, useState, useContext } from "react";
+import { getToken, checkLogin } from "services/data.service";
+import { DigitLoading, useDigitToast } from "@cthit/react-digit-components";
+import { Redirect } from "react-router-dom";
+import UserContext from "common/context/user-context";
 
 const Callback = ({ location }) => {
+    const [redirect, setRedirect] = useState(false);
+    const [, setUser] = useContext(UserContext);
+    const [toastOpen] = useDigitToast({ duration: 5000 });
+
     useEffect(() => {
         let params = new URLSearchParams(location.search);
-        cookies.set("AUTH_TOKEN", params.get("token"));
-        window.location.replace("/");
-        return () => {};
-    }, [location.search]);
+        getToken(params.get("code"))
+            .then(res => {
+                checkLogin(setUser);
+                console.log("Login success");
+            })
+            .catch(err => {
+                console.log(err);
+                toastOpen({
+                    text: "You do not have the authority to view suggestions",
+                });
+            })
+            .finally(() => setRedirect(true));
+    }, [location.search, setRedirect, setUser]);
 
-    return <div />;
+    return (
+        <>
+            <DigitLoading />
+            {redirect ? <Redirect to="/" /> : null}
+        </>
+    );
 };
 
 export default Callback;

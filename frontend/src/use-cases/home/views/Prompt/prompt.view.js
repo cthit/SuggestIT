@@ -7,14 +7,14 @@ import {
     DigitSwitch,
     useDigitCustomDialog,
     useDigitToast,
+    DigitDesign,
 } from "@cthit/react-digit-components";
 import {
     addSuggestion,
     updateSuggestions,
 } from "../../../../services/data.service";
-import "./prompt.style.css";
 import { LinkText } from "./promtp.style";
-import SuggestionsContext from "../../../../common/suggestion-provider/suggestion-context";
+import SuggestionsContext from "common/context/suggestion-context";
 
 const title_error_message = "The title is not filled in";
 const description_error_message = "The description is not filled in";
@@ -47,8 +47,8 @@ const Prompt = () => {
     };
 
     return (
-        <div className="prompt">
-            <div className="innerPrompt">
+        <DigitDesign.Card padding="1rem" size={{ height: "33rem" }}>
+            <DigitDesign.CardBody>
                 <DigitText.Heading6 text="New Suggestion" />
                 <DigitTextField
                     error={errors.title_error}
@@ -56,6 +56,7 @@ const Prompt = () => {
                     onChange={e => setTitle(e.target.value)}
                     value={title}
                     upperLabel="Title"
+                    maxLength={24}
                 />
                 <DigitTextArea
                     error={errors.description_error}
@@ -64,22 +65,23 @@ const Prompt = () => {
                     value={text}
                     upperLabel="Suggestion"
                     rows={5}
-                    rowsMax={10}
+                    rowsMax={5}
                 />
                 <DigitTextField
                     onChange={e => setAuthor(e.target.value)}
                     value={author}
                     disabled={anonymous_author}
                     upperLabel="Name/Nick"
+                    maxLength={24}
                 />
-                <div>
+                <>
                     <DigitText.Text text={"By clicking Send I agree to"} />
                     <LinkText
                         onClick={() => {
                             openDialog({
                                 renderButtons: () => null,
                                 renderMain: () => (
-                                    <div>
+                                    <>
                                         <DigitText.Title
                                             text={"GDPR agreement"}
                                         />
@@ -88,13 +90,13 @@ const Prompt = () => {
                                                 "The data is collected by the Software Engineering Student Division (IT) with the aim of knowing how to improve Hubben 2.1. The data that will be saved is title, the suggestion, the time it was sent and name if not anonymous. You have the right to withdraw your consent to the management, request to have all data that the organization has about you and to complain to the Data Inspectorate in case of dissatisfaction. The data will be kept until P.R.I.T. has solved the issue or deemed it invalid and will only be handled by the Student Division Information Technology, ultimately responsible for the data management of the section is William Levén, who can be reached at ordforande@chalmers.it. If you have any questions, please contact P.R.I.T. prit@chalmers.it or the section's data protection representative dpo@chalmers.it."
                                             }
                                         />
-                                    </div>
+                                    </>
                                 ),
                             });
                         }}
                         text={"this GDPR agreement"}
                     />
-                </div>
+                </>
                 <DigitSwitch
                     value={anonymous_author}
                     label="Anonymous"
@@ -125,8 +127,8 @@ const Prompt = () => {
                         });
                     }}
                 />
-            </div>
-        </div>
+            </DigitDesign.CardBody>
+        </DigitDesign.Card>
     );
 };
 
