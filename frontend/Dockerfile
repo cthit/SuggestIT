@@ -1,6 +1,6 @@
 FROM node:latest as build
 
-COPY /package.json /
+COPY package.json yarn.lock /
 
 RUN yarn install --production --network-timeout 1000000000
 RUN yarn global add react-scripts 

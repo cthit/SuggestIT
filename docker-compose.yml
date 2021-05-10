@@ -58,7 +58,10 @@ services:
 
   gamma-frontend:
     image: cthit/gamma-frontend:development
-    network_mode: host
+    environment:
+      HTTP_PROXY: http://gamma-backend:8081
+    depends_on:
+      - gamma-backend
     ports:
       - 3000:3000
 
@@ -85,9 +88,11 @@ services:
       PRODUCTION: "false"
       IS_MOCKING_CLIENT: "true"
       DEFAULT_REDIRECT_URI: http://localhost:3001/callback
- 
     ports:
       - 8081:8081
+    depends_on:
+      - gamma-db
+      - redis
 
   redis:
     image: redis:5.0
