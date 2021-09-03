@@ -41,7 +41,7 @@ func getSuggestions() ([]Suggestion, error) {
 		return nil, err
 	}
 
-	var suggestions []Suggestion
+	var suggestions []Suggestion = []Suggestion{}
 	for rows.Next() {
 		var s Suggestion
 		err = rows.Scan(
