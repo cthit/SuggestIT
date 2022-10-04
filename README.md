@@ -1,6 +1,6 @@
 # SuggestIT
 
-An application for sending suggestions about Hubben 2.1 to P.R.I.T..
+An application for sending suggestions about Hubben 2.2 to P.R.I.T..
 
 ## Setup development
 Run the following commands to set up the development environment.  
