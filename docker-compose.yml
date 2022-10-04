@@ -1,7 +1,7 @@
 version: "3"
 services:
   db:
-    image: postgres
+    image: postgres:11
     environment:
       POSTGRES_USER: suggestit
       POSTGRES_DB: suggestit
