@@ -13,8 +13,11 @@ services:
   adminer:
     image: adminer
     restart: always
+    depends_on:
+      - db
     ports:
       - 1234:8080
+
   backend:
     image: cthit/suggestit-backend
     environment: 
@@ -25,6 +28,8 @@ services:
       SUGGESTIT_POSTGRES_DB: suggestit
 
       AUTH_SECRET: thisisasecret
+    depends_on:
+      - db
     ports:
       - 5000:3001
 
@@ -32,5 +37,7 @@ services:
     image: cthit/suggestit-frontend
     ports:
       - 8080:8080
+    depends_on:
+      - backend
     volumes:
       - ./frontend:/usr/src/app/
