@@ -106,6 +106,9 @@ services:
       
     ports:
       - 8081:8081
+    depends_on:
+      - gamma-db
+      - redis
 
   redis:
     image: redis:5.0
