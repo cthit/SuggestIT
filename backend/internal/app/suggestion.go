@@ -36,7 +36,7 @@ func insertSuggestion(s Suggestion) (sql.Result, error) {
 }
 
 func getSuggestions() ([]Suggestion, error) {
-	rows, err := db.Query("SELECT * FROM suggestion")
+	rows, err := db.Query("SELECT * FROM suggestion ORDER BY timestamp DESC")
 	if err != nil {
 		return nil, err
 	}
