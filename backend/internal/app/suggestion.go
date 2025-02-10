@@ -2,7 +2,6 @@ package app
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 )
 
@@ -85,7 +84,7 @@ func deleteSuggestion(Id string) error {
 	if n, err := res.RowsAffected(); err != nil {
 		return err
 	} else if n != 1 {
-		return errors.New(fmt.Sprintf("Could not find element with id %s", Id))
+		return fmt.Errorf("Could not find element with id %s", Id)
 	}
 	return nil
 }

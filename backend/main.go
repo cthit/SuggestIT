@@ -31,23 +31,23 @@ func main() {
 	app.CreateSuggestionTable()
 
 	log.Println("Starting")
-	router := gin.Default()
-	router.Use(cors.New(cors.Config{
+	r := gin.Default()
+	r.Use(cors.New(cors.Config{
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowOrigins:     []string{"https://suggestit.chalmers.it", "http://localhost:3000"},
 		AllowHeaders:     []string{"Content-Type", "Authorization"},
 		AllowCredentials: true}))
 
-	router.POST("/api/auth/withCode", app.HandleAuthenticationWithCode)
-	router.GET("/api/checkLogin", app.HandleCheckLogin)
-	router.GET("/api/login", app.HandleLogin)
-	router.POST("/api/logout", app.HandleLogout)
+	r.POST("/api/auth/withCode", app.HandleAuthenticationWithCode)
+	r.GET("/api/checkLogin", app.HandleCheckLogin)
+	r.GET("/api/login", app.HandleLogin)
+	r.POST("/api/logout", app.HandleLogout)
 
-	router.DELETE("/api/delete", app.Auth(app.HandleDeleteSuggestion))
-	router.PUT("/api/delete", app.Auth(app.HandleDeleteSuggestions))
-	router.GET("/api/suggestion", app.Auth(app.HandleGetSuggestion))
-	router.GET("/api/", app.Auth(app.HandleGetSuggestions))
-	router.POST("/api/", app.HandleInsert)
+	r.DELETE("/api/delete", app.Auth(app.HandleDeleteSuggestion))
+	r.PUT("/api/delete", app.Auth(app.HandleDeleteSuggestions))
+	r.GET("/api/suggestion", app.Auth(app.HandleGetSuggestion))
+	r.GET("/api/", app.Auth(app.HandleGetSuggestions))
+	r.POST("/api/", app.HandleInsert)
 
-	router.Run(":3001")
+	r.Run(":3001")
 }

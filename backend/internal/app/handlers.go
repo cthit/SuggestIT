@@ -9,21 +9,18 @@ package app
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"golang.org/x/oauth2"
 )
 
 // Redirects the user to gamma authentication page
 func HandleLogin(c *gin.Context) {
-	c.Redirect(http.StatusPermanentRedirect,
-		fmt.Sprintf("%s?response_type=code&client_id=%s&redirect_uri=%s",
-			client.Endpoint.AuthURL,
-			client.ClientID,
-			client.RedirectURL))
+	url := oauthConfig.AuthCodeURL("state", oauth2.AccessTypeOffline)
+	c.Redirect(http.StatusPermanentRedirect, url)
 }
 
 // Removes the authentication cookie and makes the user unauthenticated
@@ -74,7 +71,7 @@ func HandleCheckLogin(c *gin.Context) {
 func HandleInsert(c *gin.Context) {
 
 	var s Suggestion
-	body, _ := ioutil.ReadAll(c.Request.Body)
+	body, _ := io.ReadAll(c.Request.Body)
 	if err := json.Unmarshal(body, &s); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return
@@ -124,7 +121,7 @@ func HandleDeleteSuggestions(c *gin.Context) {
 		Ids []string `json:"ids"`
 	}
 
-	body, _ := ioutil.ReadAll(c.Request.Body)
+	body, _ := io.ReadAll(c.Request.Body)
 	if err := json.Unmarshal(body, &suggestionIds); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
 		return

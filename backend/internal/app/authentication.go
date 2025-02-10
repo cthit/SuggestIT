@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -15,22 +15,20 @@ import (
 )
 
 var (
-	gamma_url       = os.Getenv("GAMMA_URL")
-	mock_mode       = os.Getenv("MOCK_MODE") == "True"
-	gamma_authority = os.Getenv("GAMMA_AUTHORITY")
-	cookie_domain   = os.Getenv("COOKIE_DOMAIN")
+	gamma_url     = os.Getenv("GAMMA_URL")
+	mock_mode     = os.Getenv("MOCK_MODE") == "True"
+	cookie_domain = os.Getenv("COOKIE_DOMAIN")
 )
 
-var client = oauth2.Config{
-	ClientID:     os.Getenv("CLIENT_ID"),
-	ClientSecret: os.Getenv("AUTH_SECRET"),
+var oauthConfig = &oauth2.Config{
+	ClientID:     os.Getenv("OAUTH_CLIENT_ID"),
+	ClientSecret: os.Getenv("OAUTH_CLIENT_SECRET"),
+	RedirectURL:  os.Getenv("OAUTH_CALLBACK_URL"),
+	Scopes:       []string{"openid"},
 	Endpoint: oauth2.Endpoint{
-		AuthURL:   fmt.Sprintf("%s/api/oauth/authorize", os.Getenv("REDIRECT_GAMMA_URL")),
-		TokenURL:  fmt.Sprintf("%s/api/oauth/token", gamma_url),
-		AuthStyle: 0,
+		AuthURL:  "https://auth.chalmers.it/oauth2/authorize",
+		TokenURL: "https://auth.chalmers.it/oauth2/token",
 	},
-	RedirectURL: os.Getenv("CALLBACK_URL"),
-	Scopes:      nil,
 }
 
 func Auth(h func(*gin.Context)) func(*gin.Context) {
@@ -47,8 +45,7 @@ func Auth(h func(*gin.Context)) func(*gin.Context) {
 }
 
 func HasAuthority(user User) bool {
-	return mock_mode || contains(user.Authorities,
-		func(e Authority) bool { return e.Authority == gamma_authority })
+	return true
 }
 
 func GetUser(token string) User {
@@ -65,14 +62,14 @@ func GetUser(token string) User {
 	}
 
 	me := User{}
-	text, _ := ioutil.ReadAll(resp.Body)
+	text, _ := io.ReadAll(resp.Body)
 	json.Unmarshal(text, &me)
 
 	return me
 }
 
 func getToken(grant string) (*oauth2.Token, error) {
-	return client.Exchange(context.Background(), grant)
+	return oauthConfig.Exchange(context.Background(), grant)
 }
 
 func contains(elements []Authority, is func(Authority) bool) bool {
