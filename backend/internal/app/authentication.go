@@ -16,7 +16,6 @@ import (
 
 var (
 	gamma_url     = os.Getenv("GAMMA_URL")
-	mock_mode     = os.Getenv("MOCK_MODE") == "True"
 	cookie_domain = os.Getenv("COOKIE_DOMAIN")
 )
 
@@ -26,8 +25,8 @@ var oauthConfig = &oauth2.Config{
 	RedirectURL:  os.Getenv("OAUTH_CALLBACK_URL"),
 	Scopes:       []string{"openid"},
 	Endpoint: oauth2.Endpoint{
-		AuthURL:  "https://auth.chalmers.it/oauth2/authorize",
-		TokenURL: "https://auth.chalmers.it/oauth2/token",
+		AuthURL:  fmt.Sprintf("%s/oauth2/authorize", gamma_url),
+		TokenURL: fmt.Sprintf("%s/oauth2/token", gamma_url),
 	},
 }
 
@@ -70,14 +69,4 @@ func GetUser(token string) User {
 
 func getToken(grant string) (*oauth2.Token, error) {
 	return oauthConfig.Exchange(context.Background(), grant)
-}
-
-func contains(elements []Authority, is func(Authority) bool) bool {
-	for _, v := range elements {
-		if is(v) {
-			return true
-		}
-	}
-
-	return false
 }
