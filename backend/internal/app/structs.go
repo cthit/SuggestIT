@@ -38,26 +38,7 @@ type Authority struct {
 }
 
 type User struct {
-	Id                    string      `json:"id"`
-	Cid                   string      `json:"cid"`
-	Nick                  string      `json:"nick"`
-	FirstName             string      `json:"firstName"`
-	LastName              string      `json:"lastName"`
-	Email                 string      `json:"email"`
-	Phone                 string      `json:"phone"`
-	Language              string      `json:"language"`
-	AvatarUrl             string      `json:"avatarUrl"`
-	Gdpr                  bool        `json:"gdpr"`
-	UserAgreement         bool        `json:"userAgreement"`
-	AccountLocked         bool        `json:"accountLocked"`
-	AcceptanceYear        int         `json:"acceptanceYear"`
-	Authorities           []Authority `json:"authorities"`
-	Activated             bool        `json:"activated"`
-	Username              string      `json:"username"`
-	Enabled               bool        `json:"enabled"`
-	AccountNonLocked      bool        `json:"accountNonLocked"`
-	AccountNonExpired     bool        `json:"accountNonExpired"`
-	CredentialsNonExpired bool        `json:"credentialsNonExpired"`
-	WebsiteURLs           string      `json:"websiteURLs"`
-	Groups                []Group     `json:"groups"`
+	Cid     string `json:"cid"`
+	Nick    string `json:"nickname"`
+	Picture string `json:"picture"`
 }

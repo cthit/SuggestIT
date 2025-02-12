@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
+	"math/rand/v2"
 	"net/http"
 	"os"
 
@@ -14,23 +15,22 @@ import (
 	"golang.org/x/oauth2"
 )
 
+var oauthState = randomString(16)
+
 var (
-	gamma_url       = os.Getenv("GAMMA_URL")
-	mock_mode       = os.Getenv("MOCK_MODE") == "True"
-	gamma_authority = os.Getenv("GAMMA_AUTHORITY")
-	cookie_domain   = os.Getenv("COOKIE_DOMAIN")
+	oauth_url     = os.Getenv("OAUTH_URL")
+	cookie_domain = os.Getenv("COOKIE_DOMAIN")
 )
 
-var client = oauth2.Config{
-	ClientID:     os.Getenv("CLIENT_ID"),
-	ClientSecret: os.Getenv("AUTH_SECRET"),
+var oauthConfig = &oauth2.Config{
+	ClientID:     os.Getenv("OAUTH_CLIENT_ID"),
+	ClientSecret: os.Getenv("OAUTH_CLIENT_SECRET"),
+	RedirectURL:  os.Getenv("CALLBACK_URL"),
+	Scopes:       []string{"openid", "profile"},
 	Endpoint: oauth2.Endpoint{
-		AuthURL:   fmt.Sprintf("%s/api/oauth/authorize", os.Getenv("REDIRECT_GAMMA_URL")),
-		TokenURL:  fmt.Sprintf("%s/api/oauth/token", gamma_url),
-		AuthStyle: 0,
+		AuthURL:  fmt.Sprintf("%s/oauth2/authorize", oauth_url),
+		TokenURL: fmt.Sprintf("%s/oauth2/token", oauth_url),
 	},
-	RedirectURL: os.Getenv("CALLBACK_URL"),
-	Scopes:      nil,
 }
 
 func Auth(h func(*gin.Context)) func(*gin.Context) {
@@ -38,7 +38,7 @@ func Auth(h func(*gin.Context)) func(*gin.Context) {
 		token, err := c.Cookie("suggestit")
 		if err != nil || !HasAuthority(GetUser(token)) {
 			c.SetCookie("suggestit", "", -1000, "/", cookie_domain, true, true)
-			c.AbortWithError(http.StatusUnauthorized, errors.New("You are not P.R.I.T."))
+			c.AbortWithError(http.StatusUnauthorized, errors.New("you are not P.R.I.T."))
 			return
 		}
 
@@ -47,12 +47,11 @@ func Auth(h func(*gin.Context)) func(*gin.Context) {
 }
 
 func HasAuthority(user User) bool {
-	return mock_mode || contains(user.Authorities,
-		func(e Authority) bool { return e.Authority == gamma_authority })
+	return user.Cid != ""
 }
 
 func GetUser(token string) User {
-	gammaQuery := fmt.Sprintf("%s/api/users/me", gamma_url)
+	gammaQuery := fmt.Sprintf("%s/oauth2/userinfo", oauth_url)
 
 	client := http.Client{}
 	req, _ := http.NewRequest("GET", gammaQuery, nil)
@@ -65,22 +64,22 @@ func GetUser(token string) User {
 	}
 
 	me := User{}
-	text, _ := ioutil.ReadAll(resp.Body)
+	text, _ := io.ReadAll(resp.Body)
+
 	json.Unmarshal(text, &me)
 
 	return me
 }
 
-func getToken(grant string) (*oauth2.Token, error) {
-	return client.Exchange(context.Background(), grant)
+func getToken(code string) (*oauth2.Token, error) {
+	return oauthConfig.Exchange(context.Background(), code)
 }
 
-func contains(elements []Authority, is func(Authority) bool) bool {
-	for _, v := range elements {
-		if is(v) {
-			return true
-		}
+func randomString(n int) string {
+	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letterBytes[rand.IntN(len(letterBytes))]
 	}
-
-	return false
+	return string(b)
 }
