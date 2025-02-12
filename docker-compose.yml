@@ -1,4 +1,3 @@
-version: "3"
 services:
   db:
     image: postgres:11
@@ -27,20 +26,15 @@ services:
       SUGGESTIT_POSTGRES_PORT: 5432
       SUGGESTIT_POSTGRES_DB: suggestit
 
-      GIN_MODE: ""
-      MOCK_MODE: "True"
-      AUTH_SECRET: secret
-      CLIENT_ID: id
-      GAMMA_URL: http://gamma-backend:8081
-      REDIRECT_GAMMA_URL: http://localhost:8081
+      OAUTH_CLIENT_SECRET:
+      OAUTH_CLIENT_ID:
+      OAUTH_URL:
       CALLBACK_URL: http://localhost:3001/callback
-      GAMMA_AUTHORITY: suggestit
       COOKIE_DOMAIN: localhost
     volumes:
       - ./backend/:/go/src/app
 
     depends_on:
-      - gamma-backend
       - db
 
     ports:
@@ -56,59 +50,6 @@ services:
       - backend
     volumes:
       - ./frontend/src:/usr/src
-
-  gamma-db:
-    image: postgres:10
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_DB: postgres
-      POSTGRES_PASSWORD: password
-
-  gamma-frontend:
-    image: cthit/gamma-frontend:development
-    environment:
-      HTTP_PROXY: http://gamma-backend:8081
-    depends_on:
-      - gamma-backend
-    ports:
-      - 3000:3000
-
-  gamma-backend:
-    image: cthit/gamma-backend
-    environment:
-      # Default admin user name = admin
-      # Default admin password  = password
-
-      DB_USER: user
-      DB_PASSWORD: password
-      DB_HOST: gamma-db
-      DB_PORT: 5432
-      DB_NAME: postgres
-
-      REDIS_HOST: redis
-      REDIS_PASSWORD: ""
-
-      DEFAULT_CLIENT_NAME: demo
-      DEFAULT_CLIENT_ID: id
-      DEFAULT_CLIENT_SECRET: secret
-      DEFAULT_REDIRECT_URI: http://localhost:3001/callback
-
-      SERVER_PORT: 8081
-      FRONTEND_REDIRECT_URI: http://localhost:3000/login
-      SUCCESSFUL_LOGIN: http://localhost:3000
-      CORS_ALLOWED_ORIGIN: http://localhost:3000
-      COOKIE_DOMAIN: localhost
-      PRODUCTION: "false"
-      IS_MOCKING: "true"
-    depends_on:
-      - gamma-db
-      - redis
-      
-    ports:
-      - 8081:8081
-    depends_on:
-      - gamma-db
-      - redis
 
   redis:
     image: redis:5.0

@@ -23,7 +23,7 @@ const Callback = ({ location }) => {
                 });
             })
             .finally(() => setRedirect(true));
-    }, [location.search, setRedirect, setUser]);
+    }, [location.search, setRedirect, setUser, toastOpen]);
 
     return (
         <>
