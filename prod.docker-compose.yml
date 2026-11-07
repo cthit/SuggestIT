@@ -1,45 +1,89 @@
+# Production stack. Images are built and pushed by GitHub Actions on master.
+#
+# A reverse proxy in front of this stack must serve both services on the same
+# origin (https://suggestit.chalmers.it):
+#   /api/*  -> backend  (host port 5000, same as the previous stack)
+#   /*      -> frontend (host port 8080)
+#
+# Required environment: OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, SESSION_SECRET
+# (at least 32 random bytes, e.g. `openssl rand -base64 48`).
+#
+# Upgrading a host that runs the previous stack: that stack ran an untagged
+# `postgres` with its data in an anonymous volume. This file uses postgres:18
+# with the named volume `db-data`, which starts empty, so the data must be
+# moved over with a dump and restore. Do it in this order:
+#   1. With the OLD compose file, still running:
+#        docker compose -f prod.docker-compose.yml exec -T db \
+#          pg_dump -U suggestit -d suggestit --clean --if-exists > suggestit.sql
+#   2. Stop and remove the old containers (the old volume is kept as a backup):
+#        docker compose -f prod.docker-compose.yml down
+#   3. With THIS file, start the database alone and restore the dump:
+#        docker compose -f prod.docker-compose.yml up -d --wait db
+#        docker compose -f prod.docker-compose.yml exec -T db \
+#          psql -U suggestit -d suggestit -v ON_ERROR_STOP=1 < suggestit.sql
+#   4. Start the rest:
+#        docker compose -f prod.docker-compose.yml up -d
+# Step 2 matters: recreating the old db container in place would carry its
+# anonymous /var/lib/postgresql/data volume over, and postgres:18 refuses to
+# start with data at that path.
+
 services:
   db:
-    image: postgres
+    image: postgres:18-alpine
     restart: always
     environment:
       POSTGRES_USER: suggestit
+      POSTGRES_PASSWORD: ${SUGGESTIT_POSTGRES_PASSWORD:-password}
       POSTGRES_DB: suggestit
-      POSTGRES_PASSWORD: password
-    ports:
-      - 5432:5432
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U suggestit -d suggestit"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   adminer:
-    image: adminer
+    image: adminer:6
     restart: always
+    environment:
+      ADMINER_DEFAULT_SERVER: db
     depends_on:
       - db
     ports:
-      - 1234:8080
+      - "1234:8080"
 
   backend:
-    image: cthit/suggestit-backend
+    image: ghcr.io/cthit/suggestit-backend:latest
+    restart: always
     environment:
-      SUGGESTIT_POSTGRES_USER: suggestit
-      SUGGESTIT_POSTGRES_PASSWORD: password
       SUGGESTIT_POSTGRES_HOST: db
-      SUGGESTIT_POSTGRES_PORT: 5432
+      SUGGESTIT_POSTGRES_PORT: "5432"
+      SUGGESTIT_POSTGRES_USER: suggestit
+      SUGGESTIT_POSTGRES_PASSWORD: ${SUGGESTIT_POSTGRES_PASSWORD:-password}
       SUGGESTIT_POSTGRES_DB: suggestit
+      SUGGESTIT_POSTGRES_SSLMODE: disable
 
-      OAUTH_CLIENT_SECRET:
-      OAUTH_CLIENT_ID:
-      OAUTH_URL:
-      CALLBACK_URL:
+      OAUTH_URL: ${OAUTH_URL:-https://auth.chalmers.it}
+      OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID}
+      OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET}
+      CALLBACK_URL: ${CALLBACK_URL:-https://suggestit.chalmers.it/callback}
+      SESSION_SECRET: ${SESSION_SECRET}
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN:-}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
-      - 5000:3001
+      - "5000:3001"
 
   frontend:
-    image: cthit/suggestit-frontend
-    ports:
-      - 8080:8080
+    image: ghcr.io/cthit/suggestit-frontend:latest
+    restart: always
     depends_on:
       - backend
-    volumes:
-      - ./frontend:/usr/src/app/
+    ports:
+      - "8080:80"
+
+volumes:
+  db-data:

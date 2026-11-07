@@ -1,1 +1,3 @@
-dev.Dockerfile
+# Allowlist: only the prebuilt binary is sent to the Docker daemon.
+*
+!bin/suggestit
