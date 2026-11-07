@@ -1,4 +1,10 @@
+# Editors
 .vscode/
 .idea/
-backend/gin-bin
-backend/.idea
+.DS_Store
+
+# Local environment
+.env
+
+# Backend build output
+backend/bin/

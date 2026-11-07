@@ -1,13 +1,14 @@
-FROM node:16-alpine AS build
-
-COPY package.json yarn.lock /
-
-RUN yarn install --production --network-timeout 1000000000
-RUN yarn global add react-scripts 
-
+FROM node:24-alpine AS build
+ENV CI=true COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+WORKDIR /app
+# Corepack installs the pnpm version pinned by "packageManager" in package.json.
+RUN corepack enable
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+RUN pnpm install --frozen-lockfile
 COPY . .
-RUN yarn build
+RUN pnpm build
 
-FROM nginx:alpine
+FROM nginx:1.30.6-alpine
 COPY default.conf /etc/nginx/conf.d/default.conf
-COPY --from=build ./build /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80

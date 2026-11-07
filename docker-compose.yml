@@ -1,55 +1,65 @@
+# Local development stack: Postgres, Adminer and the Go backend.
+#
+# The backend binary is built on the host (`make build`) and bind-mounted into
+# the container, so after a code change run `make restart` (rebuild + restart)
+# instead of rebuilding the image. The frontend runs natively with `pnpm dev`
+# in frontend/ and proxies /api to http://127.0.0.1:3001.
+#
+# OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET and SESSION_SECRET are read from your
+# shell environment or from a root `.env` file (see .env.example).
+
 services:
   db:
-    image: postgres:11
+    image: postgres:18-alpine
     environment:
       POSTGRES_USER: suggestit
-      POSTGRES_DB: suggestit
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: suggestit
     ports:
-      - 5432:5432
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U suggestit -d suggestit"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
 
   adminer:
-    image: adminer
+    image: adminer:6
+    environment:
+      ADMINER_DEFAULT_SERVER: db
     depends_on:
       - db
     ports:
-      - 8080:8080
+      - "8080:8080"
 
   backend:
-    build:
-      context: ./backend/
-      dockerfile: dev.Dockerfile
+    build: ./backend
+    volumes:
+      - ./backend/bin/suggestit:/suggestit:ro
     environment:
+      SUGGESTIT_POSTGRES_HOST: db
+      SUGGESTIT_POSTGRES_PORT: "5432"
       SUGGESTIT_POSTGRES_USER: suggestit
       SUGGESTIT_POSTGRES_PASSWORD: password
-      SUGGESTIT_POSTGRES_HOST: db
-      SUGGESTIT_POSTGRES_PORT: 5432
       SUGGESTIT_POSTGRES_DB: suggestit
+      SUGGESTIT_POSTGRES_SSLMODE: disable
 
-      OAUTH_CLIENT_SECRET:
-      OAUTH_CLIENT_ID:
-      OAUTH_URL:
-      CALLBACK_URL: http://localhost:3001/callback
-      COOKIE_DOMAIN: localhost
-    volumes:
-      - ./backend/:/go/src/app
-
-    depends_on:
-      - db
-
+      OAUTH_URL: ${OAUTH_URL:-https://auth.chalmers.it}
+      OAUTH_CLIENT_ID: ${OAUTH_CLIENT_ID:-}
+      OAUTH_CLIENT_SECRET: ${OAUTH_CLIENT_SECRET:-}
+      CALLBACK_URL: ${CALLBACK_URL:-http://localhost:3000/callback}
+      # Optional in dev: if empty a random secret is generated at startup
+      # (sessions then do not survive a backend restart).
+      SESSION_SECRET: ${SESSION_SECRET:-}
+      COOKIE_DOMAIN: ""
     ports:
-      - 5000:3000
-
-  frontend:
-    build:
-      context: ./frontend/
-      dockerfile: dev.Dockerfile
-    ports:
-      - 3001:3000
+      - "3001:3001"
     depends_on:
-      - backend
-    volumes:
-      - ./frontend/src:/usr/src
+      db:
+        condition: service_healthy
 
-  redis:
-    image: redis:5.0
+volumes:
+  db-data:
